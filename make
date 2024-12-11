@@ -119,6 +119,7 @@ with_test() {
 clean
 
 # Build the core library.
+assemble lib/p0/entrypoint.S
 assemble lib/p0/os.S
 
 build_library lib/libp0.a \

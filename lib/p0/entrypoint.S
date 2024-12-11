@@ -1,15 +1,20 @@
 # ===========================================================================
-# true: exits with 0
-#
-# Useful to check that the build works.
+# Entrypoint for executables
 # ===========================================================================
 
 .section .text
 
-.global main
-main:
+.global _start
+_start:
 	.cfi_startproc
-	li a0, 0
-	ret
+
+	# Prevent GDB from reporting a corrupt stack below _start.
+	.cfi_undefined sp
+	.cfi_undefined fp
+	.cfi_undefined ra
+
+	call main
+	call "os/exit"
+
 	.cfi_endproc
 
