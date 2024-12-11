@@ -6,6 +6,8 @@
 
 .global _start
 _start:
+	.cfi_startproc
 	li a0, 0
 	jal "os/exit"
+	.cfi_endproc
 
