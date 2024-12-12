@@ -180,15 +180,15 @@ build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
 # Build the core library.
-assemble lib/p0/io.S
-assemble lib/p0/os.S
+assemble lib/p0/io/write.S
+assemble lib/p0/os/exit.S
 
 build_library lib/libp0.a \
-	"$BUILD_ROOT/lib/p0/io.o" \
-	"$BUILD_ROOT/lib/p0/os.o"
+	"$BUILD_ROOT/lib/p0/io/write.o" \
+	"$BUILD_ROOT/lib/p0/os/exit.o"
 
 # Test the core library.
-with_test lib/p0/io_test \
+with_test lib/p0/io/write_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 # Build a simple program that uses libp0 and terminates successfully.
