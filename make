@@ -173,6 +173,12 @@ build_executable cmd/true/true \
 
 sanity_check "$BUILD_ROOT/cmd/true/true"
 
+# Build the testing library.
+assemble lib/testing/testing.S
+
+build_library lib/libtesting.a \
+	"$BUILD_ROOT/lib/testing/testing.o"
+
 # Build the core library.
 assemble lib/p0/io.S
 assemble lib/p0/os.S
@@ -180,6 +186,10 @@ assemble lib/p0/os.S
 build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/io.o" \
 	"$BUILD_ROOT/lib/p0/os.o"
+
+# Test the core library.
+with_test lib/p0/io_test \
+	"$BUILD_ROOT/lib/libp0.a"
 
 # Build a simple program that uses libp0 and terminates successfully.
 assemble cmd/hello/hello.S
