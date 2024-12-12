@@ -2,6 +2,8 @@
 # Entrypoint for executables
 # ===========================================================================
 
+.include "inc/syscall.S"
+
 .section .text
 
 .global _start
@@ -14,7 +16,9 @@ _start:
 	.cfi_undefined ra
 
 	call main
-	call "os/exit"
+
+	li a7, SYSCALL_EXIT
+	ecall
 
 	.cfi_endproc
 

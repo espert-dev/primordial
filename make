@@ -85,7 +85,7 @@ build_executable() {
 	target_dir="$(dirname "$target")"
 	mkdir -p "$target_dir"
 
-	"$AS" $ASFLAGS -o "$target" "$@"
+	"$AS" $ASFLAGS -o "$target" "$@" "$BUILD_ROOT/lib/libentrypoint.a"
 }
 
 with_test() {
@@ -102,7 +102,8 @@ with_test() {
 	"$AS" $ASFLAGS -o "$target" \
 		"$source" \
 		"$@" \
-		"$BUILD_ROOT/lib/libtesting.a"
+		"$BUILD_ROOT/lib/libtesting.a" \
+		"$BUILD_ROOT/lib/libentrypoint.a"
 
 	# Run test.
 	info "Running test $target..."
@@ -119,11 +120,15 @@ with_test() {
 clean
 
 # Build the core library.
-assemble lib/p0/entrypoint.S
+assemble lib/entrypoint/entrypoint.S
+
+build_library lib/libentrypoint.a \
+	"$BUILD_ROOT/lib/entrypoint/entrypoint.o"
+
 assemble lib/p0/os.S
 
 build_library lib/libp0.a \
-	"$BUILD_ROOT/lib/p0/"*.o
+	"$BUILD_ROOT/lib/p0/os.o"
 
 # Build a very simple program that uses libp0 and terminates successfully.
 assemble cmd/true/true.S
