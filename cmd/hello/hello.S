@@ -4,6 +4,7 @@
 # A classic. Also useful to check that basic IO and safe_str work.
 # ===========================================================================
 
+.include "inc/millicode.S"
 .include "inc/io.S"
 .include "inc/safe_str.S"
 
@@ -16,10 +17,7 @@ safe_str greeting, "Hello, primordial world!\n"
 .global main
 main:
 	.cfi_startproc
-	addi sp, sp, -16
-	sd fp, 0(sp)
-	mv fp, sp
-	sd ra, 8(fp)
+	save_0
 
 	li a0, STDOUT
 	la a1, greeting
@@ -29,9 +27,6 @@ main:
 	# Return error from io.Write.
 	mv a0, a1
 
-	ld ra, 8(fp)
-	ld fp, 0(fp)
-	addi sp, sp, 16
-	ret
+	restore_0
 	.cfi_endproc
 

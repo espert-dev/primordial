@@ -85,7 +85,10 @@ build_executable() {
 	target_dir="$(dirname "$target")"
 	mkdir -p "$target_dir"
 
-	"$AS" $ASFLAGS -o "$target" "$@" "$BUILD_ROOT/lib/libentrypoint.a"
+	"$AS" $ASFLAGS -o "$target" \
+		"$@" \
+		"$BUILD_ROOT/lib/libentrypoint.a" \
+		"$BUILD_ROOT/lib/libmillicode.a"
 }
 
 with_test() {
@@ -103,7 +106,8 @@ with_test() {
 		"$source" \
 		"$@" \
 		"$BUILD_ROOT/lib/libtesting.a" \
-		"$BUILD_ROOT/lib/libentrypoint.a"
+		"$BUILD_ROOT/lib/libentrypoint.a" \
+		"$BUILD_ROOT/lib/libmillicode.a"
 
 	# Run test.
 	info "Running test $target..."
@@ -127,27 +131,55 @@ sanity_check() {
 
 clean
 
-# Build the core library.
+# Build the millicode library.
+assemble lib/millicode/frame_0.S
+assemble lib/millicode/frame_1.S
+assemble lib/millicode/frame_2.S
+assemble lib/millicode/frame_3.S
+assemble lib/millicode/frame_4.S
+assemble lib/millicode/frame_5.S
+assemble lib/millicode/frame_6.S
+assemble lib/millicode/frame_7.S
+assemble lib/millicode/frame_8.S
+assemble lib/millicode/frame_9.S
+assemble lib/millicode/frame_10.S
+assemble lib/millicode/frame_11.S
+
+build_library lib/libmillicode.a \
+	"$BUILD_ROOT/lib/millicode/frame_0.o" \
+	"$BUILD_ROOT/lib/millicode/frame_1.o" \
+	"$BUILD_ROOT/lib/millicode/frame_2.o" \
+	"$BUILD_ROOT/lib/millicode/frame_3.o" \
+	"$BUILD_ROOT/lib/millicode/frame_4.o" \
+	"$BUILD_ROOT/lib/millicode/frame_5.o" \
+	"$BUILD_ROOT/lib/millicode/frame_6.o" \
+	"$BUILD_ROOT/lib/millicode/frame_7.o" \
+	"$BUILD_ROOT/lib/millicode/frame_8.o" \
+	"$BUILD_ROOT/lib/millicode/frame_9.o" \
+	"$BUILD_ROOT/lib/millicode/frame_10.o" \
+	"$BUILD_ROOT/lib/millicode/frame_11.o"
+
+# Build the entrypoint library.
 assemble lib/entrypoint/entrypoint.S
 
 build_library lib/libentrypoint.a \
 	"$BUILD_ROOT/lib/entrypoint/entrypoint.o"
 
+# Build a simple program that uses libentrypoint and terminates successfully.
+assemble cmd/true/true.S
+
+build_executable cmd/true/true \
+	"$BUILD_ROOT/cmd/true/true.o"
+
+sanity_check "$BUILD_ROOT/cmd/true/true"
+
+# Build the core library.
 assemble lib/p0/io.S
 assemble lib/p0/os.S
 
 build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/io.o" \
 	"$BUILD_ROOT/lib/p0/os.o"
-
-# Build a simple program that uses libentrypoint and terminates successfully.
-assemble cmd/true/true.S
-
-build_executable cmd/true/true \
-	"$BUILD_ROOT/cmd/true/true.o" \
-	"$BUILD_ROOT/lib/libp0.a"
-
-sanity_check "$BUILD_ROOT/cmd/true/true"
 
 # Build a simple program that uses libp0 and terminates successfully.
 assemble cmd/hello/hello.S
