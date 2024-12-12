@@ -10,6 +10,7 @@
 .macro save_0
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_0
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x10
 	.cfi_offset fp, 0x00 - 0x10
 	.cfi_offset ra, 0x08 - 0x10
@@ -18,6 +19,7 @@
 .macro save_1
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_1
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x20
 	.cfi_offset fp, 0x00 - 0x20
 	.cfi_offset ra, 0x08 - 0x20
@@ -27,6 +29,7 @@
 .macro save_2
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_2
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x20
 	.cfi_offset fp, 0x00 - 0x20
 	.cfi_offset ra, 0x08 - 0x20
@@ -37,6 +40,7 @@
 .macro save_3
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_3
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x30
 	.cfi_offset fp, 0x00 - 0x30
 	.cfi_offset ra, 0x08 - 0x30
@@ -48,6 +52,7 @@
 .macro save_4
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_4
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x30
 	.cfi_offset fp, 0x00 - 0x30
 	.cfi_offset ra, 0x08 - 0x30
@@ -60,6 +65,7 @@
 .macro save_5
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_5
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x40
 	.cfi_offset fp, 0x00 - 0x40
 	.cfi_offset ra, 0x08 - 0x40
@@ -73,6 +79,7 @@
 .macro save_6
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_6
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x40
 	.cfi_offset fp, 0x00 - 0x40
 	.cfi_offset ra, 0x08 - 0x40
@@ -87,6 +94,7 @@
 .macro save_7
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_7
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x50
 	.cfi_offset fp, 0x00 - 0x50
 	.cfi_offset ra, 0x08 - 0x50
@@ -102,6 +110,7 @@
 .macro save_8
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_8
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x50
 	.cfi_offset fp, 0x00 - 0x50
 	.cfi_offset ra, 0x08 - 0x50
@@ -118,6 +127,7 @@
 .macro save_9
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_9
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x60
 	.cfi_offset fp, 0x00 - 0x60
 	.cfi_offset ra, 0x08 - 0x60
@@ -135,6 +145,7 @@
 .macro save_10
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_10
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x60
 	.cfi_offset fp, 0x00 - 0x60
 	.cfi_offset ra, 0x08 - 0x60
@@ -153,6 +164,7 @@
 .macro save_11
 	# Use alternate calling convention using t0 to avoid clobbering ra.
 	jal t0, prologue_11
+	.cfi_return_column ra
 	.cfi_def_cfa_offset 0x70
 	.cfi_offset fp, 0x00 - 0x70
 	.cfi_offset ra, 0x08 - 0x70
@@ -170,46 +182,40 @@
 .endm
 
 .macro restore_0
-	# Tailcall into millicode.
-	j epilogue_0
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_0
 .endm
 
 .macro restore_1
-	# Tailcall into millicode.
-	j epilogue_1
 	.cfi_restore s1
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_1
 .endm
 
 .macro restore_2
-	# Tailcall into millicode.
-	j epilogue_2
 	.cfi_restore s2
 	.cfi_restore s1
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_2
 .endm
 
 .macro restore_3
-	# Tailcall into millicode.
-	j epilogue_3
 	.cfi_restore s3
 	.cfi_restore s2
 	.cfi_restore s1
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_3
 .endm
 
 .macro restore_4
-	# Tailcall into millicode.
-	j epilogue_4
 	.cfi_restore s4
 	.cfi_restore s3
 	.cfi_restore s2
@@ -217,11 +223,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_4
 .endm
 
 .macro restore_5
-	# Tailcall into millicode.
-	j epilogue_5
 	.cfi_restore s5
 	.cfi_restore s4
 	.cfi_restore s3
@@ -230,11 +235,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_5
 .endm
 
 .macro restore_6
-	# Tailcall into millicode.
-	j epilogue_6
 	.cfi_restore s6
 	.cfi_restore s5
 	.cfi_restore s4
@@ -244,11 +248,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_6
 .endm
 
 .macro restore_7
-	# Tailcall into millicode.
-	j epilogue_7
 	.cfi_restore s7
 	.cfi_restore s6
 	.cfi_restore s5
@@ -259,11 +262,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_7
 .endm
 
 .macro restore_8
-	# Tailcall into millicode.
-	j epilogue_8
 	.cfi_restore s8
 	.cfi_restore s7
 	.cfi_restore s6
@@ -275,11 +277,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_8
 .endm
 
 .macro restore_9
-	# Tailcall into millicode.
-	j epilogue_9
 	.cfi_restore s9
 	.cfi_restore s8
 	.cfi_restore s7
@@ -292,11 +293,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_9
 .endm
 
 .macro restore_10
-	# Tailcall into millicode.
-	j epilogue_10
 	.cfi_restore s10
 	.cfi_restore s9
 	.cfi_restore s8
@@ -310,11 +310,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_10
 .endm
 
 .macro restore_11
-	# Tailcall into millicode.
-	j epilogue_11
 	.cfi_restore s11
 	.cfi_restore s10
 	.cfi_restore s9
@@ -329,5 +328,6 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
+	tail epilogue_11
 .endm
 

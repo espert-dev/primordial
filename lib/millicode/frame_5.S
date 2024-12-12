@@ -8,7 +8,7 @@
 
 .global prologue_5
 prologue_5:
-	# Do NOT add CFI declarations. They go in macros.
+	.cfi_startproc
 	addi sp, sp, -FRAME_SIZE
 	sd fp, 0x00(sp)
 	mv fp, sp
@@ -19,10 +19,11 @@ prologue_5:
 	sd s4, 0x28(fp)
 	sd s5, 0x30(fp)
 	jr t0
+	.cfi_endproc
 
 .global epilogue_5
 epilogue_5:
-	# Do NOT add CFI declarations. They go in macros.
+	.cfi_startproc
 	ld s5, 0x30(fp)
 	ld s4, 0x28(fp)
 	ld s3, 0x20(fp)
@@ -32,3 +33,4 @@ epilogue_5:
 	ld fp, 0x00(fp)
 	addi sp, sp, FRAME_SIZE
 	ret
+	.cfi_endproc
