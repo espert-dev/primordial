@@ -1,6 +1,10 @@
 # ===========================================================================
-# Linux syscall numbers on RISC-V
+# Macros for safe string (slices)
 # ===========================================================================
 
-.equiv SYSCALL_WRITE, 64
-.equiv SYSCALL_EXIT, 93
+.macro safe_str name, value
+\name\():
+.ascii "\value"
+.equiv \name\()_size, . - \name
+.endm
+

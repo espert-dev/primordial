@@ -10,8 +10,8 @@
 #
 # Input:
 #   a0: Exit code
-.global "os/exit"
-"os/exit":
+.global "os.Exit"
+"os.Exit":
 	.cfi_startproc
 	li a7, SYSCALL_EXIT
 	ecall

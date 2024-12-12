@@ -33,7 +33,7 @@ info() {
 
 die() {
 	if [ -t 1 ]; then
-		echo "\e[0;31m$*\e[0m" >&2
+		echo -e "\e[0;31m$*\e[0m" >&2
 	else
 		echo "$*" >&2
 	fi
@@ -53,7 +53,7 @@ clean() {
 assemble() {
 	source="$1"
 
-	info "Assembling $source..."
+	info "Assembling $source ..."
 
 	source_dir="$(dirname "$source")"
 	target_dir="$BUILD_ROOT/$source_dir"
@@ -68,7 +68,7 @@ build_library() {
 	target="$BUILD_ROOT/$1"
 	shift
 
-	info "Building library $target..."
+	info "Building library $target ..."
 
 	target_dir="$(dirname "$target")"
 	mkdir -p "$target_dir"
@@ -80,7 +80,7 @@ build_executable() {
 	target="$BUILD_ROOT/$1"
 	shift
 
-	info "Building executable $target..."
+	info "Building executable $target ..."
 
 	target_dir="$(dirname "$target")"
 	mkdir -p "$target_dir"
@@ -94,7 +94,7 @@ with_test() {
 	shift
 
 	# Build test.
-	info "Building test $target..."
+	info "Building test $target ..."
 
 	target_dir="$(dirname "$target")"
 	mkdir -p "$target_dir"
@@ -113,6 +113,14 @@ with_test() {
 	fi
 }
 
+sanity_check() {
+	target="$1"
+	shift
+
+	info "Running sanity check $target ..."
+	"$target" "$@"
+}
+
 # ===========================================================================
 # Build instructions
 # ===========================================================================
@@ -125,19 +133,35 @@ assemble lib/entrypoint/entrypoint.S
 build_library lib/libentrypoint.a \
 	"$BUILD_ROOT/lib/entrypoint/entrypoint.o"
 
+assemble lib/p0/io.S
 assemble lib/p0/os.S
 
 build_library lib/libp0.a \
+	"$BUILD_ROOT/lib/p0/io.o" \
 	"$BUILD_ROOT/lib/p0/os.o"
 
-# Build a very simple program that uses libp0 and terminates successfully.
+# Build a simple program that uses libentrypoint and terminates successfully.
 assemble cmd/true/true.S
 
 build_executable cmd/true/true \
 	"$BUILD_ROOT/cmd/true/true.o" \
 	"$BUILD_ROOT/lib/libp0.a"
 
-# Sanity check: must execute and terminates successfully.
-"$BUILD_ROOT/cmd/true/true"
+sanity_check "$BUILD_ROOT/cmd/true/true"
 
-info "Done."
+# Build a simple program that uses libp0 and terminates successfully.
+assemble cmd/hello/hello.S
+
+build_executable cmd/hello/hello \
+	"$BUILD_ROOT/cmd/hello/hello.o" \
+	"$BUILD_ROOT/lib/libp0.a"
+
+sanity_check "$BUILD_ROOT/cmd/hello/hello"
+
+# If the execution reached here, the build completed successfully.
+echo
+if [ -t 1 ]; then
+	echo "\e[1;32mDone.\e[0m"
+else
+	echo "Done."
+fi

@@ -2,5 +2,7 @@
 # Linux syscall numbers on RISC-V
 # ===========================================================================
 
-.equiv SYSCALL_WRITE, 64
-.equiv SYSCALL_EXIT, 93
+.equiv STDIN,  0
+.equiv STDOUT, 1
+.equiv STDLOG, 2
+
