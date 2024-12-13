@@ -2,7 +2,7 @@
 # Entrypoint for executables
 # ===========================================================================
 
-.include "inc/syscall.S"
+#include "syscall.S"
 
 .section .text
 

@@ -4,9 +4,9 @@
 # A classic. Also useful to check that basic IO and safe_str work.
 # ===========================================================================
 
-.include "inc/millicode.S"
-.include "inc/io.S"
-.include "inc/safe_str.S"
+#include "millicode.S"
+#include "io.S"
+#include "safe_str.S"
 
 .section .rodata
 

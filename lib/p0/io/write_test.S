@@ -2,9 +2,9 @@
 # write tests
 # ===========================================================================
 
-.include "inc/millicode.S"
-.include "inc/safe_str.S"
-.include "inc/testing.S"
+#include "millicode.S"
+#include "safe_str.S"
+#include "testing.S"
 
 
 # ===========================================================================
@@ -32,7 +32,7 @@ test_case write_ok
 	li a2, msg_size
 	call "io.Write"
 
-	expect_eq msg_size, a0
+	expect_eqi msg_size, a0
 	expect_z a1
 
 	restore_0

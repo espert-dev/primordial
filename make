@@ -20,7 +20,7 @@ fi
 
 # Apply defaults.
 AS="${AS:-riscv64-unknown-elf-gcc}"
-ASFLAGS="${ASFLAGS:--ggdb3 -mcmodel=medlow -nostdlib -static}"
+ASFLAGS="${ASFLAGS:--ggdb3 -Iinc -mcmodel=medlow -nostdlib -static}"
 BUILD_ROOT="${BUILD_ROOT:-build}"
 
 # ===========================================================================
@@ -180,12 +180,12 @@ build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
 # Build the core library.
-assemble lib/p0/io/write.S
 assemble lib/p0/os/exit.S
+assemble lib/p0/io/write.S
 
 build_library lib/libp0.a \
-	"$BUILD_ROOT/lib/p0/io/write.o" \
-	"$BUILD_ROOT/lib/p0/os/exit.o"
+	"$BUILD_ROOT/lib/p0/os/exit.o" \
+	"$BUILD_ROOT/lib/p0/io/write.o"
 
 # Test the core library.
 with_test lib/p0/io/write_test \

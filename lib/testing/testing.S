@@ -11,8 +11,12 @@
 # that it is testing, we have written it with no external dependencies.
 # ===========================================================================
 
-.include "inc/millicode.S"
-.include "inc/safe_str.S"
+#include "millicode.S"
+#include "safe_str.S"
+
+# Must be kept in sync with "inc/testing.S"
+# Abuse the thread pointer, since p0 is single threaded.
+#define failed tp
 
 # Standard IO.
 .equiv STDIN,  0
@@ -53,7 +57,7 @@ safe_str fail_msg, "[TEST: FAIL]\n\n"
 .global run_test
 run_test:
 	# Callee-saved registers.
-	#define failed         s1
+	#define failed_backup  s1
 	#define test_fn        s2
 	#define test_name      s3
 	#define test_name_size s4
@@ -64,6 +68,7 @@ run_test:
 
 	.cfi_startproc
 	save_4
+	mv failed_backup, failed
 
 	# Preserve arguments and initialise saved variables.
 	li failed, 0
@@ -92,6 +97,9 @@ run_test:
 	li a7, SYSCALL_WRITE
 	ecall
 
+	# Clear the failures.
+	li failed, 0
+
 	# Run the test case.
 	jalr test_fn
 
@@ -99,8 +107,8 @@ run_test:
 	# Accumulate and save the test status.
 	la failed_ptr, "testing.failed"
 	ld failed_previously, 0(failed_ptr)
-	or failed, failed, failed_previously
-	sd failed, 0(failed_ptr)
+	or failed_previously, failed, failed_previously
+	sd failed_previously, 0(failed_ptr)
 
 	# Check if the test passed.
 	bnez failed, .Lfail

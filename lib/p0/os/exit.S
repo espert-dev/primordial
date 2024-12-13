@@ -4,7 +4,7 @@
 
 .section .text
 
-.include "inc/syscall.S"
+#include "syscall.S"
 
 # Terminates the application. This function does NOT return.
 #

@@ -2,7 +2,7 @@
 # Basic I/O functionality
 # ===========================================================================
 
-.include "inc/syscall.S"
+#include "syscall.S"
 
 .section .text
 

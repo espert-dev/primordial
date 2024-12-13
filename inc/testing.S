@@ -1,11 +1,12 @@
 # ===========================================================================
 # Testing macros
 #
-# Note that the register s1 is reserved to store `failed` and the register
+# Note that the register s11 is reserved to store `failed` and the register
 # `t6` will be used to implement assertions.
 # ===========================================================================
 
-#define failed s1
+# Abuse the thread pointer, since p0 is single threaded.
+#define failed tp
 
 # ===========================================================================
 # Test case macros
@@ -66,22 +67,33 @@ main:
 # ===========================================================================
 
 .macro expect_eq expected, actual
-	addi t6, \actual, -\expected
-	or s1, s1, t6
+	sub t6, \expected, \actual
+	or failed, failed, t6
 .endm
 
 .macro expect_ne forbidden, actual
+	sub t6, \forbidden, \actual
+	seqz t6, t6
+	or failed, failed, t6
+.endm
+
+.macro expect_eqi expected, actual
+	addi t6, \actual, -\expected
+	or failed, failed, t6
+.endm
+
+.macro expect_nei forbidden, actual
 	addi t6, \actual, -\forbidden
 	seqz t6, t6
-	or s1, s1, t6
+	or failed, failed, t6
 .endm
 
 .macro expect_z actual
-	or s1, s1, \actual
+	or failed, failed, \actual
 .endm
 
 .macro expect_nz actual
 	seqz t6, \actual
-	or s1, s1, t6
+	or failed, failed, t6
 .endm
 
