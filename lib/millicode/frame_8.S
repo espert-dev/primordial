@@ -9,6 +9,7 @@
 .global prologue_8
 prologue_8:
 	.cfi_startproc
+	.cfi_return_column t0
 	addi sp, sp, -FRAME_SIZE
 	sd fp, 0x00(sp)
 	mv fp, sp
