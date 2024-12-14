@@ -78,7 +78,7 @@ main:
 
 	restore_2
 	.cfi_endproc
-.endm
+
 
 # Runs a test case.
 #
