@@ -14,7 +14,7 @@ cd "$(realpath $(dirname "$0"))"
 # ===========================================================================
 
 # Read custom configuration from file.
-#
+
 if [ -f .env ]; then
 	. ./.env
 fi
