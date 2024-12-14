@@ -14,6 +14,7 @@ cd "$(realpath $(dirname "$0"))"
 # ===========================================================================
 
 # Read custom configuration from file.
+#
 if [ -f .env ]; then
 	. ./.env
 fi
@@ -26,7 +27,15 @@ COLORIZE=${COLORIZE:-}
 # Even if we only use assembler, it still needs a compiler (gcc).
 # -T enhances, rather than replaces, the linker script.
 AS="${AS:-riscv64-unknown-elf-gcc}"
-ASFLAGS="${ASFLAGS:--ggdb3 -Wl,-Tlinker.ld -Iinc -mcmodel=medlow -nostdlib -static}"
+ASFLAGS="${ASFLAGS:-
+	-ggdb3
+	-Wa,--fatal-warnings
+	-Wl,-Tlinker.ld
+	-Iinc
+	-mcmodel=medlow
+	-nostdlib
+	-static
+}"
 
 # ===========================================================================
 # Helpers
