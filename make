@@ -182,7 +182,7 @@ assemble lib/entrypoint/entrypoint.S
 build_library lib/libentrypoint.a \
 	"$BUILD_ROOT/lib/entrypoint/entrypoint.o"
 
-section Build a simple program that uses libentrypoint.
+section Build a simple program that uses the entrypoint library.
 assemble cmd/true/true.S
 
 build_executable cmd/true/true \
@@ -196,7 +196,7 @@ assemble lib/testing/testing.S
 build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
-section Build the core library.
+section Build the p0 library.
 assemble lib/p0/ascii/ascii.S
 assemble lib/p0/os/exit.S
 assemble lib/p0/io/write.S
@@ -206,14 +206,14 @@ build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/os/exit.o" \
 	"$BUILD_ROOT/lib/p0/io/write.o"
 
-section Test the core library.
+section Test the p0 library.
 with_test lib/p0/ascii/ascii_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/io/write_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
-section Build a simple program that uses libp0.
+section Build a simple program that uses the p0 library.
 assemble cmd/hello/hello.S
 
 build_executable cmd/hello/hello \
