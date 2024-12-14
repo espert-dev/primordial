@@ -33,7 +33,7 @@ if [ -z "$COLORIZE" -a -t 1 ]; then
 fi
 
 die() {
-	if [ "$COLORIZE" != 0 ]; then
+	if [ -n "$COLORIZE" -a "$COLORIZE" != 0 ]; then
 		echo "\e[0;31m$*\e[0m" >&2
 	else
 		echo "$*" >&2
@@ -47,7 +47,7 @@ info() {
 }
 
 section() {
-	if [ "$COLORIZE" != 0 ]; then
+	if [ -n "$COLORIZE" -a "$COLORIZE" != 0 ]; then
 		echo "\n\e[1;35m$*\e[0m" >&2
 	else
 		echo "\n$*" >&2
