@@ -197,14 +197,19 @@ build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
 section Build the core library.
+assemble lib/p0/ascii/ascii.S
 assemble lib/p0/os/exit.S
 assemble lib/p0/io/write.S
 
 build_library lib/libp0.a \
+	"$BUILD_ROOT/lib/p0/ascii/ascii.o" \
 	"$BUILD_ROOT/lib/p0/os/exit.o" \
 	"$BUILD_ROOT/lib/p0/io/write.o"
 
 section Test the core library.
+with_test lib/p0/ascii/ascii_test \
+	"$BUILD_ROOT/lib/libp0.a"
+
 with_test lib/p0/io/write_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
