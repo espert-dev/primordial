@@ -32,8 +32,9 @@
 
 safe_str test_header_start, "[TEST: "
 safe_str test_header_end, "]\n"
-safe_str pass_msg, "[TEST: PASS]\n\n"
-safe_str fail_msg, "[TEST: FAIL]\n\n"
+safe_str pass_header, "[PASS: "
+safe_str fail_header, "[FAIL: "
+safe_str test_result_trailer, "]\n\n"
 
 
 # ===========================================================================
@@ -143,25 +144,38 @@ run_test:
 	# Check if the test passed.
 	bnez test_failed, .Lfail
 
-	# Select pass message.
-	# a0 and a7 will be set by .end.
-	la a1, pass_msg
-	li a2, pass_msg_size
+	# Show pass message.
+	li a0, STDLOG
+	la a1, pass_header
+	li a2, pass_header_size
+	li a7, SYSCALL_WRITE
+	ecall
 
 	# Fall through.
 
 .Lend:
 	li a0, STDLOG
+	mv a1, test_name
+	mv a2, test_name_size
+	li a7, SYSCALL_WRITE
+	ecall
+
+	li a0, STDLOG
+	la a1, test_result_trailer
+	li a2, test_result_trailer_size
 	li a7, SYSCALL_WRITE
 	ecall
 
 	restore_3
 
 .Lfail:
-	# Select fail message.
-	# a0 and a7 will be set by .end.
-	la a1, fail_msg
-	li a2, fail_msg_size
+	# Show fail message.
+	li a0, STDLOG
+	la a1, fail_header
+	li a2, fail_header_size
+	li a7, SYSCALL_WRITE
+	ecall
+
 	j .Lend
 
 	.cfi_endproc
