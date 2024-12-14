@@ -11,12 +11,9 @@
 # that it is testing, we have written it with no external dependencies.
 # ===========================================================================
 
-#include "millicode.S"
-#include "safe_str.S"
-
-# Must be kept in sync with "inc/testing.S"
-# Abuse the thread pointer, since p0 is single threaded.
-#define failed tp
+#include <millicode.S>
+#include <safe_str.S>
+#include <testing.S>
 
 # Standard IO.
 .equiv STDIN,  0
@@ -45,6 +42,43 @@ safe_str fail_msg, "[TEST: FAIL]\n\n"
 
 .section .text
 
+# Test main. Runs the test cases.
+.global main
+main:
+	# Callee-saved registers.
+	#define next s1
+	#define end  s2
+
+	.cfi_startproc
+	save_2
+
+	# We will appropriate the thread pointer as the "test pointer".
+	la tp, "testing.state"
+
+	# Load the test information from the custom .test_cases section.
+	la next, __start_test_cases
+	la end, __end_test_cases
+
+	j .Lmain.loop_cond
+
+.Lmain.loop:
+	ld a0, "test_case_entry.fn"(next)
+	ld a1, "test_case_entry.name"(next)
+	ld a2, "test_case_entry.name_size"(next)
+	call run_test
+
+	addi next, next, test_case_entry_size
+
+.Lmain.loop_cond:
+	bltu next, end, .Lmain.loop
+
+	# Return 0 if no tests failed, 1 if any did.
+	ld a0, "testing_state.suite_failed"(tp)
+
+	restore_2
+	.cfi_endproc
+.endm
+
 # Runs a test case.
 #
 # Input:
@@ -57,21 +91,18 @@ safe_str fail_msg, "[TEST: FAIL]\n\n"
 .global run_test
 run_test:
 	# Callee-saved registers.
-	#define failed_backup  s1
-	#define test_fn        s2
-	#define test_name      s3
-	#define test_name_size s4
+	#define test_fn        s1
+	#define test_name      s2
+	#define test_name_size s3
 
 	# Temporary registers.
-	#define failed_ptr        t0
-	#define failed_previously t1
+	#define test_failed  t0
+	#define suite_failed t1
 
 	.cfi_startproc
-	save_4
-	mv failed_backup, failed
+	save_3
 
 	# Preserve arguments and initialise saved variables.
-	li failed, 0
 	mv test_fn, a0
 	mv test_name, a1
 	mv test_name_size, a2
@@ -97,21 +128,20 @@ run_test:
 	li a7, SYSCALL_WRITE
 	ecall
 
-	# Clear the failures.
-	li failed, 0
+	# Clear the failed state.
+	sd zero, "testing_state.test_failed"(tp)
 
 	# Run the test case.
 	jalr test_fn
 
-	# a0 now contains the number of failed tests.
-	# Accumulate and save the test status.
-	la failed_ptr, "testing.failed"
-	ld failed_previously, 0(failed_ptr)
-	or failed_previously, failed, failed_previously
-	sd failed_previously, 0(failed_ptr)
+	# Accumulate test case failures into test suite failures.
+	ld test_failed, "testing_state.test_failed"(tp)
+	ld suite_failed, "testing_state.suite_failed"(tp)
+	or suite_failed, suite_failed, test_failed
+	sd suite_failed, "testing_state.suite_failed"(tp)
 
 	# Check if the test passed.
-	bnez failed, .Lfail
+	bnez test_failed, .Lfail
 
 	# Select pass message.
 	# a0 and a7 will be set by .end.
@@ -125,7 +155,7 @@ run_test:
 	li a7, SYSCALL_WRITE
 	ecall
 
-	restore_4
+	restore_3
 
 .Lfail:
 	# Select fail message.
@@ -145,6 +175,6 @@ run_test:
 
 # When a test fails, this variable will be set to 1.
 # It will normally be returned as the exit code of the test suite.
-.global "testing.failed"
-.lcomm "testing.failed", 8
+.global "testing.state"
+.lcomm "testing.state", testing_state_size
 

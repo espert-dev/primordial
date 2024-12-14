@@ -18,11 +18,15 @@ if [ -f .env ]; then
 	. ./.env
 fi
 
-# Apply defaults.
-AS="${AS:-riscv64-unknown-elf-gcc}"
-ASFLAGS="${ASFLAGS:--ggdb3 -Iinc -mcmodel=medlow -nostdlib -static}"
+# A good alternative location for this is something like /tmp/primordial.
+# If it's on tmpfs, you will hammer your drive a bit less.
 BUILD_ROOT="${BUILD_ROOT:-build}"
 COLORIZE=${COLORIZE:-}
+
+# Even if we only use assembler, it still needs a compiler (gcc).
+# -T enhances, rather than replaces, the linker script.
+AS="${AS:-riscv64-unknown-elf-gcc}"
+ASFLAGS="${ASFLAGS:--ggdb3 -Wl,-Tlinker.ld -Iinc -mcmodel=medlow -nostdlib -static}"
 
 # ===========================================================================
 # Helpers
@@ -118,8 +122,8 @@ with_test() {
 	"$AS" $ASFLAGS -o "$target" \
 		"$source" \
 		"$@" \
-		"$BUILD_ROOT/lib/libtesting.a" \
 		"$BUILD_ROOT/lib/libentrypoint.a" \
+		"$BUILD_ROOT/lib/libtesting.a" \
 		"$BUILD_ROOT/lib/libmillicode.a"
 
 	# Run test.

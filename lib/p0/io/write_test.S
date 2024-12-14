@@ -2,9 +2,9 @@
 # write tests
 # ===========================================================================
 
-#include "millicode.S"
-#include "safe_str.S"
-#include "testing.S"
+#include <millicode.S>
+#include <safe_str.S>
+#include <testing.S>
 
 
 # ===========================================================================
@@ -52,14 +52,3 @@ test_case write_fails_on_invalid_descriptor
 
 	restore_0
 end_test
-
-
-# ===========================================================================
-# Test suite
-# ===========================================================================
-
-test_suite
-	run_test write_ok
-	run_test write_fails_on_invalid_descriptor
-end_suite
-
