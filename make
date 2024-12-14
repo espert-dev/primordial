@@ -22,23 +22,36 @@ fi
 AS="${AS:-riscv64-unknown-elf-gcc}"
 ASFLAGS="${ASFLAGS:--ggdb3 -Iinc -mcmodel=medlow -nostdlib -static}"
 BUILD_ROOT="${BUILD_ROOT:-build}"
+COLORIZE=${COLORIZE:-}
 
 # ===========================================================================
 # Helpers
 # ===========================================================================
 
-info() {
-	echo "$*" >&2
-}
+if [ -z "$COLORIZE" -a -t 1 ]; then
+	COLORIZE=1
+fi
 
 die() {
-	if [ -t 1 ]; then
-		echo -e "\e[0;31m$*\e[0m" >&2
+	if [ "$COLORIZE" != 0 ]; then
+		echo "\e[0;31m$*\e[0m" >&2
 	else
 		echo "$*" >&2
 	fi
 
 	exit 1
+}
+
+info() {
+	echo "$*" >&2
+}
+
+section() {
+	if [ "$COLORIZE" != 0 ]; then
+		echo "\n\e[1;35m$*\e[0m" >&2
+	else
+		echo "\n$*" >&2
+	fi
 }
 
 # ===========================================================================
@@ -131,7 +144,7 @@ sanity_check() {
 
 clean
 
-# Build the millicode library.
+section Build the millicode library.
 assemble lib/millicode/frame_0.S
 assemble lib/millicode/frame_1.S
 assemble lib/millicode/frame_2.S
@@ -159,13 +172,13 @@ build_library lib/libmillicode.a \
 	"$BUILD_ROOT/lib/millicode/frame_10.o" \
 	"$BUILD_ROOT/lib/millicode/frame_11.o"
 
-# Build the entrypoint library.
+section Build the entrypoint library.
 assemble lib/entrypoint/entrypoint.S
 
 build_library lib/libentrypoint.a \
 	"$BUILD_ROOT/lib/entrypoint/entrypoint.o"
 
-# Build a simple program that uses libentrypoint and terminates successfully.
+section Build a simple program that uses libentrypoint.
 assemble cmd/true/true.S
 
 build_executable cmd/true/true \
@@ -173,13 +186,13 @@ build_executable cmd/true/true \
 
 sanity_check "$BUILD_ROOT/cmd/true/true"
 
-# Build the testing library.
+section Build the testing library.
 assemble lib/testing/testing.S
 
 build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
-# Build the core library.
+section Build the core library.
 assemble lib/p0/os/exit.S
 assemble lib/p0/io/write.S
 
@@ -187,11 +200,11 @@ build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/os/exit.o" \
 	"$BUILD_ROOT/lib/p0/io/write.o"
 
-# Test the core library.
+section Test the core library.
 with_test lib/p0/io/write_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
-# Build a simple program that uses libp0 and terminates successfully.
+section Build a simple program that uses libp0.
 assemble cmd/hello/hello.S
 
 build_executable cmd/hello/hello \
