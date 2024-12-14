@@ -24,7 +24,7 @@
 	ecall
 
 	# After the syscall, x0 is an error if negative, or valid otherwise.
-	blt a0, x0, .Lfail
+	blt a0, zero, .Lfail
 
 	# Return (num_bytes, 0)
 	li a1, 0
