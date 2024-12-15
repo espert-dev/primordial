@@ -209,6 +209,7 @@ section Build the p0 library.
 assemble lib/p0/ascii/ascii.S
 assemble lib/p0/mem/eq.S
 assemble lib/p0/mem/index.S
+assemble lib/p0/mem/shortlex.S
 assemble lib/p0/io/write.S
 assemble lib/p0/os/exit.S
 
@@ -216,6 +217,7 @@ build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/ascii/ascii.o" \
 	"$BUILD_ROOT/lib/p0/mem/eq.o" \
 	"$BUILD_ROOT/lib/p0/mem/index.o" \
+	"$BUILD_ROOT/lib/p0/mem/shortlex.o" \
 	"$BUILD_ROOT/lib/p0/io/write.o" \
 	"$BUILD_ROOT/lib/p0/os/exit.o"
 
@@ -227,6 +229,9 @@ with_test lib/p0/mem/eq_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/mem/index_test \
+	"$BUILD_ROOT/lib/libp0.a"
+
+with_test lib/p0/mem/shortlex_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/io/write_test \

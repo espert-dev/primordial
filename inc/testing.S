@@ -105,6 +105,34 @@ test_\t:
 	ld t5, "testing_state.spill_1"(tp)
 .endm
 
+.macro expect_positive expected
+	sd t6, "testing_state.spill_0"(tp)
+	sd t5, "testing_state.spill_1"(tp)
+	ld t6, "testing_state.test_failed"(tp)
+
+	slti t5, \expected, 1
+	or t6, t6, t5
+
+	sd t6, "testing_state.test_failed"(tp)
+	ld t6, "testing_state.spill_0"(tp)
+	ld t5, "testing_state.spill_1"(tp)
+.endm
+
+.macro expect_negative expected
+	sd t6, "testing_state.spill_0"(tp)
+	sd t5, "testing_state.spill_1"(tp)
+	ld t6, "testing_state.test_failed"(tp)
+
+	# Check the MSB.
+	not t5, \expected
+	srli t5, t5, 63
+	or t6, t6, t5
+
+	sd t6, "testing_state.test_failed"(tp)
+	ld t6, "testing_state.spill_0"(tp)
+	ld t5, "testing_state.spill_1"(tp)
+.endm
+
 .macro expect_eqi expected, actual
 	sd t6, "testing_state.spill_0"(tp)
 	sd t5, "testing_state.spill_1"(tp)
