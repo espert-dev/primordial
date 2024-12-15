@@ -138,7 +138,7 @@ with_test() {
 	# Run test.
 	info "Running test $target..."
 	if ! "$target" >"$target.out" 2>&1; then
-		cat "$target.out"
+		grep "^\[FAIL:" <"$target.out"
 		die "Test $target failed!"
 	fi
 }
