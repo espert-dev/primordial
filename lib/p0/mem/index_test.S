@@ -8,21 +8,62 @@
 
 
 # ===========================================================================
+# Test macros
+# ===========================================================================
+
+.macro found str, slice, position
+test_case Index_\str\()_found_in_\slice\()_at_\position
+	save_0
+
+	la a0, \str
+	li a1, \str\()_size
+	la a2, \slice
+	li a3, \slice\()_size
+	call "mem.Index"
+
+	expect_eqi \position a0
+
+	restore_0
+end_test
+.endm
+
+.macro not_found s, ss
+test_case Index_\s\()_not_found_in_\ss\()
+	save_0
+
+	la a0, \s
+	li a1, \s\()_size
+	la a2, \ss
+	li a3, \ss\()_size
+	call "mem.Index"
+
+	expect_eqi -1, a0
+
+	restore_0
+end_test
+.endm
+
+
+# ===========================================================================
 # Test data
 # ===========================================================================
 
+# Nil string or slice with address and size 0. Useful to reuse macros.
+.struct 0
+nil:
+.equiv nil_size, 0
+
 .section .rodata
 
-# TODO minimise
 safe_str s0, ""
 safe_str s1, "a"
 safe_str s2, "ab"
 safe_str s3, "abc"
 
-safe_str copy_s0, ""
-safe_str copy_s1, "a"
-safe_str copy_s2, "ab"
-safe_str copy_s3, "abc"
+safe_str s0_copy, ""
+safe_str s1_copy, "a"
+safe_str s2_copy, "ab"
+safe_str s3_copy, "abc"
 
 safe_str other_s1, "x"
 safe_str other_s2, "xy"
@@ -31,24 +72,30 @@ safe_str other_s3, "xyz"
 safe_str different_but_same_prefix_2, "ay"
 safe_str different_but_same_prefix_3, "abz"
 
-# In case you're wondering, this stands for "byte slice slice".
-bss_0:
-.equiv bss_0_size, 0
+only_s0:
+safe_str_slice s0
+.equiv only_s0_size, 1
 
-bss_1:
-.quad s3, s3_size
-.equiv bss_1_size, 1
+only_s1:
+safe_str_slice s1
+.equiv only_s1_size, 1
 
-bss_2:
-.quad s3, s3_size
-.quad other_s3, other_s3_size
-.equiv bss_2_size, 2
+only_s2:
+safe_str_slice s2
+.equiv only_s2_size, 1
 
-bss_3:
-.quad s3, s3_size
-.quad other_s3, other_s3_size
-.quad different_but_same_prefix_2, different_but_same_prefix_2_size
-.equiv bss_3_size, 3
+only_s3:
+safe_str_slice s3
+.equiv only_s3_size, 1
+
+empty_slice:
+.equiv empty_slice_size, 0
+
+three_strings:
+safe_str_slice s3
+safe_str_slice other_s3
+safe_str_slice different_but_same_prefix_2
+.equiv three_strings_size, 3
 
 
 # ===========================================================================
@@ -57,141 +104,74 @@ bss_3:
 
 .section .text
 
-test_case Index_nil_and_nil
-	save_0
+not_found nil, nil
 
-	li a0, 0
-	li a1, 0
-	li a2, 0
-	li a3, 0
-	call "mem.Index"
+not_found s0, nil
+not_found s1, nil
+not_found s2, nil
+not_found s3, nil
 
-	expect_eqi -1, a0
+not_found s0_copy, nil
+not_found s1_copy, nil
+not_found s2_copy, nil
+not_found s3_copy, nil
 
-	restore_0
-end_test
+not_found s0, empty_slice
+not_found s1, empty_slice
+not_found s2, empty_slice
+not_found s3, empty_slice
 
-test_case Index_s3_and_nil
-	save_0
+not_found s0_copy, empty_slice
+not_found s1_copy, empty_slice
+not_found s2_copy, empty_slice
+not_found s3_copy, empty_slice
 
-	la a0, s3
-	li a1, s3_size
-	li a2, 0
-	li a3, 0
-	call "mem.Index"
+found s0, only_s0, 0
+not_found s1, only_s0
+not_found s2, only_s0
+not_found s3, only_s0
 
-	expect_eqi -1, a0
+found s0_copy, only_s0, 0
+not_found s1_copy, only_s0
+not_found s2_copy, only_s0
+not_found s3_copy, only_s0
 
-	restore_0
-end_test
+found s1, only_s1, 0
+not_found s0, only_s1
+not_found s2, only_s1
+not_found s3, only_s1
 
-test_case Index_s3_and_bss_0
-	save_0
+found s1_copy, only_s1, 0
+not_found s0_copy, only_s1
+not_found s2_copy, only_s1
+not_found s3_copy, only_s1
 
-	la a0, s3
-	li a1, s3_size
-	la a2, bss_0
-	li a3, bss_0_size
-	call "mem.Index"
+found s2, only_s2, 0
+not_found s0, only_s2
+not_found s1, only_s2
+not_found s3, only_s2
 
-	expect_eqi -1, a0
+found s2_copy, only_s2, 0
+not_found s0_copy, only_s2
+not_found s1_copy, only_s2
+not_found s3_copy, only_s2
 
-	restore_0
-end_test
+found s3, only_s3, 0
+not_found s0, only_s3
+not_found s1, only_s3
+not_found s2, only_s3
 
-test_case Index_s3_and_bss_1
-	save_0
+found s3_copy, only_s3, 0
+not_found s0_copy, only_s3
+not_found s1_copy, only_s3
+not_found s2_copy, only_s3
 
-	la a0, s3
-	li a1, s3_size
-	la a2, bss_1
-	li a3, bss_1_size
-	call "mem.Index"
+found s3_copy, three_strings, 0
+not_found s0_copy, three_strings
+not_found s1_copy, three_strings
+not_found s2_copy, three_strings
 
-	expect_z a0
-
-	restore_0
-end_test
-
-test_case Index_s3_and_bss_2
-	save_0
-
-	la a0, s3
-	li a1, s3_size
-	la a2, bss_2
-	li a3, bss_2_size
-	call "mem.Index"
-
-	expect_z a0
-
-	restore_0
-end_test
-
-test_case Index_other_s3_and_bss_2
-	save_0
-
-	la a0, other_s3
-	li a1, other_s3_size
-	la a2, bss_2
-	li a3, bss_2_size
-	call "mem.Index"
-
-	expect_eqi 1, a0
-
-	restore_0
-end_test
-
-test_case Index_s3_and_bss_3
-	save_0
-
-	la a0, s3
-	li a1, s3_size
-	la a2, bss_3
-	li a3, bss_3_size
-	call "mem.Index"
-
-	expect_z a0
-
-	restore_0
-end_test
-
-test_case Index_other_s3_and_bss_3
-	save_0
-
-	la a0, other_s3
-	li a1, other_s3_size
-	la a2, bss_3
-	li a3, bss_3_size
-	call "mem.Index"
-
-	expect_eqi 1, a0
-
-	restore_0
-end_test
-
-test_case Index_different_but_same_prefix_2_and_bss_3
-	save_0
-
-	la a0, different_but_same_prefix_2
-	li a1, different_but_same_prefix_2_size
-	la a2, bss_3
-	li a3, bss_3_size
-	call "mem.Index"
-
-	expect_eqi 2, a0
-
-	restore_0
-end_test
-
-test_case Index_different_but_same_prefix_3_and_bss_3
-	save_0
-
-	la a0, different_but_same_prefix_3
-	li a1, different_but_same_prefix_3_size
-	la a2, bss_3
-	li a3, bss_3_size
-	call "mem.Index"
-
-	expect_eqi -1, a0
-	restore_0
-end_test
+found s3, three_strings, 0
+found other_s3, three_strings, 1
+found different_but_same_prefix_2, three_strings, 2
+not_found different_but_same_prefix_3, three_strings

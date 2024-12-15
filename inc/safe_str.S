@@ -8,3 +8,7 @@
 .equiv \name\()_size, . - \name
 .endm
 
+.macro safe_str_slice name
+.8byte \name
+.8byte \name\()_size
+.endm
