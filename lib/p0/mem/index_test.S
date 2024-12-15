@@ -1,5 +1,5 @@
 # ===========================================================================
-# memory manipulation tests
+# Memory manipulation and comparison tests -- Index
 # ===========================================================================
 
 #include <millicode.S>
