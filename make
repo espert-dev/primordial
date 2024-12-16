@@ -246,6 +246,13 @@ build_executable cmd/hello/hello \
 
 sanity_check "$BUILD_ROOT/cmd/hello/hello"
 
+section Build the Primordial compiler
+assemble cmd/compile/scanner/scan.S
+
+with_test cmd/compile/scanner/scan_test \
+	"$BUILD_ROOT/cmd/compile/scanner/scan.o" \
+	"$BUILD_ROOT/lib/libp0.a"
+
 # If the execution reached here, the build completed successfully.
 echo
 if [ -t 1 ]; then

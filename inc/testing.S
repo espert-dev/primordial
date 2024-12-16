@@ -133,12 +133,27 @@ test_\t:
 	ld t5, "testing_state.spill_1"(tp)
 .endm
 
+.macro expect_eqa expected, actual
+	sd t6, "testing_state.spill_0"(tp)
+	sd t5, "testing_state.spill_1"(tp)
+	ld t6, "testing_state.test_failed"(tp)
+
+	la t5, \expected
+	sub t5, t5, \actual
+	or t6, t6, t5
+
+	sd t6, "testing_state.test_failed"(tp)
+	ld t6, "testing_state.spill_0"(tp)
+	ld t5, "testing_state.spill_1"(tp)
+.endm
+
 .macro expect_eqi expected, actual
 	sd t6, "testing_state.spill_0"(tp)
 	sd t5, "testing_state.spill_1"(tp)
 	ld t6, "testing_state.test_failed"(tp)
 
-	addi t5, \actual, -\expected
+	li t5, \expected
+	sub t5, t5, \actual
 	or t6, t6, t5
 
 	sd t6, "testing_state.test_failed"(tp)
@@ -151,7 +166,8 @@ test_\t:
 	sd t5, "testing_state.spill_1"(tp)
 	ld t6, "testing_state.test_failed"(tp)
 
-	addi t5, \actual, -\forbidden
+	li t5, \forbidden
+	sub t5, t5, \actual
 	seqz t5, t5
 	or t6, t6, t5
 

@@ -182,40 +182,41 @@
 .endm
 
 .macro restore_0
+	tail epilogue_0
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_0
 .endm
 
 .macro restore_1
+	tail epilogue_1
 	.cfi_restore s1
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_1
 .endm
 
 .macro restore_2
+	tail epilogue_2
 	.cfi_restore s2
 	.cfi_restore s1
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_2
 .endm
 
 .macro restore_3
+	tail epilogue_3
 	.cfi_restore s3
 	.cfi_restore s2
 	.cfi_restore s1
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_3
 .endm
 
 .macro restore_4
+	tail epilogue_4
 	.cfi_restore s4
 	.cfi_restore s3
 	.cfi_restore s2
@@ -223,10 +224,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_4
 .endm
 
 .macro restore_5
+	tail epilogue_5
 	.cfi_restore s5
 	.cfi_restore s4
 	.cfi_restore s3
@@ -235,10 +236,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_5
 .endm
 
 .macro restore_6
+	tail epilogue_6
 	.cfi_restore s6
 	.cfi_restore s5
 	.cfi_restore s4
@@ -248,10 +249,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_6
 .endm
 
 .macro restore_7
+	tail epilogue_7
 	.cfi_restore s7
 	.cfi_restore s6
 	.cfi_restore s5
@@ -262,10 +263,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_7
 .endm
 
 .macro restore_8
+	tail epilogue_8
 	.cfi_restore s8
 	.cfi_restore s7
 	.cfi_restore s6
@@ -277,10 +278,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_8
 .endm
 
 .macro restore_9
+	tail epilogue_9
 	.cfi_restore s9
 	.cfi_restore s8
 	.cfi_restore s7
@@ -293,10 +294,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_9
 .endm
 
 .macro restore_10
+	tail epilogue_10
 	.cfi_restore s10
 	.cfi_restore s9
 	.cfi_restore s8
@@ -310,10 +311,10 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_10
 .endm
 
 .macro restore_11
+	tail epilogue_11
 	.cfi_restore s11
 	.cfi_restore s10
 	.cfi_restore s9
@@ -328,6 +329,5 @@
 	.cfi_restore ra
 	.cfi_restore fp
 	.cfi_def_cfa_offset 0
-	tail epilogue_11
 .endm
 
