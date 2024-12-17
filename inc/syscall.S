@@ -4,3 +4,4 @@
 
 .equiv SYSCALL_WRITE, 64
 .equiv SYSCALL_EXIT, 93
+.equiv SYSCALL_BRK, 214

@@ -206,6 +206,7 @@ build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
 section Build the p0 library.
+assemble lib/p0/forever/allocate.S
 assemble lib/p0/ascii/ascii.S
 assemble lib/p0/mem/eq.S
 assemble lib/p0/mem/index.S
@@ -214,6 +215,7 @@ assemble lib/p0/io/write.S
 assemble lib/p0/os/exit.S
 
 build_library lib/libp0.a \
+	"$BUILD_ROOT/lib/p0/forever/allocate.o" \
 	"$BUILD_ROOT/lib/p0/ascii/ascii.o" \
 	"$BUILD_ROOT/lib/p0/mem/eq.o" \
 	"$BUILD_ROOT/lib/p0/mem/index.o" \
@@ -222,6 +224,9 @@ build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/os/exit.o"
 
 section Test the p0 library.
+with_test lib/p0/forever/allocate_test \
+	"$BUILD_ROOT/lib/libp0.a"
+
 with_test lib/p0/ascii/ascii_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
