@@ -40,7 +40,7 @@ testing_state:
 #
 # See https://sourceware.org/binutils/docs/as/Section.html
 .section .test_cases, "aMR", @progbits, test_case_entry_size
-.align 3
+.p2align 3
 .8byte test_\t
 .8byte test_\t\()_name
 .8byte test_\t\()_name_size
