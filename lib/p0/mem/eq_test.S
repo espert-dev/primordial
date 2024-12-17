@@ -47,19 +47,19 @@ nil:
 
 .section .rodata
 
-safe_str s0, ""
-safe_str s1, "a"
-safe_str s2, "ab"
-safe_str s3, "abc"
+safe_str str0, ""
+safe_str str1, "a"
+safe_str str2, "ab"
+safe_str str3, "abc"
 
-safe_str copy_s0, ""
-safe_str copy_s1, "a"
-safe_str copy_s2, "ab"
-safe_str copy_s3, "abc"
+safe_str copy_str0, ""
+safe_str copy_str1, "a"
+safe_str copy_str2, "ab"
+safe_str copy_str3, "abc"
 
-safe_str other_s1, "x"
-safe_str other_s2, "xy"
-safe_str other_s3, "xyz"
+safe_str other_str1, "x"
+safe_str other_str2, "xy"
+safe_str other_str3, "xyz"
 
 safe_str different_but_same_prefix_2, "ay"
 safe_str different_but_same_prefix_3, "abz"
@@ -74,22 +74,22 @@ safe_str different_but_same_prefix_3, "abz"
 accept nil, nil
 
 # Identical slices.
-accept s0, s0
-accept s1, s1
-accept s2, s2
-accept s3, s3
+accept str0, str0
+accept str1, str1
+accept str2, str2
+accept str3, str3
 
 # Equal but not identical slices.
-accept s0, copy_s0
-accept s1, copy_s1
-accept s2, copy_s2
-accept s3, copy_s3
+accept str0, copy_str0
+accept str1, copy_str1
+accept str2, copy_str2
+accept str3, copy_str3
 
 # Different slices.
-reject s1, other_s1
-reject s2, other_s2
-reject s3, other_s3
+reject str1, other_str1
+reject str2, other_str2
+reject str3, other_str3
 
 # Different slices with a shared prefix.
-reject s2, different_but_same_prefix_2
-reject s3, different_but_same_prefix_3
+reject str2, different_but_same_prefix_2
+reject str3, different_but_same_prefix_3
