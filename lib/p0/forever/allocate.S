@@ -6,8 +6,10 @@
 # easy to implement.
 # ===========================================================================
 
-.include "inc/millicode.S"
-.include "inc/syscall.S"
+#include <millicode.S>
+#include <io.S>
+#include <syscall.S>
+#include <safe_str.S>
 
 
 # ===========================================================================
@@ -26,6 +28,15 @@ state.next: .space 8
 
 
 # ===========================================================================
+# Constants
+# ===========================================================================
+
+.section .rodata
+
+safe_str allocation_panic, "PANIC: allocation failed!"
+
+
+# ===========================================================================
 # Global variables
 # ===========================================================================
 
@@ -40,6 +51,39 @@ state.next: .space 8
 # ===========================================================================
 
 .section .text
+
+# Allocate memory until the process terminates.
+#
+# - A request size of zero will always allocate memory.
+# - All returned memory is aligned to 16 bytes.
+#
+# Input:
+#   a0: requested memory size in bytes
+#
+# Output:
+#   a0: allocated memory
+#   a1: error
+.global "forever.MustAllocate"
+"forever.MustAllocate":
+	.cfi_startproc
+
+	save_0
+	call "forever.Allocate"
+	bltz a1, .LMustAllocate.panic
+	restore_0
+
+.LMustAllocate.panic:
+	# This will have to do until we have a better panic handler.
+	li a0, STDLOG
+	la a1, allocation_panic
+	li a2, allocation_panic_size
+	call "io.Write"
+
+	li a0, 1
+	call "os.Exit"
+
+	.cfi_endproc
+
 
 # Allocate memory until the process terminates.
 #
