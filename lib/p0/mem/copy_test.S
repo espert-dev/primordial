@@ -31,7 +31,7 @@ test_case Copy_nil_ok
 	li a3, nil_data
 	call "mem.Copy"
 
-	# No faults.
+	expect_z a0
 
 	restore_0
 end_test
