@@ -8,7 +8,7 @@
 
 
 # ===========================================================================
-# Test data
+# Read-only test data
 # ===========================================================================
 
 .section .rodata
@@ -16,12 +16,16 @@
 .equiv nil, 0
 .equiv nil_size, 0
 
-safe_str empty_src, ""
+safe_str source, "abc"
 
-.section .data
 
-empty_dst:
-.equiv empty_dst_size, 0
+# ===========================================================================
+# Writeable test data
+# ===========================================================================
+
+.section .bss
+
+.lcomm destination, source_size
 
 
 # ===========================================================================
@@ -44,16 +48,274 @@ test_case Copy_nil_ok
 	restore_0
 end_test
 
-test_case Copy_empty_ok
+test_case Copy_0_to_0
 	save_0
 
-	li a0, empty_src_size
-	la a1, empty_src
-	li a2, empty_dst_size
-	la a3, empty_dst
+	li a0, 0
+	la a1, source
+	li a2, 0
+	la a3, destination
 	call "mem.Copy"
 
 	expect_z a0
 
 	restore_0
 end_test
+
+test_case Copy_1_to_0
+	save_0
+
+	li a0, 1
+	la a1, source
+	li a2, 0
+	la a3, destination
+	call "mem.Copy"
+
+	expect_z a0
+
+	restore_0
+end_test
+
+test_case Copy_2_to_0
+	save_0
+
+	li a0, 2
+	la a1, source
+	li a2, 0
+	la a3, destination
+	call "mem.Copy"
+
+	expect_z a0
+
+	restore_0
+end_test
+
+test_case Copy_3_to_0
+	save_0
+
+	li a0, 3
+	la a1, source
+	li a2, 0
+	la a3, destination
+	call "mem.Copy"
+
+	expect_z a0
+
+	restore_0
+end_test
+
+test_case Copy_0_to_1
+	save_0
+
+	li a0, 0
+	la a1, source
+	li a2, 1
+	la a3, destination
+	call "mem.Copy"
+
+	expect_z a0
+
+	restore_0
+end_test
+
+test_case Copy_1_to_1
+	save_0
+
+	li a0, 1
+	la a1, source
+	li a2, 1
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 1, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+
+	restore_0
+end_test
+
+test_case Copy_2_to_1
+	save_0
+
+	li a0, 2
+	la a1, source
+	li a2, 1
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 1, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+
+	restore_0
+end_test
+
+test_case Copy_3_to_1
+	save_0
+
+	li a0, 3
+	la a1, source
+	li a2, 1
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 1, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+
+	restore_0
+end_test
+
+test_case Copy_0_to_2
+	save_0
+
+	li a0, 0
+	la a1, source
+	li a2, 2
+	la a3, destination
+	call "mem.Copy"
+
+	expect_z a0
+
+	restore_0
+end_test
+
+test_case Copy_1_to_2
+	save_0
+
+	li a0, 2
+	la a1, source
+	li a2, 1
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 1, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+
+	restore_0
+end_test
+
+test_case Copy_2_to_2
+	save_0
+
+	li a0, 2
+	la a1, source
+	li a2, 2
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 2, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+	lbu t1, 1(t0)
+	expect_eqi 'b', t1
+
+	restore_0
+end_test
+
+test_case Copy_3_to_2
+	save_0
+
+	li a0, 3
+	la a1, source
+	li a2, 2
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 2, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+	lbu t1, 1(t0)
+	expect_eqi 'b', t1
+
+	restore_0
+end_test
+
+test_case Copy_0_to_3
+	save_0
+
+	li a0, 0
+	la a1, source
+	li a2, 3
+	la a3, destination
+
+	call "mem.Copy"
+
+	expect_z a0
+
+	restore_0
+end_test
+
+test_case Copy_1_to_3
+	save_0
+
+	li a0, 1
+	la a1, source
+	li a2, 3
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 1, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+
+	restore_0
+end_test
+
+test_case Copy_2_to_3
+	save_0
+
+	li a0, 2
+	la a1, source
+	li a2, 3
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 2, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+	lbu t1, 1(t0)
+	expect_eqi 'b', t1
+
+	restore_0
+end_test
+
+test_case Copy_3_to_3
+	save_0
+
+	li a0, 3
+	la a1, source
+	li a2, 3
+	la a3, destination
+	call "mem.Copy"
+
+	expect_eqi 3, a0
+
+	la t0, destination
+	lbu t1, 0(t0)
+	expect_eqi 'a', t1
+	lbu t1, 1(t0)
+	expect_eqi 'b', t1
+	lbu t1, 2(t0)
+	expect_eqi 'c', t1
+
+	restore_0
+end_test
+

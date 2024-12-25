@@ -67,6 +67,22 @@ section() {
 	fi
 }
 
+success() {
+	if [ -t 1 ]; then
+		echo "\n\e[1;32mDone.\e[0m"
+	else
+		echo "\nDone."
+	fi
+}
+
+fail() {
+	if [ -n "$COLORIZE" -a "$COLORIZE" != 0 ]; then
+		echo "\n\e[1;31mFAILED!\e[0m"
+	else
+		echo "\nFAILED!"
+	fi
+}
+
 # ===========================================================================
 # Build rules
 # ===========================================================================
@@ -154,6 +170,8 @@ sanity_check() {
 # ===========================================================================
 # Build instructions
 # ===========================================================================
+
+trap fail EXIT
 
 clean
 
@@ -264,9 +282,5 @@ with_test cmd/compile/scanner/scan_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 # If the execution reached here, the build completed successfully.
-echo
-if [ -t 1 ]; then
-	echo "\e[1;32mDone.\e[0m"
-else
-	echo "Done."
-fi
+trap - EXIT
+success
