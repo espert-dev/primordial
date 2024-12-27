@@ -22,7 +22,8 @@ fi
 # A good alternative location for this is something like /tmp/primordial.
 # If it's on tmpfs, you will hammer your drive a bit less.
 BUILD_ROOT="${BUILD_ROOT:-build}"
-COLORIZE=${COLORIZE:-}
+COLORIZE="${COLORIZE:-}"
+NO_TEST="${NO_TEST:-}"
 
 # Even if we only use assembler, it still needs a compiler (gcc).
 # -T enhances, rather than replaces, the linker script.
@@ -151,10 +152,17 @@ with_test() {
 		"$BUILD_ROOT/lib/libtesting.a" \
 		"$BUILD_ROOT/lib/libmillicode.a"
 
+	if [ -n "$NO_TEST" ]; then
+		return
+	fi
+
 	# Run test.
 	info "Running test $target..."
 	if ! "$target" >"$target.out" 2>&1; then
-		grep "^\[FAIL:" <"$target.out"
+		# Avoid failure when the out file is missing or empty.
+		if ! grep "^\[FAIL:" <"$target.out"; then
+			tail -n5 "$target.out" || :true
+		fi
 		die "Test $target failed!"
 	fi
 }
