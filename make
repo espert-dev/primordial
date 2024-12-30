@@ -232,32 +232,37 @@ build_library lib/libtesting.a \
 	"$BUILD_ROOT/lib/testing/testing.o"
 
 section Build the p0 library.
-assemble lib/p0/forever/allocate.S
 assemble lib/p0/ascii/ascii.S
 assemble lib/p0/mem/clone.S
 assemble lib/p0/mem/copy.S
+assemble lib/p0/forever/allocate.S
+assemble lib/p0/io/write.S
+assemble lib/p0/os/exit.S
 assemble lib/p0/mem/eq.S
 assemble lib/p0/mem/index.S
 assemble lib/p0/mem/shortlex.S
-assemble lib/p0/io/write.S
-assemble lib/p0/os/exit.S
+assemble lib/p0/strintern/strintern.S
 
 build_library lib/libp0.a \
-	"$BUILD_ROOT/lib/p0/forever/allocate.o" \
 	"$BUILD_ROOT/lib/p0/ascii/ascii.o" \
 	"$BUILD_ROOT/lib/p0/mem/clone.o" \
 	"$BUILD_ROOT/lib/p0/mem/copy.o" \
+	"$BUILD_ROOT/lib/p0/forever/allocate.o" \
+	"$BUILD_ROOT/lib/p0/io/write.o" \
+	"$BUILD_ROOT/lib/p0/os/exit.o" \
 	"$BUILD_ROOT/lib/p0/mem/eq.o" \
 	"$BUILD_ROOT/lib/p0/mem/index.o" \
 	"$BUILD_ROOT/lib/p0/mem/shortlex.o" \
-	"$BUILD_ROOT/lib/p0/io/write.o" \
-	"$BUILD_ROOT/lib/p0/os/exit.o"
+	"$BUILD_ROOT/lib/p0/strintern/strintern.o"
 
 section Test the p0 library.
+with_test lib/p0/ascii/ascii_test \
+	"$BUILD_ROOT/lib/libp0.a"
+
 with_test lib/p0/forever/allocate_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
-with_test lib/p0/ascii/ascii_test \
+with_test lib/p0/io/write_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/mem/clone_test \
@@ -275,7 +280,7 @@ with_test lib/p0/mem/index_test \
 with_test lib/p0/mem/shortlex_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
-with_test lib/p0/io/write_test \
+with_test lib/p0/strintern/strintern_internal_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 section Build a simple program that uses the p0 library.
