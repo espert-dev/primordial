@@ -14,10 +14,10 @@
 .macro accept x, y
 test_case Eq_accepts_\x\()_and_\y
 	save_0
-	la a0, \x\()_data
-	li a1, \x\()_size
-	la a2, \y\()_data
-	li a3, \y\()_size
+	li a0, \x\()_size
+	la a1, \x\()_data
+	li a2, \y\()_size
+	la a3, \y\()_data
 	call "mem.Eq"
 	expect_nz a0
 	restore_0
@@ -27,10 +27,10 @@ end_test
 .macro reject x, y
 test_case Eq_rejects_\x\()_and_\y
 	save_0
-	la a0, \x\()_data
-	li a1, \x\()_size
-	la a2, \y\()_data
-	li a3, \y\()_size
+	li a0, \x\()_size
+	la a1, \x\()_data
+	li a2, \y\()_size
+	la a3, \y\()_data
 	call "mem.Eq"
 	expect_z a0
 	restore_0

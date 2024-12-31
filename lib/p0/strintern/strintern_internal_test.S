@@ -301,8 +301,10 @@ expectIntern:
 	mv actual_data, a0
 	mv actual_size, a1
 
-	mv a2, expected_data
-	mv a3, expected_size
+	mv a0, actual_size
+	mv a1, actual_data
+	mv a2, expected_size
+	mv a3, expected_data
 	call "mem.Eq"
 
 	expect_eqi 1, a0

@@ -4,29 +4,33 @@
 
 .section .text
 
-# Returns if two memory slices contain the same values.
+# Tests if two memory slices contain the same values.
 #
-# Inputs:
-#   a0: Pointer to the first slice
-#   a1: Size of the first slice
-#   a2: Pointer to the second slice
-#   a3: Size of the second slice
+# Input:
+#   a0 xs_size: Size of the first slice
+#   a1 xs_data: Pointer to the first slice
+#   a2 ys_size: Size of the second slice
+#   a3 ys_data: Pointer to the second slice
 #
-# Outputs:
+# Output:
 #   a0: 1 if equal, otherwise 0.
 .global "mem.Eq"
 "mem.Eq":
-	# We try to optimise the fast case.
+	# Arguments.
+	#define xs_size a0
+	#define xs_data a1
+	#define ys_size a2
+	#define ys_data a3
 
 	# Temporary registers.
-	#define x_end t0
-	#define x_ch  t1
-	#define y_ch  t2
+	#define xs_end t0
+	#define x      t1
+	#define y      t2
 
 	.cfi_startproc
 
 	# If the slices are different sizes, they cannot be equal.
-	beq a1, a3, .LEq.check_ptrs
+	beq xs_size, ys_size, .LEq.check_ptrs
 
 .LEq.returns_not_equal:
 	li a0, 0
@@ -35,7 +39,7 @@
 .LEq.check_ptrs:
 	# We know that the sizes are equal.
 	# Hence, if the base pointers are the same, they are equal.
-	bne a0, a2, .LEq.check_contents
+	bne xs_data, ys_data, .LEq.check_contents
 
 .LEq.returns_equal:
 	li a0, 1
@@ -44,20 +48,19 @@
 .LEq.check_contents:
 	# This could easily be optimised by doing a first pass that
 	# compares one or more dwords at a time. Maybe I'll come back
-
 	# and revisit it at some point, if it's worth it.
-	add x_end, a0, a1
+	add xs_end, xs_size, xs_data
 
 .LEq.loop:
-	bgeu a0, x_end, .LEq.returns_equal
+	bgeu xs_data, xs_end, .LEq.returns_equal
 
-	lbu x_ch, 0(a0)
-	lbu y_ch, 0(a2)
+	lbu x, 0(xs_data)
+	lbu y, 0(ys_data)
 
-	addi a0, a0, 1
-	addi a2, a2, 1
+	addi xs_data, xs_data, 1
+	addi ys_data, ys_data, 1
 
-	beq x_ch, y_ch, .LEq.loop
+	beq x, y, .LEq.loop
 	j .LEq.returns_not_equal
 
 	.cfi_endproc

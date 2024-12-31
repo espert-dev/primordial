@@ -43,10 +43,10 @@
 .LIndex.loop:
 	bgeu ss_ptr, ss_end, .LIndex.fail
 
-	mv a0, s_ptr
-	mv a1, s_size
-	ld a2, 0(ss_ptr)
-	ld a3, 8(ss_ptr)
+	mv a0, s_size
+	mv a1, s_ptr
+	ld a2, 8(ss_ptr)
+	ld a3, 0(ss_ptr)
 	call "mem.Eq"
 	bnez a0, .LIndex.ok
 
