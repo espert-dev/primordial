@@ -13,7 +13,7 @@
 
 .section .rodata
 
-.equiv nil, 0
+.equiv nil_data, 0
 .equiv nil_size, 0
 
 safe_str source, "abc"
@@ -25,6 +25,7 @@ safe_str source, "abc"
 
 .section .bss
 
+.p2align 4
 .lcomm destination, source_size
 
 
@@ -38,9 +39,9 @@ test_case Copy_nil_ok
 	save_0
 
 	li a0, nil_size
-	li a1, nil
+	li a1, nil_data
 	li a2, nil_size
-	li a3, nil
+	li a3, nil_data
 	call "mem.Copy"
 
 	expect_z a0
@@ -52,7 +53,7 @@ test_case Copy_0_to_0
 	save_0
 
 	li a0, 0
-	la a1, source
+	la a1, source_data
 	li a2, 0
 	la a3, destination
 	call "mem.Copy"
@@ -66,7 +67,7 @@ test_case Copy_1_to_0
 	save_0
 
 	li a0, 1
-	la a1, source
+	la a1, source_data
 	li a2, 0
 	la a3, destination
 	call "mem.Copy"
@@ -80,7 +81,7 @@ test_case Copy_2_to_0
 	save_0
 
 	li a0, 2
-	la a1, source
+	la a1, source_data
 	li a2, 0
 	la a3, destination
 	call "mem.Copy"
@@ -94,7 +95,7 @@ test_case Copy_3_to_0
 	save_0
 
 	li a0, 3
-	la a1, source
+	la a1, source_data
 	li a2, 0
 	la a3, destination
 	call "mem.Copy"
@@ -108,7 +109,7 @@ test_case Copy_0_to_1
 	save_0
 
 	li a0, 0
-	la a1, source
+	la a1, source_data
 	li a2, 1
 	la a3, destination
 	call "mem.Copy"
@@ -122,7 +123,7 @@ test_case Copy_1_to_1
 	save_0
 
 	li a0, 1
-	la a1, source
+	la a1, source_data
 	li a2, 1
 	la a3, destination
 	call "mem.Copy"
@@ -140,7 +141,7 @@ test_case Copy_2_to_1
 	save_0
 
 	li a0, 2
-	la a1, source
+	la a1, source_data
 	li a2, 1
 	la a3, destination
 	call "mem.Copy"
@@ -158,7 +159,7 @@ test_case Copy_3_to_1
 	save_0
 
 	li a0, 3
-	la a1, source
+	la a1, source_data
 	li a2, 1
 	la a3, destination
 	call "mem.Copy"
@@ -176,7 +177,7 @@ test_case Copy_0_to_2
 	save_0
 
 	li a0, 0
-	la a1, source
+	la a1, source_data
 	li a2, 2
 	la a3, destination
 	call "mem.Copy"
@@ -190,7 +191,7 @@ test_case Copy_1_to_2
 	save_0
 
 	li a0, 2
-	la a1, source
+	la a1, source_data
 	li a2, 1
 	la a3, destination
 	call "mem.Copy"
@@ -208,7 +209,7 @@ test_case Copy_2_to_2
 	save_0
 
 	li a0, 2
-	la a1, source
+	la a1, source_data
 	li a2, 2
 	la a3, destination
 	call "mem.Copy"
@@ -228,7 +229,7 @@ test_case Copy_3_to_2
 	save_0
 
 	li a0, 3
-	la a1, source
+	la a1, source_data
 	li a2, 2
 	la a3, destination
 	call "mem.Copy"
@@ -248,7 +249,7 @@ test_case Copy_0_to_3
 	save_0
 
 	li a0, 0
-	la a1, source
+	la a1, source_data
 	li a2, 3
 	la a3, destination
 
@@ -263,7 +264,7 @@ test_case Copy_1_to_3
 	save_0
 
 	li a0, 1
-	la a1, source
+	la a1, source_data
 	li a2, 3
 	la a3, destination
 	call "mem.Copy"
@@ -281,7 +282,7 @@ test_case Copy_2_to_3
 	save_0
 
 	li a0, 2
-	la a1, source
+	la a1, source_data
 	li a2, 3
 	la a3, destination
 	call "mem.Copy"
@@ -301,7 +302,7 @@ test_case Copy_3_to_3
 	save_0
 
 	li a0, 3
-	la a1, source
+	la a1, source_data
 	li a2, 3
 	la a3, destination
 	call "mem.Copy"

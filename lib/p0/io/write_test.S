@@ -28,7 +28,7 @@ test_case write_ok
 
 	# Call function under test.
 	li a0, valid_descriptor
-	la a1, msg
+	la a1, msg_data
 	li a2, msg_size
 	call "io.Write"
 
@@ -43,7 +43,7 @@ test_case write_fails_on_invalid_descriptor
 
 	# Call function under test.
 	li a0, invalid_descriptor
-	la a1, msg
+	la a1, msg_data
 	li a2, msg_size
 	call "io.Write"
 

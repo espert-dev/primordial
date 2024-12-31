@@ -15,9 +15,9 @@
 test_case Shortlex_\x\()_and_\y\()_return_equal
 	save_0
 
-	la a0, \x
+	la a0, \x\()_data
 	li a1, \x\()_size
-	la a2, \y
+	la a2, \y\()_data
 	li a3, \y\()_size
 	call "mem/Shortlex"
 
@@ -31,9 +31,9 @@ end_test
 test_case Shortlex_\x\()_and_\y\()_return_smaller
 	save_0
 
-	la a0, \x
+	la a0, \x\()_data
 	li a1, \x\()_size
-	la a2, \y
+	la a2, \y\()_data
 	li a3, \y\()_size
 	call "mem/Shortlex"
 
@@ -47,9 +47,9 @@ end_test
 test_case Shortlex_\x\()_and_\y\()_return_bigger
 	save_0
 
-	la a0, \x
+	la a0, \x\()_data
 	li a1, \x\()_size
-	la a2, \y
+	la a2, \y\()_data
 	li a3, \y\()_size
 	call "mem/Shortlex"
 
@@ -64,9 +64,8 @@ end_test
 # Test data
 # ===========================================================================
 
-.struct 0
-nil:
 .equiv nil_size, 0
+.equiv nil_data, 0
 
 .section .rodata
 

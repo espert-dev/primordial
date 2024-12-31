@@ -31,6 +31,7 @@ safe_str strs_copy, "abcdefghijklmnopqrstuvwxyz"
 # ===========================================================================
 # Test cases
 # ===========================================================================
+
 test_case sentinel_has_expected_size
 	li t0, "strintern.sentinel_size"
 	li t1, "strintern.node_size"
@@ -62,7 +63,7 @@ test_case Intern_first_string
 	save_0
 	call cleanSlate
 
-	la a0, str0
+	la a0, str0_data
 	li a1, str0_size
 	mv a2, a0
 	mv a3, a1
@@ -75,15 +76,15 @@ test_case Intern_first_string_twice
 	save_0
 	call cleanSlate
 
-	la a0, str0
+	la a0, str0_data
 	li a1, str0_size
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
 
-	la a0, str0_copy
+	la a0, str0_copy_data
 	li a1, str0_copy_size
-	la a2, str0
+	la a2, str0_data
 	li a3, str0_size
 	call expectIntern
 
@@ -94,21 +95,21 @@ test_case Intern_smaller
 	save_0
 	call cleanSlate
 
-	la a0, str0
+	la a0, str0_data
 	li a1, str0_size
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
 
-	la a0, smaller_1
+	la a0, smaller_1_data
 	li a1, smaller_1_size
-	la a2, smaller_1
+	la a2, smaller_1_data
 	li a3, smaller_1_size
 	call expectIntern
 
-	la a0, smaller_1_copy
+	la a0, smaller_1_copy_data
 	li a1, smaller_1_copy_size
-	la a2, smaller_1
+	la a2, smaller_1_data
 	li a3, smaller_1_size
 	call expectIntern
 
@@ -119,21 +120,21 @@ test_case Intern_bigger
 	save_0
 	call cleanSlate
 
-	la a0, str0
+	la a0, str0_data
 	li a1, str0_size
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
 
-	la a0, bigger_1
+	la a0, bigger_1_data
 	li a1, bigger_1_size
-	la a2, bigger_1
+	la a2, bigger_1_data
 	li a3, bigger_1_size
 	call expectIntern
 
-	la a0, bigger_1_copy
+	la a0, bigger_1_copy_data
 	li a1, bigger_1_copy_size
-	la a2, bigger_1
+	la a2, bigger_1_data
 	li a3, bigger_1_size
 	call expectIntern
 
@@ -148,7 +149,7 @@ test_case Intern_many
 	save_2
 	call cleanSlate
 
-	la p, strs
+	la p, strs_data
 	addi end, p, strs_size
 
 .LIntern_many_loop:
@@ -176,7 +177,7 @@ test_case Intern_many_twice
 	save_2
 	call cleanSlate
 
-	la p, strs
+	la p, strs_data
 	add end, p, strs_size
 
 .LIntern_many_loop_1:
@@ -189,7 +190,7 @@ test_case Intern_many_twice
 	addi p, p, 1
 	bltu p, end, .LIntern_many_loop_1
 
-	la p, strs
+	la p, strs_data
 
 .LIntern_many_loop_2:
 	mv a0, p
@@ -217,7 +218,7 @@ test_case Intern_many_and_copies
 	save_3
 	call cleanSlate
 
-	la p, strs
+	la p, strs_data
 	add end, p, strs_size
 
 .LIntern_many_and_copies_loop_1:
@@ -230,8 +231,8 @@ test_case Intern_many_and_copies
 	addi p, p, 1
 	bltu p, end, .LIntern_many_and_copies_loop_1
 
-	la p_copy, strs_copy
-	la p, strs
+	la p_copy, strs_copy_data
+	la p, strs_data
 	add end, p, strs_size
 
 .LIntern_many_and_copies_loop_2:

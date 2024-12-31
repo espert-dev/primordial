@@ -15,9 +15,9 @@
 test_case Index_\str\()_found_in_\slice\()_at_\position
 	save_0
 
-	la a0, \str
+	la a0, \str\()_data
 	li a1, \str\()_size
-	la a2, \slice
+	la a2, \slice\()_data
 	li a3, \slice\()_size
 	call "mem.Index"
 
@@ -31,9 +31,9 @@ end_test
 test_case Index_\s\()_not_found_in_\ss\()
 	save_0
 
-	la a0, \s
+	la a0, \s\()_data
 	li a1, \s\()_size
-	la a2, \ss
+	la a2, \ss\()_data
 	li a3, \ss\()_size
 	call "mem.Index"
 
@@ -49,9 +49,8 @@ end_test
 # ===========================================================================
 
 # Nil string or slice with address and size 0. Useful to reuse macros.
-.struct 0
-nil:
 .equiv nil_size, 0
+.equiv nil_data, 0
 
 .section .rodata
 
@@ -72,26 +71,26 @@ safe_str other_str3, "xyz"
 safe_str different_but_same_prefix_2, "ay"
 safe_str different_but_same_prefix_3, "abz"
 
-only_str0:
+only_str0_data:
 safe_str_slice str0
 .equiv only_str0_size, 1
 
-only_str1:
+only_str1_data:
 safe_str_slice str1
 .equiv only_str1_size, 1
 
-only_str2:
+only_str2_data:
 safe_str_slice str2
 .equiv only_str2_size, 1
 
-only_str3:
+only_str3_data:
 safe_str_slice str3
 .equiv only_str3_size, 1
 
-empty_slice:
+empty_slice_data:
 .equiv empty_slice_size, 0
 
-three_strings:
+three_strings_data:
 safe_str_slice str3
 safe_str_slice other_str3
 safe_str_slice different_but_same_prefix_2

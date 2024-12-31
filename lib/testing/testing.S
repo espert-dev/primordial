@@ -93,7 +93,7 @@ main:
 run_test:
 	# Callee-saved registers.
 	#define test_fn        s1
-	#define test_name      s2
+	#define test_name_data s2
 	#define test_name_size s3
 
 	# Temporary registers.
@@ -105,26 +105,26 @@ run_test:
 
 	# Preserve arguments and initialise saved variables.
 	mv test_fn, a0
-	mv test_name, a1
+	mv test_name_data, a1
 	mv test_name_size, a2
 
 	# Print test header.
 	li a0, STDLOG
-	la a1, test_header_start
+	la a1, test_header_start_data
 	li a2, test_header_start_size
 	li a7, SYSCALL_WRITE
 	ecall
 
 	# Print test name.
 	li a0, STDLOG
-	mv a1, test_name
+	mv a1, test_name_data
 	mv a2, test_name_size
 	li a7, SYSCALL_WRITE
 	ecall
 
 	# Print new line.
 	li a0, STDLOG
-	la a1, test_header_end
+	la a1, test_header_end_data
 	li a2, test_header_end_size
 	li a7, SYSCALL_WRITE
 	ecall
@@ -146,7 +146,7 @@ run_test:
 
 	# Show pass message.
 	li a0, STDLOG
-	la a1, pass_header
+	la a1, pass_header_data
 	li a2, pass_header_size
 	li a7, SYSCALL_WRITE
 	ecall
@@ -155,13 +155,13 @@ run_test:
 
 .Lend:
 	li a0, STDLOG
-	mv a1, test_name
+	mv a1, test_name_data
 	mv a2, test_name_size
 	li a7, SYSCALL_WRITE
 	ecall
 
 	li a0, STDLOG
-	la a1, test_result_trailer
+	la a1, test_result_trailer_data
 	li a2, test_result_trailer_size
 	li a7, SYSCALL_WRITE
 	ecall
@@ -171,7 +171,7 @@ run_test:
 .Lfail:
 	# Show fail message.
 	li a0, STDLOG
-	la a1, fail_header
+	la a1, fail_header_data
 	li a2, fail_header_size
 	li a7, SYSCALL_WRITE
 	ecall

@@ -20,7 +20,7 @@ main:
 	save_0
 
 	li a0, STDOUT
-	la a1, greeting
+	la a1, greeting_data
 	li a2, greeting_size
 	call "io.Write"
 

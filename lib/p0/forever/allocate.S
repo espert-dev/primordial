@@ -75,7 +75,7 @@ safe_str allocation_panic, "PANIC: allocation failed!"
 .LMustAllocate.panic:
 	# This will have to do until we have a better panic handler.
 	li a0, STDLOG
-	la a1, allocation_panic
+	la a1, allocation_panic_data
 	li a2, allocation_panic_size
 	call "io.Write"
 

@@ -42,13 +42,13 @@ test_case Clone_size_0
 	save_0
 
 	li a0, 0
-	la a1, original
+	la a1, original_data
 	call "mem.Clone"
 
 	expect_z a0
 	expect_nz a1
 
-	la t0, original
+	la t0, original_data
 	expect_ne t0, a1
 
 	restore_0
@@ -58,13 +58,13 @@ test_case Clone_size_1
 	save_0
 
 	li a0, 1
-	la a1, original
+	la a1, original_data
 	call "mem.Clone"
 
 	expect_eqi 1, a0
 	expect_nz a1
 
-	la t0, original
+	la t0, original_data
 	expect_ne t0, a1
 
 	restore_0
@@ -74,13 +74,13 @@ test_case Clone_size_2
 	save_0
 
 	li a0, 2
-	la a1, original
+	la a1, original_data
 	call "mem.Clone"
 
 	expect_eqi 2, a0
 	expect_nz a1
 
-	la t0, original
+	la t0, original_data
 	expect_ne t0, a1
 
 	restore_0
@@ -90,13 +90,13 @@ test_case Clone_size_3
 	save_0
 
 	li a0, 3
-	la a1, original
+	la a1, original_data
 	call "mem.Clone"
 
 	expect_eqi 3, a0
 	expect_nz a1
 
-	la t0, original
+	la t0, original_data
 	expect_ne t0, a1
 
 	restore_0

@@ -159,35 +159,35 @@ end_test
 
 test_case Index_missing_0
 	li a0, 'x'
-	la a1, char_list_0
+	la a1, char_list_0_data
 	li a2, char_list_0_size
 	tail missing_Index
 end_test
 
 test_case Index_missing_1
 	li a0, 'x'
-	la a1, char_list_1
+	la a1, char_list_1_data
 	li a2, char_list_1_size
 	tail missing_Index
 end_test
 
 test_case Index_missing_2
 	li a0, 'x'
-	la a1, char_list_2
+	la a1, char_list_2_data
 	li a2, char_list_2_size
 	tail missing_Index
 end_test
 
 test_case Index_missing_3
 	li a0, 'x'
-	la a1, char_list_3
+	la a1, char_list_3_data
 	li a2, char_list_3_size
 	tail missing_Index
 end_test
 
 test_case Index_found_1
 	li a0, 's'
-	la a1, char_list_1
+	la a1, char_list_1_data
 	li a2, char_list_1_size
 	li a3, 0
 	tail found_Index
@@ -195,7 +195,7 @@ end_test
 
 test_case Index_found_2_start
 	li a0, 's'
-	la a1, char_list_2
+	la a1, char_list_2_data
 	li a2, char_list_2_size
 	li a3, 0
 	tail found_Index
@@ -203,7 +203,7 @@ end_test
 
 test_case Index_found_3_start
 	li a0, 's'
-	la a1, char_list_3
+	la a1, char_list_3_data
 	li a2, char_list_3_size
 	li a3, 0
 	tail found_Index
@@ -211,7 +211,7 @@ end_test
 
 test_case Index_found_2_end
 	li a0, 'e'
-	la a1, char_list_2
+	la a1, char_list_2_data
 	li a2, char_list_2_size
 	li a3, 1
 	tail found_Index
@@ -219,7 +219,7 @@ end_test
 
 test_case Index_found_3_end
 	li a0, 'e'
-	la a1, char_list_3
+	la a1, char_list_3_data
 	li a2, char_list_3_size
 	li a3, 2
 	tail found_Index
@@ -227,7 +227,7 @@ end_test
 
 test_case Index_found_3_middle
 	li a0, 'm'
-	la a1, char_list_3
+	la a1, char_list_3_data
 	li a2, char_list_3_size
 	li a3, 1
 	tail found_Index

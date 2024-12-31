@@ -52,7 +52,7 @@
 
 # Keyword list.
 .p2align 4
-keywords:
+keywords_data:
 safe_str_slice if_kw
 safe_str_slice for_kw
 safe_str_slice func_kw
@@ -60,7 +60,7 @@ safe_str_slice func_kw
 
 # Operator list.
 .p2align 4
-operators:
+operators_data:
 safe_str_slice plus_op
 safe_str_slice minus_op
 safe_str_slice mult_op
@@ -69,15 +69,15 @@ safe_str_slice div_op
 
 # Mapping of keywords to token types (must be in sync with keyword_strings).
 .p2align 0
-keyword_token_types:
+keyword_token_types_data:
 .byte TK_IF
 .byte TK_FOR
 .byte TK_FUNC
-.equiv keyword_token_types_size, . - keyword_token_types
+.equiv keyword_token_types_size, . - keyword_token_types_data
 
 # Mapping of separators to token types (must be in sync with separator_strings).
 .p2align 0
-separator_token_types:
+separator_token_types_data:
 .byte TK_LPAR
 .byte TK_RPAR
 .byte TK_LBRA
@@ -86,16 +86,16 @@ separator_token_types:
 .byte TK_RCUR
 .byte TK_SEMI
 .byte TK_COMMA
-.equiv separator_token_types_size, . - separator_token_types
+.equiv separator_token_types_size, . - separator_token_types_data
 
 # Mapping of operators to token types (must be in sync with operator_strings).
 .p2align 0
-operator_token_types:
+operator_token_types_data:
 .byte TK_PLUS
 .byte TK_MINUS
 .byte TK_MULT
 .byte TK_DIV
-.equiv operator_token_types_size, . - operator_token_types
+.equiv operator_token_types_size, . - operator_token_types_data
 
 # Keyword strings.
 safe_str if_kw, "if"
@@ -385,7 +385,7 @@ skip_comments:
 
 	# Keep it in a saved register to prevent re-initialization.
 	li s1, '\n'
-	
+
 .Lcomment.loop:
 	call consume
 	beqz a0, .Lcomment.accept
@@ -436,13 +436,13 @@ accept_id_or_kw:
 	# Recognise keywords. If none is found, return an identifier.
 	mv a0, token_start
 	sub a1, token_end, token_start
-	la a2, keywords
+	la a2, keywords_data
 	li a3, keywords_size
 	call "mem.Index"
 	bltz a0, .Lid.return_id
 
 	# A keyword was identified. Its position (a0) determines its type.
-	la t0, keyword_token_types
+	la t0, keyword_token_types_data
 	add t0, t0, a0
 	lbu a0, 0(t0)
 	j .Lid.return
@@ -479,13 +479,13 @@ accept_operator:
 	# Recognise operators.
 	mv a0, token_start
 	sub a1, token_end, token_start
-	la a2, operators
+	la a2, operators_data
 	li a3, operators_size
 	call "mem.Index"
 	beqz a1, .Loperator_error
 
 	# An operator was identified. Its position (a0) determines its type.
-	la t0, operator_token_types
+	la t0, operator_token_types_data
 	add t0, t0, a0
 	lbu a0, 0(t0)
 
@@ -513,7 +513,7 @@ accept_separator:
 	# If the matching fails, jump to the return section.
 	# In that case, a0 will be 0 (TK_NONE) by construction.
 	mv a0, ch
-	la a1, separator_list
+	la a1, separator_list_data
 	li a2, separator_list_size
 	call "ascii.Index"
 	bltz a0, .Lseparator_fail
@@ -524,7 +524,7 @@ accept_separator:
 	call consume
 
 	# Recognise the operator.
-	la token_type_ptr, separator_token_types
+	la token_type_ptr, separator_token_types_data
 	add token_type_ptr, token_type_ptr, found_pos
 	lb a0, 0(token_type_ptr)
 
@@ -590,7 +590,7 @@ is_operator_char:
 	save_0
 
 	mv a0, ch
-	la a1, operator_chars
+	la a1, operator_chars_data
 	li a2, operator_chars_size
 	call "ascii.Index"
 
