@@ -28,8 +28,8 @@ test_case write_ok
 
 	# Call function under test.
 	li a0, valid_descriptor
-	la a1, msg_data
-	li a2, msg_size
+	li a1, msg_size
+	la a2, msg_data
 	call "io.Write"
 
 	expect_eqi msg_size, a0
@@ -43,8 +43,8 @@ test_case write_fails_on_invalid_descriptor
 
 	# Call function under test.
 	li a0, invalid_descriptor
-	la a1, msg_data
-	li a2, msg_size
+	li a1, msg_size
+	la a2, msg_data
 	call "io.Write"
 
 	expect_z a0

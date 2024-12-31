@@ -20,8 +20,8 @@ main:
 	save_0
 
 	li a0, STDOUT
-	la a1, greeting_data
-	li a2, greeting_size
+	li a1, greeting_size
+	la a2, greeting_data
 	call "io.Write"
 
 	# Return error from io.Write.

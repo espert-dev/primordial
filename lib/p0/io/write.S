@@ -9,9 +9,9 @@
 # Write to a file descriptor.
 #
 # Input:
-#   a0: File descriptor
-#   a1: Data pointer
-#   a2: Data size
+#   a0 fd:      File descriptor
+#   a1 xs_size: Data size
+#   a2 xs_data: Data pointer
 #
 # Output:
 #   a0: Number of bytes written
@@ -19,6 +19,11 @@
 .global "io.Write"
 "io.Write":
 	.cfi_startproc
+
+	# Swap a1 and a2.
+	mv t0, a1
+	mv a1, a2
+	mv a2, t0
 
 	li a7, SYSCALL_WRITE
 	ecall
