@@ -10,37 +10,42 @@
 # Compares two memory regions with the shortlex ordering.
 #
 # Input:
-#   a0: Pointer to the first slice
-#   a1: Size of the first slice
-#   a2: Pointer to the second slice
-#   a3: Size of the second slice
+#   a0 xs_size: Size of the first slice
+#   a1 xs_data: Pointer to the first slice
+#   a2 ys_size: Size of the second slice
+#   a3 ys_data: Pointer to the second slice
 #
 # Output:
 #   a0: negative if x < y, 0 if x == y, positive if x > y
 .global "mem/Shortlex"
 "mem/Shortlex":
-	# We try to optimise the fast case.
+	# Arguments.
+	#define xs_size a0
+	#define xs_data a1
+	#define ys_size a2
+	#define ys_data a3
 
 	# Temporary registers.
-	#define x_end t0
-	#define x_ch  t1
-	#define y_ch  t2
+	#define xs_end t0
+	#define x      t1
+	#define y      t2
 
 	.cfi_startproc
+	# We try to optimise the fast case.
 
 	# If the slices are different sizes, they cannot be equal.
-	beq a1, a3, .LShortlex.check_ptrs
+	beq xs_size, ys_size, .LShortlex.check_ptrs
 
 .LShortlex.different_sizes:
 	# Will be negative if x1 < x3, positive if x1 > x3.
 	# It cannot be x1 == x3 because of the branch above.
-	sub a0, a1, a3
+	sub a0, xs_size, ys_size
 	ret
 
 .LShortlex.check_ptrs:
 	# We know that the sizes are equal.
 	# Hence, if the base pointers are the same, they are equal.
-	bne a0, a2, .LShortlex.check_contents
+	bne xs_data, ys_data, .LShortlex.check_contents
 
 .LShortlex.equal:
 	li a0, 0
@@ -50,19 +55,19 @@
 	# This could easily be optimised by doing a first pass that
 	# compares one or more dwords at a time. Maybe I'll come back
 	# and revisit it at some point, if it's worth it.
-	add x_end, a0, a1
+	add xs_end, xs_data, xs_size
 
 .LShortlex.loop:
-	bgeu a0, x_end, .LShortlex.equal
+	bgeu xs_data, xs_end, .LShortlex.equal
 
-	lbu x_ch, 0(a0)
-	lbu y_ch, 0(a2)
-	add a0, a0, 1
-	add a2, a2, 1
-	beq x_ch, y_ch, .LShortlex.loop
+	lbu x, 0(xs_data)
+	lbu y, 0(ys_data)
+	add xs_data, xs_data, 1
+	add ys_data, ys_data, 1
+	beq x, y, .LShortlex.loop
 
 .LShortlex.different_content:
-	sub a0, x_ch, y_ch
+	sub a0, x, y
 	ret
 
 	.cfi_endproc

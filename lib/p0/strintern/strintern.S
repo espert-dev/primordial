@@ -156,9 +156,13 @@
 	# Allocation should be rarer, so put it last.
 	beq tree, sentinel, .LfindOrInsert.allocate
 
-	# a0 and a1 are ready.
-	ld a2, "strintern.node.str_data"(tree)
-	lw a3, "strintern.node.str_size"(tree)
+	# Swap a0 and a1.
+	mv t0, a0
+	mv a0, a1
+	mv a1, t0
+
+	lw a2, "strintern.node.str_size"(tree)
+	ld a3, "strintern.node.str_data"(tree)
 	call "mem/Shortlex"
 
 	bltz a0, .LfindOrUpdate.left

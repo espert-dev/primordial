@@ -15,10 +15,10 @@
 test_case Shortlex_\x\()_and_\y\()_return_equal
 	save_0
 
-	la a0, \x\()_data
-	li a1, \x\()_size
-	la a2, \y\()_data
-	li a3, \y\()_size
+	li a0, \x\()_size
+	la a1, \x\()_data
+	li a2, \y\()_size
+	la a3, \y\()_data
 	call "mem/Shortlex"
 
 	expect_z a0
@@ -31,10 +31,10 @@ end_test
 test_case Shortlex_\x\()_and_\y\()_return_smaller
 	save_0
 
-	la a0, \x\()_data
-	li a1, \x\()_size
-	la a2, \y\()_data
-	li a3, \y\()_size
+	li a0, \x\()_size
+	la a1, \x\()_data
+	li a2, \y\()_size
+	la a3, \y\()_data
 	call "mem/Shortlex"
 
 	expect_negative a0
@@ -47,10 +47,10 @@ end_test
 test_case Shortlex_\x\()_and_\y\()_return_bigger
 	save_0
 
-	la a0, \x\()_data
-	li a1, \x\()_size
-	la a2, \y\()_data
-	li a3, \y\()_size
+	li a0, \x\()_size
+	la a1, \x\()_data
+	li a2, \y\()_size
+	la a3, \y\()_data
 	call "mem/Shortlex"
 
 	expect_positive a0
