@@ -88,12 +88,12 @@
 # Intern a string.
 #
 # Inputs:
-#   a0: pointer to string data
-#   a1: size of string
+#   a0 xs_size: size of string
+#   a1 xs_data: pointer to string data
 #
 # Outputs:
-#   a0: pointer to interned string data
-#   a1: size of string
+#   a0: size of string
+#   a1: pointer to interned string data
 .global "strintern.Intern"
 "strintern.Intern":
 	#define sentinel_backup s1
@@ -134,33 +134,29 @@
 #   sentinel
 #
 # Inputs:
-#   a0: pointer to string data
-#   a1: size of string
-#   a2: tree
+#   a0 str_size: size of string
+#   a1 str_data: pointer to string data
+#   a2 tree:    tree that stores the interned string set
 #
 # Outputs:
-#   a0: pointer to interned string data
-#   a1: size of string
+#   a0: size of string
+#   a1: pointer to interned string data
 #   a2: updated tree
 "strintern.findOrInsert":
-	#define str_data s1
-	#define str_size s2
+	#define str_size s1
+	#define str_data s2
 	#define tree     s3
 
 	.cfi_startproc
 	save_3
-	mv str_data, a0
-	mv str_size, a1
+	mv str_size, a0
+	mv str_data, a1
 	mv tree, a2
 
 	# Allocation should be rarer, so put it last.
 	beq tree, sentinel, .LfindOrInsert.allocate
 
-	# Swap a0 and a1.
-	mv t0, a0
-	mv a0, a1
-	mv a1, t0
-
+	# a0 and a1 are ready.
 	lw a2, "strintern.node.str_size"(tree)
 	ld a3, "strintern.node.str_data"(tree)
 	call "mem/Shortlex"
@@ -176,24 +172,24 @@
 	j .LfindOrInsert.end
 
 .LfindOrUpdate.left:
-	mv a0, str_data
-	mv a1, str_size
+	mv a0, str_size
+	mv a1, str_data
 	ld a2, "strintern.node.left"(tree)
 	call "strintern.findOrInsert"
 
 	j .LfindOrUpdate.rebalance
 
 .LfindOrUpdate.right:
-	mv a0, str_data
-	mv a1, str_size
+	mv a0, str_size
+	mv a1, str_data
 	ld a2, "strintern.node.right"(tree)
 	call "strintern.findOrInsert"
 
 	# Fall through.
 
 .LfindOrUpdate.rebalance:
-	mv str_data, a0
-	mv str_size, a1
+	mv str_size, a0
+	mv str_data, a1
 	mv a0, a2
 
 	# skew and split modify and return a0.
@@ -204,8 +200,8 @@
 	# Fall through.
 
 .LfindOrInsert.end:
-	mv a0, str_data
-	mv a1, str_size
+	mv a0, str_size
+	mv a1, str_data
 	mv a2, tree
 	restore_3
 

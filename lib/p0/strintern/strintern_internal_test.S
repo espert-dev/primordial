@@ -63,8 +63,8 @@ test_case Intern_first_string
 	save_0
 	call cleanSlate
 
-	la a0, str0_data
-	li a1, str0_size
+	li a0, str0_size
+	la a1, str0_data
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
@@ -76,16 +76,16 @@ test_case Intern_first_string_twice
 	save_0
 	call cleanSlate
 
-	la a0, str0_data
-	li a1, str0_size
+	li a0, str0_size
+	la a1, str0_data
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
 
-	la a0, str0_copy_data
-	li a1, str0_copy_size
-	la a2, str0_data
-	li a3, str0_size
+	li a0, str0_copy_size
+	la a1, str0_copy_data
+	li a2, str0_size
+	la a3, str0_data
 	call expectIntern
 
 	restore_0
@@ -95,22 +95,22 @@ test_case Intern_smaller
 	save_0
 	call cleanSlate
 
-	la a0, str0_data
-	li a1, str0_size
+	li a0, str0_size
+	la a1, str0_data
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
 
-	la a0, smaller_1_data
-	li a1, smaller_1_size
-	la a2, smaller_1_data
-	li a3, smaller_1_size
+	li a0, smaller_1_size
+	la a1, smaller_1_data
+	li a2, smaller_1_size
+	la a3, smaller_1_data
 	call expectIntern
 
-	la a0, smaller_1_copy_data
-	li a1, smaller_1_copy_size
-	la a2, smaller_1_data
-	li a3, smaller_1_size
+	li a0, smaller_1_copy_size
+	la a1, smaller_1_copy_data
+	li a2, smaller_1_size
+	la a3, smaller_1_data
 	call expectIntern
 
 	restore_0
@@ -120,22 +120,22 @@ test_case Intern_bigger
 	save_0
 	call cleanSlate
 
-	la a0, str0_data
-	li a1, str0_size
+	li a0, str0_size
+	la a1, str0_data
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
 
-	la a0, bigger_1_data
-	li a1, bigger_1_size
-	la a2, bigger_1_data
-	li a3, bigger_1_size
+	li a0, bigger_1_size
+	la a1, bigger_1_data
+	li a2, bigger_1_size
+	la a3, bigger_1_data
 	call expectIntern
 
-	la a0, bigger_1_copy_data
-	li a1, bigger_1_copy_size
-	la a2, bigger_1_data
-	li a3, bigger_1_size
+	li a0, bigger_1_copy_size
+	la a1, bigger_1_copy_data
+	li a2, bigger_1_size
+	la a3, bigger_1_data
 	call expectIntern
 
 	restore_0
@@ -153,8 +153,8 @@ test_case Intern_many
 	addi end, p, strs_size
 
 .LIntern_many_loop:
-	mv a0, p
-	li a1, 1
+	li a0, 1
+	mv a1, p
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
@@ -181,8 +181,8 @@ test_case Intern_many_twice
 	add end, p, strs_size
 
 .LIntern_many_loop_1:
-	mv a0, p
-	li a1, 1
+	li a0, 1
+	mv a1, p
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
@@ -193,8 +193,8 @@ test_case Intern_many_twice
 	la p, strs_data
 
 .LIntern_many_loop_2:
-	mv a0, p
-	li a1, 1
+	li a0, 1
+	mv a1, p
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
@@ -222,8 +222,8 @@ test_case Intern_many_and_copies
 	add end, p, strs_size
 
 .LIntern_many_and_copies_loop_1:
-	mv a0, p
-	li a1, 1
+	li a0, 1
+	mv a1, p
 	mv a2, a0
 	mv a3, a1
 	call expectIntern
@@ -236,10 +236,10 @@ test_case Intern_many_and_copies
 	add end, p, strs_size
 
 .LIntern_many_and_copies_loop_2:
-	mv a0, p_copy
-	li a1, 1
-	mv a2, p
-	li a3, 1
+	li a0, 1
+	mv a1, p_copy
+	li a2, 1
+	mv a3, p
 	call expectIntern
 
 	addi p, p, 1
@@ -286,30 +286,23 @@ cleanSlate:
 expectIntern:
 	#define expected_size s1
 	#define expected_data s2
-	#define actual_size   s3
-	#define actual_data   s4
 
 	.cfi_startproc
-	save_4
+	save_2
 
-	mv expected_size, a3
-	mv expected_data, a2
+	mv expected_size, a2
+	mv expected_data, a3
 
 	# a0 and a1 are already set.
 	call "strintern.Intern"
 
-	mv actual_data, a0
-	mv actual_size, a1
-
-	mv a0, actual_size
-	mv a1, actual_data
 	mv a2, expected_size
 	mv a3, expected_data
 	call "mem.Eq"
 
 	expect_eqi 1, a0
 
-	restore_4
+	restore_2
 	.cfi_endproc
 
 	#undef expected_date
