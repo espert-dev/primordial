@@ -4,6 +4,7 @@
 
 #include <millicode.S>
 #include <safe_str.S>
+#include <slice.S>
 #include <testing.S>
 
 
@@ -15,10 +16,10 @@
 test_case Index_\str\()_found_in_\slice\()_at_\position
 	save_0
 
-	la a0, \str\()_data
-	li a1, \str\()_size
-	la a2, \slice\()_data
-	li a3, \slice\()_size
+	li a0, \str\()_size
+	la a1, \str\()_data
+	li a2, \slice\()_size
+	la a3, \slice\()_data
 	call "mem.Index"
 
 	expect_eqi \position a0
@@ -31,10 +32,10 @@ end_test
 test_case Index_\s\()_not_found_in_\ss\()
 	save_0
 
-	la a0, \s\()_data
-	li a1, \s\()_size
-	la a2, \ss\()_data
-	li a3, \ss\()_size
+	li a0, \s\()_size
+	la a1, \s\()_data
+	li a2, \ss\()_size
+	la a3, \ss\()_data
 	call "mem.Index"
 
 	expect_eqi -1, a0

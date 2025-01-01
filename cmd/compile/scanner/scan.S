@@ -41,6 +41,7 @@
 
 #include <millicode.S>
 #include <safe_str.S>
+#include <slice.S>
 #include "compile/scanner.S"
 
 
@@ -434,10 +435,10 @@ accept_id_or_kw:
 
 .Lid.detect_keywords:
 	# Recognise keywords. If none is found, return an identifier.
-	mv a0, token_start
-	sub a1, token_end, token_start
-	la a2, keywords_data
-	li a3, keywords_size
+	sub a0, token_end, token_start
+	mv a1, token_start
+	li a2, keywords_size
+	la a3, keywords_data
 	call "mem.Index"
 	bltz a0, .Lid.return_id
 
@@ -477,10 +478,10 @@ accept_operator:
 
 .Loperator_detect:
 	# Recognise operators.
-	mv a0, token_start
-	sub a1, token_end, token_start
-	la a2, operators_data
-	li a3, operators_size
+	sub a0, token_end, token_start
+	mv a1, token_start
+	li a2, operators_size
+	la a3, operators_data
 	call "mem.Index"
 	beqz a1, .Loperator_error
 

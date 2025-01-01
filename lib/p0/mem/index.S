@@ -3,6 +3,7 @@
 # ===========================================================================
 
 #include <millicode.S>
+#include <slice.S>
 
 
 .section .text
@@ -13,45 +14,46 @@
 # This is useful, for example, when comparing a string against a list of
 # strings.
 #
-# Inputs:
-#   a0: Pointer to the byte slice
-#   a1: Size of the slice
-#   a2: Pointer to the slice of byte slices
-#   a3: Size of the slice of byte slices
+# Input:
+#   a0 xs_size:  Size of the slice
+#   a1 xs_data:  Pointer to the byte slice
+#   a2 yss_size: Size of the slice of byte slices
+#   a3 yss_data: Pointer to the slice of byte slices
 #
-# Outputs:
+# Output:
 #   a0: Matched index (or -1 if none)
 .global "mem.Index"
 "mem.Index":
 	# Callee-saved registers.
-	#define s_ptr    s1
-	#define s_size   s2
-	#define ss_ptr   s3
-	#define ss_end   s4
-	#define ss_pos   s5
+	#define pos      s1
+	#define xs_size  s2
+	#define xs_data  s3
+	#define yss_data s4
+	#define yss_end  s5
 
 	.cfi_startproc
 	save_5
 
-	li ss_pos,  0
-	mv s_ptr,   a0
-	mv s_size,  a1
-	mv ss_ptr,  a2
-	sll ss_end, a3, 4  # ss_size * 16
-	add ss_end, ss_end, ss_ptr
+	li pos, 0
+	mv xs_size, a0
+	mv xs_data, a1
+	mv yss_data, a3
+
+	sll yss_end, a2, 4  # Entries are 16 bytes.
+	add yss_end, yss_end, yss_data
 
 .LIndex.loop:
-	bgeu ss_ptr, ss_end, .LIndex.fail
+	bgeu yss_data, yss_end, .LIndex.fail
 
-	mv a0, s_size
-	mv a1, s_ptr
-	ld a2, 8(ss_ptr)
-	ld a3, 0(ss_ptr)
+	mv a0, xs_size
+	mv a1, xs_data
+	ld a2, slice.size(yss_data)
+	ld a3, slice.data(yss_data)
 	call "mem.Eq"
 	bnez a0, .LIndex.ok
 
-	add ss_pos, ss_pos, 1
-	add ss_ptr, ss_ptr, 16
+	add pos, pos, 1
+	add yss_data, yss_data, 16
 	j .LIndex.loop
 
 .LIndex.fail:
@@ -59,7 +61,7 @@
 	j .LIndex.end
 
 .LIndex.ok:
-	mv a0, ss_pos
+	mv a0, pos
 
 .LIndex.end:
 	restore_5
