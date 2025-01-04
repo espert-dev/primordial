@@ -64,8 +64,8 @@ main:
 
 .Lmain.loop:
 	ld a0, "test_case_entry.fn"(next)
-	ld a1, "test_case_entry.name"(next)
-	ld a2, "test_case_entry.name_size"(next)
+	ld a1, "test_case_entry.name_size"(next)
+	ld a2, "test_case_entry.name_data"(next)
 	call run_test
 
 	addi next, next, test_case_entry_size
@@ -84,8 +84,8 @@ main:
 #
 # Input:
 #   * a0: test function
-#   * a1: test name
-#   * a2: test name size
+#   * a1: test name size
+#   * a2: test name
 #
 # Output:
 #   * a0: 0 if OK, nonzero if not OK
@@ -93,8 +93,8 @@ main:
 run_test:
 	# Callee-saved registers.
 	#define test_fn        s1
-	#define test_name_data s2
-	#define test_name_size s3
+	#define test_name_size s2
+	#define test_name_data s3
 
 	# Temporary registers.
 	#define test_failed  t0
@@ -105,8 +105,8 @@ run_test:
 
 	# Preserve arguments and initialise saved variables.
 	mv test_fn, a0
-	mv test_name_data, a1
-	mv test_name_size, a2
+	mv test_name_size, a1
+	mv test_name_data, a2
 
 	# Print test header.
 	li a0, STDLOG

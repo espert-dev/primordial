@@ -9,8 +9,8 @@
 .struct 0
 test_case_entry:
 "test_case_entry.fn": .space 8
-"test_case_entry.name": .space 8
 "test_case_entry.name_size": .space 8
+"test_case_entry.name_data": .space 8
 .equiv test_case_entry_size, . - test_case_entry
 
 # Testing state.
@@ -42,13 +42,13 @@ testing_state:
 .section .test_cases, "aMR", @progbits, test_case_entry_size
 .p2align 3
 .8byte test_\t
-.8byte test_\t\()_name
 .8byte test_\t\()_name_size
+.8byte test_\t\()_name_data
 
 .section .rodata
-test_\t\()_name:
+test_\t\()_name_data:
 .ascii "\t"
-.equiv test_\t\()_name_size , . - test_\t\()_name
+.equiv test_\t\()_name_size , . - test_\t\()_name_data
 
 .section .text
 test_\t:
@@ -63,8 +63,8 @@ test_\t:
 # Run a test case. Call from within a test suite.
 .macro run_test t
 	la a0, test_\t
-	la a1, test_\t\()_name
 	li a2, test_\t\()_name_size
+	la a1, test_\t\()_name_data
 	call run_test
 .endm
 
