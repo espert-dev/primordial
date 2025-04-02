@@ -44,8 +44,10 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	#define value    a3
 
 	# Temporaries.
-	#define out_ptr  t0
-	#define ch       t1
+	#define out_ptr    t0
+	#define ch         t1
+	#define ten	   t2
+	#define remainder  t4
 
 	.cfi_startproc
 
@@ -56,10 +58,12 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	bltz a0, .LUnsigned.Panic.NegativeBufferSize
 	bltz a2, .LUnsigned.Panic.NegativeBufferPos
 
+	li ten, 10
 	add out_ptr, out_data, out_idx
+	remu remainder, value, ten
 
 	# Write an ASCII zero.
-	li ch, '0'
+	addi ch, remainder, '0'
 	sb ch, 0(out_ptr)
 	addi out_ptr, out_ptr, 1
 

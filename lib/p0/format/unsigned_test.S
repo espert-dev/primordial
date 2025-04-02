@@ -65,3 +65,66 @@ test_case Unsigned_0
 
     restore_0
 end_test
+
+test_case Unsigned_1
+    save_0
+
+    la a0, buffer_size
+    la a1, buffer_data
+    li a2, 0
+    li a3, 1
+
+    call "format.Unsigned"
+
+    expect_eqi buffer_size, a0
+    expect_eqa buffer_data, a1
+    expect_eqi 1, a2
+
+    la t0, buffer_data
+    lbu t1, 0(t0)
+    expect_eqi '1', t1
+
+    restore_0
+end_test
+
+test_case Unsigned_2
+    save_0
+
+    la a0, buffer_size
+    la a1, buffer_data
+    li a2, 0
+    li a3, 2
+
+    call "format.Unsigned"
+
+    expect_eqi buffer_size, a0
+    expect_eqa buffer_data, a1
+    expect_eqi 1, a2
+
+    la t0, buffer_data
+    lbu t1, 0(t0)
+    expect_eqi '2', t1
+
+    restore_0
+end_test
+
+test_case Unsigned_9
+    save_0
+
+    la a0, buffer_size
+    la a1, buffer_data
+    li a2, 0
+    li a3, 9
+
+    call "format.Unsigned"
+
+    expect_eqi buffer_size, a0
+    expect_eqa buffer_data, a1
+    expect_eqi 1, a2
+
+    la t0, buffer_data
+    lbu t1, 0(t0)
+    expect_eqi '9', t1
+
+    restore_0
+end_test
