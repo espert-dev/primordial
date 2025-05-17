@@ -38,6 +38,18 @@ safe_str test_result_trailer, "]\n\n"
 
 
 # ===========================================================================
+# Global variables
+# ===========================================================================
+
+.section .bss
+
+# When a test fails, this variable will be set to 1.
+# It will normally be returned as the exit code of the test suite.
+.p2align 4
+.lcomm "testing.state", testing_state_size
+
+
+# ===========================================================================
 # Functions
 # ===========================================================================
 
@@ -179,16 +191,3 @@ run_test:
 	j .Lend
 
 	.cfi_endproc
-
-
-# ===========================================================================
-# Global variables
-# ===========================================================================
-
-.section .bss
-
-# When a test fails, this variable will be set to 1.
-# It will normally be returned as the exit code of the test suite.
-.global "testing.state"
-.lcomm "testing.state", testing_state_size
-
