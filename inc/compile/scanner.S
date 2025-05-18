@@ -31,4 +31,3 @@ Scanner.end: .space 8
 Scanner.line: .space 8
 Scanner.column: .space 8
 .equiv Scanner_size, . - Scanner
-

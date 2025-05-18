@@ -5,4 +5,3 @@
 .equiv STDIN,  0
 .equiv STDOUT, 1
 .equiv STDLOG, 2
-

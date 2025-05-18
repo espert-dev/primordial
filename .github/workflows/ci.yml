@@ -21,3 +21,7 @@ jobs:
 
       - name: Acceptance test
         run: ./make
+
+      # Run scripts/setup_git_hooks.sh if this is failing.
+      - name: Linting
+        run: scripts/pre-commit_hook.sh && scripts/no-vcs-changes.sh

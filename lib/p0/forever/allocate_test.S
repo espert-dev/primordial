@@ -134,4 +134,3 @@ assert_allocation_ok:
 
 	ret
 	.cfi_endproc
-

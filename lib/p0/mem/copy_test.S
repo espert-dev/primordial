@@ -319,4 +319,3 @@ test_case Copy_3_to_3
 
 	restore_0
 end_test
-

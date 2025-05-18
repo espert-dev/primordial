@@ -29,4 +29,3 @@ main:
 
 	restore_0
 	.cfi_endproc
-

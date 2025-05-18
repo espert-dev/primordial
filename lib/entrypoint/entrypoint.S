@@ -21,4 +21,3 @@ _start:
 	ecall
 
 	.cfi_endproc
-
