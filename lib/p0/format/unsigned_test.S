@@ -71,7 +71,8 @@ safe_str quote_end, "\"\n"
 		call "mem.Eq"
 		expect_eqi 1, a0
 
-		bnez a0, .LUnsigned_\value\()_\buffer_size\()_\idx\().end
+		ld t0, "testing_state.test_failed"(tp)
+		beqz t0, .LUnsigned_\value\()_\buffer_size\()_\idx\().end
 
 		li a0, STDLOG
 		li a1, expected_label_size
