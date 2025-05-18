@@ -2,9 +2,27 @@
 # String formatting tests - Unsigned
 # ===========================================================================
 
+#include <io.S>
 #include <millicode.S>
 #include <safe_str.S>
 #include <testing.S>
+
+
+
+# ===========================================================================
+# Test data
+# ===========================================================================
+
+.section .rodata
+
+# An attempt to write here will fault.
+.equiv nil_data, 0
+.equiv nil_size, 0
+
+safe_str expected_label, "Expected:  "
+safe_str actual_label,   "Actual:    "
+safe_str quote_start, "\""
+safe_str quote_end, "\"\n"
 
 
 # ===========================================================================
@@ -24,7 +42,7 @@
 
 	.section .text
 	test_case Unsigned_\value\()_\buffer_size\()_\idx
-		save_0
+		save_4
 
 		# Call function under test.
 		la a0, \buffer_size
@@ -41,25 +59,64 @@
 		expect_eqi \updated_idx, a2
 
 		# Check that the string representation is as expected.
-		li a0, Unsigned_\value\()_\buffer_size\()_\idx\()_expected_size
-		la a1, Unsigned_\value\()_\buffer_size\()_\idx\()_expected_data
-		la a2, \updated_idx - \idx
-		la a3, Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data + \idx
+		li s1, Unsigned_\value\()_\buffer_size\()_\idx\()_expected_size
+		la s2, Unsigned_\value\()_\buffer_size\()_\idx\()_expected_data
+		li s3, \updated_idx - \idx
+		la s4, Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data + \idx
+
+		mv a0, s1
+		mv a1, s2
+		mv a2, s3
+		mv a3, s4
 		call "mem.Eq"
 		expect_eqi 1, a0
 
-		restore_0
+		bnez a0, .LUnsigned_\value\()_\buffer_size\()_\idx\().end
+
+		li a0, STDLOG
+		li a1, expected_label_size
+		la a2, expected_label_data
+		call "io.Write"
+
+		li a0, STDLOG
+		li a1, quote_start_size
+		la a2, quote_start_data
+		call "io.Write"
+
+		li a0, STDLOG
+		mv a1, s1
+		mv a2, s2
+		call "io.Write"
+
+		li a0, STDLOG
+		li a1, quote_end_size
+		la a2, quote_end_data
+		call "io.Write"
+
+		li a0, STDLOG
+		li a1, actual_label_size
+		la a2, actual_label_data
+		call "io.Write"
+
+		li a0, STDLOG
+		li a1, quote_start_size
+		la a2, quote_start_data
+		call "io.Write"
+
+		li a0, STDLOG
+		mv a1, s3
+		mv a2, s4
+		call "io.Write"
+
+		li a0, STDLOG
+		li a1, quote_end_size
+		la a2, quote_end_data
+		call "io.Write"
+
+	.LUnsigned_\value\()_\buffer_size\()_\idx\().end:
+		restore_4
 	end_test
 .endm
-
-
-# ===========================================================================
-# Test data
-# ===========================================================================
-
-# An attempt to write here will fault.
-.equiv nil_data, 0
-.equiv nil_size, 0
 
 
 # ===========================================================================
