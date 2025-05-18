@@ -33,7 +33,7 @@
 		li a3, \value
 		call "format.Unsigned"
 
-		# Check invariants (buffer data pointer and size)
+		# Check invariants (buffer data pointer and size).
 		expect_eqi \buffer_size, a0
 		expect_eqa Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data, a1
 
