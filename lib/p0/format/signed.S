@@ -46,7 +46,21 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	bltz a0, .LSigned.Panic.NegativeBufferSize
 	bltz a2, .LSigned.Panic.NegativeBufferPos
 
+	# Sign check.
+	bltz a3, .LSigned.Negative
+
+.LSigned.Positive:
 	# Positive numbers can be formatted as unsigned numbers.
+	tail "format.Unsigned"
+
+.LSigned.Negative:
+	# Write a minus sign and negate the number to make it positive,
+	# then print it as an unsigned number.
+	li t0, '-'
+	add t1, a1, a2
+	sb t0, 0(t1)
+	addi a2, a2, 1
+	sub a3, zero, a3
 	tail "format.Unsigned"
 
 .LSigned.BufferFull:

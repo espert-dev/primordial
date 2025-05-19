@@ -28,6 +28,9 @@ safe_str quote_end, "\"\n"
 # Test macros
 # ===========================================================================
 
+# We use two macros, pcheck and ncheck, to distinguish positive and negative
+# values, because we cannot simply include the value as '-' is not permitted.
+
 .macro check name, value, buffer_size, idx, updated_idx, expected
 	# Reserve 32 bytes regardless of intended buffer size to mitigate the
 	# risk of buffer overruns affecting other test cases.
@@ -120,7 +123,7 @@ safe_str quote_end, "\"\n"
 
 .macro pcheck value, buffer_size, idx, updated_idx, expected
 	check \
-		name="Signed_\value\()_\buffer_size\()_\idx", \
+		name="SignedP_\value\()_\buffer_size\()_\idx", \
 		value="\value", \
 		buffer_size="\buffer_size" \
 		idx="\idx", \
@@ -128,6 +131,15 @@ safe_str quote_end, "\"\n"
 		expected="\expected"
 .endm
 
+.macro ncheck value, buffer_size, idx, updated_idx, expected
+	check \
+		name="SignedN_\value\()_\buffer_size\()_\idx", \
+		value="-\value", \
+		buffer_size="\buffer_size" \
+		idx="\idx", \
+		updated_idx="\updated_idx", \
+		expected="\expected"
+.endm
 
 # ===========================================================================
 # Test cases for positive numbers
@@ -199,7 +211,6 @@ pcheck value=6, buffer_size=2, idx=1, updated_idx=2, expected="6"
 pcheck value=7, buffer_size=2, idx=1, updated_idx=2, expected="7"
 pcheck value=8, buffer_size=2, idx=1, updated_idx=2, expected="8"
 pcheck value=9, buffer_size=2, idx=1, updated_idx=2, expected="9"
-
 
 # Test 2 digits (no space).
 pcheck value=10, buffer_size=0, idx=0, updated_idx=0, expected=""
@@ -367,9 +378,250 @@ pcheck value=9223372036854775807, buffer_size=3, idx=1, updated_idx=3, expected=
 pcheck value=9223372036854775807, buffer_size=2, idx=1, updated_idx=2, expected="9"
 pcheck value=9223372036854775807, buffer_size=1, idx=1, updated_idx=1, expected=""
 
+
 # ===========================================================================
 # Test cases for negative numbers
 # ===========================================================================
 
 # Test all negative single digits (no space).
-#pcheck value=-1, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=1, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=2, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=3, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=4, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=5, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=6, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=7, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=8, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=9, buffer_size=0, idx=0, updated_idx=0, expected=""
+
+# Test all negative single digits (truncated at sign).
+ncheck value=1, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=2, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=3, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=4, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=5, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=6, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=7, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=8, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=9, buffer_size=1, idx=0, updated_idx=1, expected="-"
+
+# Test all negative single digits (exact space).
+ncheck value=1, buffer_size=2, idx=0, updated_idx=2, expected="-1"
+ncheck value=2, buffer_size=2, idx=0, updated_idx=2, expected="-2"
+ncheck value=3, buffer_size=2, idx=0, updated_idx=2, expected="-3"
+ncheck value=4, buffer_size=2, idx=0, updated_idx=2, expected="-4"
+ncheck value=5, buffer_size=2, idx=0, updated_idx=2, expected="-5"
+ncheck value=6, buffer_size=2, idx=0, updated_idx=2, expected="-6"
+ncheck value=7, buffer_size=2, idx=0, updated_idx=2, expected="-7"
+ncheck value=8, buffer_size=2, idx=0, updated_idx=2, expected="-8"
+ncheck value=9, buffer_size=2, idx=0, updated_idx=2, expected="-9"
+
+# Test all negative single digits (extra space).
+ncheck value=1, buffer_size=3, idx=0, updated_idx=2, expected="-1"
+ncheck value=2, buffer_size=3, idx=0, updated_idx=2, expected="-2"
+ncheck value=3, buffer_size=3, idx=0, updated_idx=2, expected="-3"
+ncheck value=4, buffer_size=3, idx=0, updated_idx=2, expected="-4"
+ncheck value=5, buffer_size=3, idx=0, updated_idx=2, expected="-5"
+ncheck value=6, buffer_size=3, idx=0, updated_idx=2, expected="-6"
+ncheck value=7, buffer_size=3, idx=0, updated_idx=2, expected="-7"
+ncheck value=8, buffer_size=3, idx=0, updated_idx=2, expected="-8"
+ncheck value=9, buffer_size=3, idx=0, updated_idx=2, expected="-9"
+
+# Test all negative single digits (offset 1).
+ncheck value=1, buffer_size=3, idx=1, updated_idx=3, expected="-1"
+ncheck value=2, buffer_size=3, idx=1, updated_idx=3, expected="-2"
+ncheck value=3, buffer_size=3, idx=1, updated_idx=3, expected="-3"
+ncheck value=4, buffer_size=3, idx=1, updated_idx=3, expected="-4"
+ncheck value=5, buffer_size=3, idx=1, updated_idx=3, expected="-5"
+ncheck value=6, buffer_size=3, idx=1, updated_idx=3, expected="-6"
+ncheck value=7, buffer_size=3, idx=1, updated_idx=3, expected="-7"
+ncheck value=8, buffer_size=3, idx=1, updated_idx=3, expected="-8"
+ncheck value=9, buffer_size=3, idx=1, updated_idx=3, expected="-9"
+
+# Test 2 digits (no space).
+ncheck value=10, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=19, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=20, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=29, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=30, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=39, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=40, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=49, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=50, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=59, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=60, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=69, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=70, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=79, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=80, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=89, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=90, buffer_size=0, idx=0, updated_idx=0, expected=""
+ncheck value=99, buffer_size=0, idx=0, updated_idx=0, expected=""
+
+# Test 2 digits (truncated at sign).
+ncheck value=10, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=19, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=20, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=29, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=30, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=39, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=40, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=49, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=50, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=59, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=60, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=69, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=70, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=79, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=80, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=89, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=90, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=99, buffer_size=1, idx=0, updated_idx=1, expected="-"
+
+# Test 2 digits (truncated).
+ncheck value=10, buffer_size=2, idx=0, updated_idx=2, expected="-1"
+ncheck value=19, buffer_size=2, idx=0, updated_idx=2, expected="-1"
+ncheck value=20, buffer_size=2, idx=0, updated_idx=2, expected="-2"
+ncheck value=29, buffer_size=2, idx=0, updated_idx=2, expected="-2"
+ncheck value=30, buffer_size=2, idx=0, updated_idx=2, expected="-3"
+ncheck value=39, buffer_size=2, idx=0, updated_idx=2, expected="-3"
+ncheck value=40, buffer_size=2, idx=0, updated_idx=2, expected="-4"
+ncheck value=49, buffer_size=2, idx=0, updated_idx=2, expected="-4"
+ncheck value=50, buffer_size=2, idx=0, updated_idx=2, expected="-5"
+ncheck value=59, buffer_size=2, idx=0, updated_idx=2, expected="-5"
+ncheck value=60, buffer_size=2, idx=0, updated_idx=2, expected="-6"
+ncheck value=69, buffer_size=2, idx=0, updated_idx=2, expected="-6"
+ncheck value=70, buffer_size=2, idx=0, updated_idx=2, expected="-7"
+ncheck value=79, buffer_size=2, idx=0, updated_idx=2, expected="-7"
+ncheck value=80, buffer_size=2, idx=0, updated_idx=2, expected="-8"
+ncheck value=89, buffer_size=2, idx=0, updated_idx=2, expected="-8"
+ncheck value=90, buffer_size=2, idx=0, updated_idx=2, expected="-9"
+ncheck value=99, buffer_size=2, idx=0, updated_idx=2, expected="-9"
+
+# Test 2 digits (exact space).
+ncheck value=10, buffer_size=3, idx=0, updated_idx=3, expected="-10"
+ncheck value=19, buffer_size=3, idx=0, updated_idx=3, expected="-19"
+ncheck value=20, buffer_size=3, idx=0, updated_idx=3, expected="-20"
+ncheck value=29, buffer_size=3, idx=0, updated_idx=3, expected="-29"
+ncheck value=30, buffer_size=3, idx=0, updated_idx=3, expected="-30"
+ncheck value=39, buffer_size=3, idx=0, updated_idx=3, expected="-39"
+ncheck value=40, buffer_size=3, idx=0, updated_idx=3, expected="-40"
+ncheck value=49, buffer_size=3, idx=0, updated_idx=3, expected="-49"
+ncheck value=50, buffer_size=3, idx=0, updated_idx=3, expected="-50"
+ncheck value=59, buffer_size=3, idx=0, updated_idx=3, expected="-59"
+ncheck value=60, buffer_size=3, idx=0, updated_idx=3, expected="-60"
+ncheck value=69, buffer_size=3, idx=0, updated_idx=3, expected="-69"
+ncheck value=70, buffer_size=3, idx=0, updated_idx=3, expected="-70"
+ncheck value=79, buffer_size=3, idx=0, updated_idx=3, expected="-79"
+ncheck value=80, buffer_size=3, idx=0, updated_idx=3, expected="-80"
+ncheck value=89, buffer_size=3, idx=0, updated_idx=3, expected="-89"
+ncheck value=90, buffer_size=3, idx=0, updated_idx=3, expected="-90"
+ncheck value=99, buffer_size=3, idx=0, updated_idx=3, expected="-99"
+
+# Test 2 digits (extra space).
+ncheck value=10, buffer_size=4, idx=0, updated_idx=3, expected="-10"
+ncheck value=19, buffer_size=4, idx=0, updated_idx=3, expected="-19"
+ncheck value=20, buffer_size=4, idx=0, updated_idx=3, expected="-20"
+ncheck value=29, buffer_size=4, idx=0, updated_idx=3, expected="-29"
+ncheck value=30, buffer_size=4, idx=0, updated_idx=3, expected="-30"
+ncheck value=39, buffer_size=4, idx=0, updated_idx=3, expected="-39"
+ncheck value=40, buffer_size=4, idx=0, updated_idx=3, expected="-40"
+ncheck value=49, buffer_size=4, idx=0, updated_idx=3, expected="-49"
+ncheck value=50, buffer_size=4, idx=0, updated_idx=3, expected="-50"
+ncheck value=59, buffer_size=4, idx=0, updated_idx=3, expected="-59"
+ncheck value=60, buffer_size=4, idx=0, updated_idx=3, expected="-60"
+ncheck value=69, buffer_size=4, idx=0, updated_idx=3, expected="-69"
+ncheck value=70, buffer_size=4, idx=0, updated_idx=3, expected="-70"
+ncheck value=79, buffer_size=4, idx=0, updated_idx=3, expected="-79"
+ncheck value=80, buffer_size=4, idx=0, updated_idx=3, expected="-80"
+ncheck value=89, buffer_size=4, idx=0, updated_idx=3, expected="-89"
+ncheck value=90, buffer_size=4, idx=0, updated_idx=3, expected="-90"
+ncheck value=99, buffer_size=4, idx=0, updated_idx=3, expected="-99"
+
+# Test 2 digits (offset 1).
+ncheck value=10, buffer_size=4, idx=1, updated_idx=4, expected="-10"
+ncheck value=19, buffer_size=4, idx=1, updated_idx=4, expected="-19"
+ncheck value=20, buffer_size=4, idx=1, updated_idx=4, expected="-20"
+ncheck value=29, buffer_size=4, idx=1, updated_idx=4, expected="-29"
+ncheck value=30, buffer_size=4, idx=1, updated_idx=4, expected="-30"
+ncheck value=39, buffer_size=4, idx=1, updated_idx=4, expected="-39"
+ncheck value=40, buffer_size=4, idx=1, updated_idx=4, expected="-40"
+ncheck value=49, buffer_size=4, idx=1, updated_idx=4, expected="-49"
+ncheck value=50, buffer_size=4, idx=1, updated_idx=4, expected="-50"
+ncheck value=59, buffer_size=4, idx=1, updated_idx=4, expected="-59"
+ncheck value=60, buffer_size=4, idx=1, updated_idx=4, expected="-60"
+ncheck value=69, buffer_size=4, idx=1, updated_idx=4, expected="-69"
+ncheck value=70, buffer_size=4, idx=1, updated_idx=4, expected="-70"
+ncheck value=79, buffer_size=4, idx=1, updated_idx=4, expected="-79"
+ncheck value=80, buffer_size=4, idx=1, updated_idx=4, expected="-80"
+ncheck value=89, buffer_size=4, idx=1, updated_idx=4, expected="-89"
+ncheck value=90, buffer_size=4, idx=1, updated_idx=4, expected="-90"
+ncheck value=99, buffer_size=4, idx=1, updated_idx=4, expected="-99"
+
+# Test 3 digits (exact space).
+ncheck value=150, buffer_size=4, idx=0, updated_idx=4, expected="-150"
+ncheck value=159, buffer_size=4, idx=0, updated_idx=4, expected="-159"
+ncheck value=250, buffer_size=4, idx=0, updated_idx=4, expected="-250"
+ncheck value=259, buffer_size=4, idx=0, updated_idx=4, expected="-259"
+ncheck value=350, buffer_size=4, idx=0, updated_idx=4, expected="-350"
+ncheck value=359, buffer_size=4, idx=0, updated_idx=4, expected="-359"
+ncheck value=450, buffer_size=4, idx=0, updated_idx=4, expected="-450"
+ncheck value=459, buffer_size=4, idx=0, updated_idx=4, expected="-459"
+ncheck value=550, buffer_size=4, idx=0, updated_idx=4, expected="-550"
+ncheck value=559, buffer_size=4, idx=0, updated_idx=4, expected="-559"
+ncheck value=650, buffer_size=4, idx=0, updated_idx=4, expected="-650"
+ncheck value=659, buffer_size=4, idx=0, updated_idx=4, expected="-659"
+ncheck value=750, buffer_size=4, idx=0, updated_idx=4, expected="-750"
+ncheck value=759, buffer_size=4, idx=0, updated_idx=4, expected="-759"
+ncheck value=850, buffer_size=4, idx=0, updated_idx=4, expected="-850"
+ncheck value=859, buffer_size=4, idx=0, updated_idx=4, expected="-859"
+ncheck value=950, buffer_size=4, idx=0, updated_idx=4, expected="-950"
+ncheck value=959, buffer_size=4, idx=0, updated_idx=4, expected="-959"
+
+# Maximum value (exact space).
+ncheck value=9223372036854775808, buffer_size=20, idx=0, updated_idx=20, expected="-9223372036854775808"
+
+# Maximum value (truncated).
+ncheck value=9223372036854775808, buffer_size=19, idx=0, updated_idx=19, expected="-922337203685477580"
+ncheck value=9223372036854775808, buffer_size=18, idx=0, updated_idx=18, expected="-92233720368547758"
+ncheck value=9223372036854775808, buffer_size=17, idx=0, updated_idx=17, expected="-9223372036854775"
+ncheck value=9223372036854775808, buffer_size=16, idx=0, updated_idx=16, expected="-922337203685477"
+ncheck value=9223372036854775808, buffer_size=15, idx=0, updated_idx=15, expected="-92233720368547"
+ncheck value=9223372036854775808, buffer_size=14, idx=0, updated_idx=14, expected="-9223372036854"
+ncheck value=9223372036854775808, buffer_size=13, idx=0, updated_idx=13, expected="-922337203685"
+ncheck value=9223372036854775808, buffer_size=12, idx=0, updated_idx=12, expected="-92233720368"
+ncheck value=9223372036854775808, buffer_size=11, idx=0, updated_idx=11, expected="-9223372036"
+ncheck value=9223372036854775808, buffer_size=10, idx=0, updated_idx=10, expected="-922337203"
+ncheck value=9223372036854775808, buffer_size=9, idx=0, updated_idx=9, expected="-92233720"
+ncheck value=9223372036854775808, buffer_size=8, idx=0, updated_idx=8, expected="-9223372"
+ncheck value=9223372036854775808, buffer_size=7, idx=0, updated_idx=7, expected="-922337"
+ncheck value=9223372036854775808, buffer_size=6, idx=0, updated_idx=6, expected="-92233"
+ncheck value=9223372036854775808, buffer_size=5, idx=0, updated_idx=5, expected="-9223"
+ncheck value=9223372036854775808, buffer_size=4, idx=0, updated_idx=4, expected="-922"
+ncheck value=9223372036854775808, buffer_size=3, idx=0, updated_idx=3, expected="-92"
+ncheck value=9223372036854775808, buffer_size=2, idx=0, updated_idx=2, expected="-9"
+ncheck value=9223372036854775808, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=9223372036854775808, buffer_size=0, idx=0, updated_idx=0, expected=""
+
+# Maximum value (offset, truncation in all but first).
+ncheck value=9223372036854775808, buffer_size=21, idx=1, updated_idx=21, expected="-9223372036854775808"
+ncheck value=9223372036854775808, buffer_size=20, idx=1, updated_idx=20, expected="-922337203685477580"
+ncheck value=9223372036854775808, buffer_size=19, idx=1, updated_idx=19, expected="-92233720368547758"
+ncheck value=9223372036854775808, buffer_size=18, idx=1, updated_idx=18, expected="-9223372036854775"
+ncheck value=9223372036854775808, buffer_size=17, idx=1, updated_idx=17, expected="-922337203685477"
+ncheck value=9223372036854775808, buffer_size=16, idx=1, updated_idx=16, expected="-92233720368547"
+ncheck value=9223372036854775808, buffer_size=15, idx=1, updated_idx=15, expected="-9223372036854"
+ncheck value=9223372036854775808, buffer_size=14, idx=1, updated_idx=14, expected="-922337203685"
+ncheck value=9223372036854775808, buffer_size=13, idx=1, updated_idx=13, expected="-92233720368"
+ncheck value=9223372036854775808, buffer_size=12, idx=1, updated_idx=12, expected="-9223372036"
+ncheck value=9223372036854775808, buffer_size=11, idx=1, updated_idx=11, expected="-922337203"
+ncheck value=9223372036854775808, buffer_size=10, idx=1, updated_idx=10, expected="-92233720"
+ncheck value=9223372036854775808, buffer_size=9, idx=1, updated_idx=9, expected="-9223372"
+ncheck value=9223372036854775808, buffer_size=8, idx=1, updated_idx=8, expected="-922337"
+ncheck value=9223372036854775808, buffer_size=7, idx=1, updated_idx=7, expected="-92233"
+ncheck value=9223372036854775808, buffer_size=6, idx=1, updated_idx=6, expected="-9223"
+ncheck value=9223372036854775808, buffer_size=5, idx=1, updated_idx=5, expected="-922"
+ncheck value=9223372036854775808, buffer_size=4, idx=1, updated_idx=4, expected="-92"
+ncheck value=9223372036854775808, buffer_size=3, idx=1, updated_idx=3, expected="-9"
+ncheck value=9223372036854775808, buffer_size=2, idx=1, updated_idx=2, expected="-"
+ncheck value=9223372036854775808, buffer_size=1, idx=1, updated_idx=1, expected=""
