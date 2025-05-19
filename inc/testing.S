@@ -41,17 +41,17 @@ testing_state:
 # See https://sourceware.org/binutils/docs/as/Section.html
 .section .test_cases, "aMR", @progbits, test_case_entry_size
 .p2align 3
-.8byte test_\t
-.8byte test_\t\()_name_size
-.8byte test_\t\()_name_data
+.8byte "test_\t"
+.8byte "test_\t\()_name_size"
+.8byte "test_\t\()_name_data"
 
 .section .rodata
 test_\t\()_name_data:
 .ascii "\t"
-.equiv test_\t\()_name_size , . - test_\t\()_name_data
+.equiv "test_\t\()_name_size" , . - "test_\t\()_name_data"
 
 .section .text
-test_\t:
+"test_\t":
 	.cfi_startproc
 .endm
 
@@ -130,7 +130,7 @@ test_\t:
 	sd t5, "testing_state.spill_1"(tp)
 	ld t6, "testing_state.test_failed"(tp)
 
-	la t5, \expected
+	la t5, "\expected"
 	sub t5, t5, \actual
 	or t6, t6, t5
 

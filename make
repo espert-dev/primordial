@@ -236,6 +236,7 @@ assemble lib/p0/ascii/ascii.S
 assemble lib/p0/mem/clone.S
 assemble lib/p0/mem/copy.S
 assemble lib/p0/forever/allocate.S
+assemble lib/p0/format/signed.S
 assemble lib/p0/format/unsigned.S
 assemble lib/p0/io/write.S
 assemble lib/p0/os/exit.S
@@ -247,6 +248,7 @@ assemble lib/p0/strintern/strintern.S
 build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/ascii/ascii.o" \
 	"$BUILD_ROOT/lib/p0/forever/allocate.o" \
+	"$BUILD_ROOT/lib/p0/format/signed.o" \
 	"$BUILD_ROOT/lib/p0/format/unsigned.o" \
 	"$BUILD_ROOT/lib/p0/io/write.o" \
 	"$BUILD_ROOT/lib/p0/os/exit.o" \
@@ -262,6 +264,9 @@ with_test lib/p0/ascii/ascii_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/forever/allocate_test \
+	"$BUILD_ROOT/lib/libp0.a"
+
+with_test lib/p0/format/signed_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/format/unsigned_test \

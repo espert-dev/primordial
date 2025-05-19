@@ -1,5 +1,5 @@
 # ===========================================================================
-# String formatting tests - Unsigned integer
+# String formatting tests - Signed integer
 # ===========================================================================
 
 #include <io.S>
@@ -33,35 +33,35 @@ safe_str quote_end, "\"\n"
 	# risk of buffer overruns affecting other test cases.
 	.section .bss
 	.p2align 3
-	.lcomm Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data, 32
+	.lcomm "Signed_\value\()_\buffer_size\()_\idx\()_buffer_data", 32
 
 	.section .rodata
 	.p2align 3
-	safe_str Unsigned_\value\()_\buffer_size\()_\idx\()_expected, "\expected"
+	safe_str "Signed_\value\()_\buffer_size\()_\idx\()_expected", "\expected"
 
 	.section .text
-	test_case Unsigned_\value\()_\buffer_size\()_\idx
+	test_case "Signed_\value\()_\buffer_size\()_\idx"
 		save_4
 
 		# Call function under test.
 		la a0, \buffer_size
-		la a1, Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data
+		la a1, "Signed_\value\()_\buffer_size\()_\idx\()_buffer_data"
 		li a2, \idx
 		li a3, \value
-		call "format.Unsigned"
+		call "format.Signed"
 
 		# Check invariants (buffer data pointer and size).
 		expect_eqi \buffer_size, a0
-		expect_eqa Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data, a1
+		expect_eqa "Signed_\value\()_\buffer_size\()_\idx\()_buffer_data", a1
 
 		# Check that the buffer index has been updated.
 		expect_eqi \updated_idx, a2
 
 		# Check that the string representation is as expected.
-		li s1, Unsigned_\value\()_\buffer_size\()_\idx\()_expected_size
-		la s2, Unsigned_\value\()_\buffer_size\()_\idx\()_expected_data
+		li s1, "Signed_\value\()_\buffer_size\()_\idx\()_expected_size"
+		la s2, "Signed_\value\()_\buffer_size\()_\idx\()_expected_data"
 		li s3, \updated_idx - \idx
-		la s4, Unsigned_\value\()_\buffer_size\()_\idx\()_buffer_data + \idx
+		la s4, "Signed_\value\()_\buffer_size\()_\idx\()_buffer_data" + \idx
 
 		mv a0, s1
 		mv a1, s2
@@ -71,7 +71,7 @@ safe_str quote_end, "\"\n"
 		expect_eqi 1, a0
 
 		ld t0, "testing_state.test_failed"(tp)
-		beqz t0, .LUnsigned_\value\()_\buffer_size\()_\idx\().end
+		beqz t0, ".LSigned_\value\()_\buffer_size\()_\idx\().end"
 
 		li a0, STDLOG
 		li a1, expected_label_size
@@ -113,7 +113,7 @@ safe_str quote_end, "\"\n"
 		la a2, quote_end_data
 		call "io.Write"
 
-	.LUnsigned_\value\()_\buffer_size\()_\idx\().end:
+	".LSigned_\value\()_\buffer_size\()_\idx\().end":
 		restore_4
 	end_test
 .endm
@@ -125,7 +125,7 @@ safe_str quote_end, "\"\n"
 
 .section .text
 
-test_case Unsigned_does_not_write_to_nil_output
+test_case Signed_does_not_write_to_nil_output
 	save_0
 
 	li a0, nil_size
@@ -134,7 +134,7 @@ test_case Unsigned_does_not_write_to_nil_output
 	li a3, 0
 
 	# May fault on failure.
-	call "format.Unsigned"
+	call "format.Signed"
 	expect_eqi nil_size, a0
 	expect_eqi nil_data, a1
 	expect_eqi 0, a2
@@ -142,7 +142,7 @@ test_case Unsigned_does_not_write_to_nil_output
 	restore_0
 end_test
 
-# Test all single digits (no space).
+# Test all positive single digits (no space).
 check value=0, buffer_size=0, idx=0, updated_idx=0, expected=""
 check value=1, buffer_size=0, idx=0, updated_idx=0, expected=""
 check value=2, buffer_size=0, idx=0, updated_idx=0, expected=""
@@ -154,7 +154,7 @@ check value=7, buffer_size=0, idx=0, updated_idx=0, expected=""
 check value=8, buffer_size=0, idx=0, updated_idx=0, expected=""
 check value=9, buffer_size=0, idx=0, updated_idx=0, expected=""
 
-# Test all single digits (exact space).
+# Test all positive single digits (exact space).
 check value=0, buffer_size=1, idx=0, updated_idx=1, expected="0"
 check value=1, buffer_size=1, idx=0, updated_idx=1, expected="1"
 check value=2, buffer_size=1, idx=0, updated_idx=1, expected="2"
@@ -166,7 +166,7 @@ check value=7, buffer_size=1, idx=0, updated_idx=1, expected="7"
 check value=8, buffer_size=1, idx=0, updated_idx=1, expected="8"
 check value=9, buffer_size=1, idx=0, updated_idx=1, expected="9"
 
-# Test all single digits (extra space).
+# Test all positive single digits (extra space).
 check value=0, buffer_size=2, idx=0, updated_idx=1, expected="0"
 check value=1, buffer_size=2, idx=0, updated_idx=1, expected="1"
 check value=2, buffer_size=2, idx=0, updated_idx=1, expected="2"
@@ -178,7 +178,7 @@ check value=7, buffer_size=2, idx=0, updated_idx=1, expected="7"
 check value=8, buffer_size=2, idx=0, updated_idx=1, expected="8"
 check value=9, buffer_size=2, idx=0, updated_idx=1, expected="9"
 
-# Test all single digits (offset 1).
+# Test all positive single digits (offset 1).
 check value=0, buffer_size=2, idx=1, updated_idx=2, expected="0"
 check value=1, buffer_size=2, idx=1, updated_idx=2, expected="1"
 check value=2, buffer_size=2, idx=1, updated_idx=2, expected="2"
@@ -189,6 +189,7 @@ check value=6, buffer_size=2, idx=1, updated_idx=2, expected="6"
 check value=7, buffer_size=2, idx=1, updated_idx=2, expected="7"
 check value=8, buffer_size=2, idx=1, updated_idx=2, expected="8"
 check value=9, buffer_size=2, idx=1, updated_idx=2, expected="9"
+
 
 # Test 2 digits (no space).
 check value=10, buffer_size=0, idx=0, updated_idx=0, expected=""
@@ -311,49 +312,47 @@ check value=950, buffer_size=3, idx=0, updated_idx=3, expected="950"
 check value=959, buffer_size=3, idx=0, updated_idx=3, expected="959"
 
 # Maximum value (exact space).
-check value=18446744073709551615, buffer_size=20, idx=0, updated_idx=20, expected="18446744073709551615"
+check value=9223372036854775807, buffer_size=19, idx=0, updated_idx=19, expected="9223372036854775807"
 
 # Maximum value (truncated).
-check value=18446744073709551615, buffer_size=19, idx=0, updated_idx=19, expected="1844674407370955161"
-check value=18446744073709551615, buffer_size=18, idx=0, updated_idx=18, expected="184467440737095516"
-check value=18446744073709551615, buffer_size=17, idx=0, updated_idx=17, expected="18446744073709551"
-check value=18446744073709551615, buffer_size=16, idx=0, updated_idx=16, expected="1844674407370955"
-check value=18446744073709551615, buffer_size=15, idx=0, updated_idx=15, expected="184467440737095"
-check value=18446744073709551615, buffer_size=14, idx=0, updated_idx=14, expected="18446744073709"
-check value=18446744073709551615, buffer_size=13, idx=0, updated_idx=13, expected="1844674407370"
-check value=18446744073709551615, buffer_size=12, idx=0, updated_idx=12, expected="184467440737"
-check value=18446744073709551615, buffer_size=11, idx=0, updated_idx=11, expected="18446744073"
-check value=18446744073709551615, buffer_size=10, idx=0, updated_idx=10, expected="1844674407"
-check value=18446744073709551615, buffer_size=9, idx=0, updated_idx=9, expected="184467440"
-check value=18446744073709551615, buffer_size=8, idx=0, updated_idx=8, expected="18446744"
-check value=18446744073709551615, buffer_size=7, idx=0, updated_idx=7, expected="1844674"
-check value=18446744073709551615, buffer_size=6, idx=0, updated_idx=6, expected="184467"
-check value=18446744073709551615, buffer_size=5, idx=0, updated_idx=5, expected="18446"
-check value=18446744073709551615, buffer_size=4, idx=0, updated_idx=4, expected="1844"
-check value=18446744073709551615, buffer_size=3, idx=0, updated_idx=3, expected="184"
-check value=18446744073709551615, buffer_size=2, idx=0, updated_idx=2, expected="18"
-check value=18446744073709551615, buffer_size=1, idx=0, updated_idx=1, expected="1"
-check value=18446744073709551615, buffer_size=0, idx=0, updated_idx=0, expected=""
+check value=9223372036854775807, buffer_size=18, idx=0, updated_idx=18, expected="922337203685477580"
+check value=9223372036854775807, buffer_size=17, idx=0, updated_idx=17, expected="92233720368547758"
+check value=9223372036854775807, buffer_size=16, idx=0, updated_idx=16, expected="9223372036854775"
+check value=9223372036854775807, buffer_size=15, idx=0, updated_idx=15, expected="922337203685477"
+check value=9223372036854775807, buffer_size=14, idx=0, updated_idx=14, expected="92233720368547"
+check value=9223372036854775807, buffer_size=13, idx=0, updated_idx=13, expected="9223372036854"
+check value=9223372036854775807, buffer_size=12, idx=0, updated_idx=12, expected="922337203685"
+check value=9223372036854775807, buffer_size=11, idx=0, updated_idx=11, expected="92233720368"
+check value=9223372036854775807, buffer_size=10, idx=0, updated_idx=10, expected="9223372036"
+check value=9223372036854775807, buffer_size=9, idx=0, updated_idx=9, expected="922337203"
+check value=9223372036854775807, buffer_size=8, idx=0, updated_idx=8, expected="92233720"
+check value=9223372036854775807, buffer_size=7, idx=0, updated_idx=7, expected="9223372"
+check value=9223372036854775807, buffer_size=6, idx=0, updated_idx=6, expected="922337"
+check value=9223372036854775807, buffer_size=5, idx=0, updated_idx=5, expected="92233"
+check value=9223372036854775807, buffer_size=4, idx=0, updated_idx=4, expected="9223"
+check value=9223372036854775807, buffer_size=3, idx=0, updated_idx=3, expected="922"
+check value=9223372036854775807, buffer_size=2, idx=0, updated_idx=2, expected="92"
+check value=9223372036854775807, buffer_size=1, idx=0, updated_idx=1, expected="9"
+check value=9223372036854775807, buffer_size=0, idx=0, updated_idx=0, expected=""
 
 # Maximum value (offset, truncation in all but first).
-check value=18446744073709551615, buffer_size=21, idx=1, updated_idx=21, expected="18446744073709551615"
-check value=18446744073709551615, buffer_size=20, idx=1, updated_idx=20, expected="1844674407370955161"
-check value=18446744073709551615, buffer_size=19, idx=1, updated_idx=19, expected="184467440737095516"
-check value=18446744073709551615, buffer_size=18, idx=1, updated_idx=18, expected="18446744073709551"
-check value=18446744073709551615, buffer_size=17, idx=1, updated_idx=17, expected="1844674407370955"
-check value=18446744073709551615, buffer_size=16, idx=1, updated_idx=16, expected="184467440737095"
-check value=18446744073709551615, buffer_size=15, idx=1, updated_idx=15, expected="18446744073709"
-check value=18446744073709551615, buffer_size=14, idx=1, updated_idx=14, expected="1844674407370"
-check value=18446744073709551615, buffer_size=13, idx=1, updated_idx=13, expected="184467440737"
-check value=18446744073709551615, buffer_size=12, idx=1, updated_idx=12, expected="18446744073"
-check value=18446744073709551615, buffer_size=11, idx=1, updated_idx=11, expected="1844674407"
-check value=18446744073709551615, buffer_size=10, idx=1, updated_idx=10, expected="184467440"
-check value=18446744073709551615, buffer_size=9, idx=1, updated_idx=9, expected="18446744"
-check value=18446744073709551615, buffer_size=8, idx=1, updated_idx=8, expected="1844674"
-check value=18446744073709551615, buffer_size=7, idx=1, updated_idx=7, expected="184467"
-check value=18446744073709551615, buffer_size=6, idx=1, updated_idx=6, expected="18446"
-check value=18446744073709551615, buffer_size=5, idx=1, updated_idx=5, expected="1844"
-check value=18446744073709551615, buffer_size=4, idx=1, updated_idx=4, expected="184"
-check value=18446744073709551615, buffer_size=3, idx=1, updated_idx=3, expected="18"
-check value=18446744073709551615, buffer_size=2, idx=1, updated_idx=2, expected="1"
-check value=18446744073709551615, buffer_size=1, idx=1, updated_idx=1, expected=""
+check value=9223372036854775807, buffer_size=20, idx=1, updated_idx=20, expected="9223372036854775807"
+check value=9223372036854775807, buffer_size=19, idx=1, updated_idx=19, expected="922337203685477580"
+check value=9223372036854775807, buffer_size=18, idx=1, updated_idx=18, expected="92233720368547758"
+check value=9223372036854775807, buffer_size=17, idx=1, updated_idx=17, expected="9223372036854775"
+check value=9223372036854775807, buffer_size=16, idx=1, updated_idx=16, expected="922337203685477"
+check value=9223372036854775807, buffer_size=15, idx=1, updated_idx=15, expected="92233720368547"
+check value=9223372036854775807, buffer_size=14, idx=1, updated_idx=14, expected="9223372036854"
+check value=9223372036854775807, buffer_size=13, idx=1, updated_idx=13, expected="922337203685"
+check value=9223372036854775807, buffer_size=12, idx=1, updated_idx=12, expected="92233720368"
+check value=9223372036854775807, buffer_size=11, idx=1, updated_idx=11, expected="9223372036"
+check value=9223372036854775807, buffer_size=10, idx=1, updated_idx=10, expected="922337203"
+check value=9223372036854775807, buffer_size=9, idx=1, updated_idx=9, expected="92233720"
+check value=9223372036854775807, buffer_size=8, idx=1, updated_idx=8, expected="9223372"
+check value=9223372036854775807, buffer_size=7, idx=1, updated_idx=7, expected="922337"
+check value=9223372036854775807, buffer_size=6, idx=1, updated_idx=6, expected="92233"
+check value=9223372036854775807, buffer_size=5, idx=1, updated_idx=5, expected="9223"
+check value=9223372036854775807, buffer_size=4, idx=1, updated_idx=4, expected="922"
+check value=9223372036854775807, buffer_size=3, idx=1, updated_idx=3, expected="92"
+check value=9223372036854775807, buffer_size=2, idx=1, updated_idx=2, expected="9"
+check value=9223372036854775807, buffer_size=1, idx=1, updated_idx=1, expected=""
