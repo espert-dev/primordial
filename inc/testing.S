@@ -60,14 +60,6 @@ test_\t:
 	.cfi_endproc
 .endm
 
-# Run a test case. Call from within a test suite.
-.macro run_test t
-	la a0, test_\t
-	li a2, test_\t\()_name_size
-	la a1, test_\t\()_name_data
-	call run_test
-.endm
-
 
 # ===========================================================================
 # Assertions
