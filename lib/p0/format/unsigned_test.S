@@ -335,7 +335,6 @@ check value=18446744073709551615, buffer_size=2, idx=0, updated_idx=2, expected=
 check value=18446744073709551615, buffer_size=1, idx=0, updated_idx=1, expected="1"
 check value=18446744073709551615, buffer_size=0, idx=0, updated_idx=0, expected=""
 
-
 # Maximum value (offset, truncation in all but first).
 check value=18446744073709551615, buffer_size=21, idx=1, updated_idx=21, expected="18446744073709551615"
 check value=18446744073709551615, buffer_size=20, idx=1, updated_idx=20, expected="1844674407370955161"
