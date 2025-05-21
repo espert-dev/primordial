@@ -61,11 +61,11 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	.cfi_startproc
 
 	# Optimisation: no-op if the buffer is full.
-	bge a2, a0, .LUnsigned.BufferFull
+	bge out_idx, out_size, .LUnsigned.BufferFull
 
 	# Sanity checks.
-	bltz a0, .LUnsigned.Panic.NegativeBufferSize
-	bltz a2, .LUnsigned.Panic.NegativeBufferPos
+	bltz out_size, .LUnsigned.Panic.NegativeBufferSize
+	bltz out_idx, .LUnsigned.Panic.NegativeBufferPos
 
 	# The digit extraction algorithm returns the digits in reverse order
 	# to what we want to print. We store them in a temporary buffer and
