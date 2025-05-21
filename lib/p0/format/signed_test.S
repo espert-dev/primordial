@@ -47,7 +47,7 @@ safe_str quote_end, "\"\n"
 		save_4
 
 		# Call function under test.
-		la a0, \buffer_size
+		li a0, \buffer_size
 		la a1, "\name\()_buffer_data"
 		li a2, \idx
 		li a3, \value
