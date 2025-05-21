@@ -37,17 +37,23 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 #   a2 out_idx:  Output buffer updated index
 .global "format.Signed"
 "format.Signed":
+	# Arguments.
+	#define out_size a0
+	#define out_data a1
+	#define out_idx  a2
+	#define value    a3
+
 	.cfi_startproc
 
 	# Optimisation: no-op if the buffer is full.
-	bge a2, a0, .LSigned.BufferFull
+	bge out_idx, out_size, .LSigned.BufferFull
 
 	# Sanity checks.
-	bltz a0, .LSigned.Panic.NegativeBufferSize
-	bltz a2, .LSigned.Panic.NegativeBufferPos
+	bltz out_size, .LSigned.Panic.NegativeBufferSize
+	bltz out_idx, .LSigned.Panic.NegativeBufferPos
 
 	# Sign check.
-	bltz a3, .LSigned.Negative
+	bltz value, .LSigned.Negative
 
 .LSigned.Positive:
 	# Positive numbers can be formatted as unsigned numbers.
@@ -57,10 +63,10 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	# Write a minus sign and negate the number to make it positive,
 	# then print it as an unsigned number.
 	li t0, '-'
-	add t1, a1, a2
+	add t1, out_data, out_idx
 	sb t0, 0(t1)
-	addi a2, a2, 1
-	sub a3, zero, a3
+	addi out_idx, out_idx, 1
+	sub value, zero, value
 	tail "format.Unsigned"
 
 .LSigned.BufferFull:
