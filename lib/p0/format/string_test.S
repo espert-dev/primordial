@@ -33,18 +33,15 @@ safe_str empty_string, ""
 	# risk of buffer overruns affecting other test cases.
 	.section .bss
 	.p2align 3
-	.lcomm String_\value\()_\buffer_size\()_\idx\()_buffer_data, 32
+	.lcomm "String_\value\()_\buffer_size\()_\idx\()_buffer_data", 32
 
 	.section .rodata
 	.p2align 3
-	safe_str String_\value\()_\buffer_size\()_\idx\()_input, "\value"
-
-	.section .rodata
-	.p2align 3
-	safe_str String_\value\()_\buffer_size\()_\idx\()_expected, "\expected"
+	safe_str "String_\value\()_\buffer_size\()_\idx\()_input", "\value"
+	safe_str "String_\value\()_\buffer_size\()_\idx\()_expected", "\expected"
 
 	.section .text
-	test_case String_\value\()_\buffer_size\()_\idx
+	test_case "String_\value\()_\buffer_size\()_\idx"
 		save_4
 
 		# Call function under test.
@@ -57,16 +54,16 @@ safe_str empty_string, ""
 
 		# Check invariants (buffer data pointer and size).
 		expect_eqi \buffer_size, a0
-		expect_eqa String_\value\()_\buffer_size\()_\idx\()_buffer_data, a1
+		expect_eqa "String_\value\()_\buffer_size\()_\idx\()_buffer_data", a1
 
 		# Check that the buffer index has been updated.
 		expect_eqi \updated_idx, a2
 
 		# Check that the string representation is as expected.
-		li s1, String_\value\()_\buffer_size\()_\idx\()_expected_size
-		la s2, String_\value\()_\buffer_size\()_\idx\()_expected_data
+		li s1, "String_\value\()_\buffer_size\()_\idx\()_expected_size"
+		la s2, "String_\value\()_\buffer_size\()_\idx\()_expected_data"
 		li s3, \updated_idx - \idx
-		la s4, String_\value\()_\buffer_size\()_\idx\()_buffer_data + \idx
+		la s4, "String_\value\()_\buffer_size\()_\idx\()_buffer_data" + \idx
 
 		mv a0, s1
 		mv a1, s2
@@ -76,7 +73,7 @@ safe_str empty_string, ""
 		expect_eqi 1, a0
 
 		ld t0, "testing_state.test_failed"(tp)
-		beqz t0, .LString_\value\()_\buffer_size\()_\idx\().end
+		beqz t0, ".LString_\value\()_\buffer_size\()_\idx\().end"
 
 		li a0, STDLOG
 		li a1, expected_label_size
@@ -118,7 +115,7 @@ safe_str empty_string, ""
 		la a2, quote_end_data
 		call "io.Write"
 
-	.LString_\value\()_\buffer_size\()_\idx\().end:
+	".LString_\value\()_\buffer_size\()_\idx\().end":
 		restore_4
 	end_test
 .endm
@@ -153,3 +150,23 @@ check value="", buffer_size=0, idx=0, updated_idx=0, expected=""
 check value="a", buffer_size=1, idx=0, updated_idx=1, expected="a"
 check value="ab", buffer_size=2, idx=0, updated_idx=2, expected="ab"
 check value="abc", buffer_size=3, idx=0, updated_idx=3, expected="abc"
+check value="abcd", buffer_size=4, idx=0, updated_idx=4, expected="abcd"
+
+# Trucation.
+check value="a", buffer_size=0, idx=0, updated_idx=0, expected=""
+check value="ab", buffer_size=1, idx=0, updated_idx=1, expected="a"
+check value="abc", buffer_size=2, idx=0, updated_idx=2, expected="ab"
+check value="abcd", buffer_size=3, idx=0, updated_idx=3, expected="abc"
+
+# Offset 1.
+check value="", buffer_size=1, idx=1, updated_idx=1, expected=""
+check value="a", buffer_size=2, idx=1, updated_idx=2, expected="a"
+check value="ab", buffer_size=3, idx=1, updated_idx=3, expected="ab"
+check value="abc", buffer_size=4, idx=1, updated_idx=4, expected="abc"
+check value="abcd", buffer_size=5, idx=1, updated_idx=5, expected="abcd"
+
+# Offset and truncation.
+check value="a", buffer_size=1, idx=1, updated_idx=1, expected=""
+check value="ab", buffer_size=2, idx=1, updated_idx=2, expected="a"
+check value="abc", buffer_size=3, idx=1, updated_idx=3, expected="ab"
+check value="abcd", buffer_size=4, idx=1, updated_idx=4, expected="abc"

@@ -63,13 +63,11 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	bltz out_idx, .LString.Panic.NegativeBufferPos
 
 .LString.MinLength:
-	# min(value_size, out_size - out_idx)
-	sub out_end, out_size, out_idx
-	blt out_end, value_size, .LString.Prepare
-	mv out_end, value_size
+	add out_end, out_idx, value_size
+	blt out_end, out_size, .LString.Prepare
+	mv out_end, out_size
 
 .LString.Prepare:
-	# out_end = out_data + min(value_size, out_size - out_idx)
 	add out_end, out_end, out_data
 	add out_ptr, out_data, out_idx
 	mv value_ptr, value_data
