@@ -59,8 +59,8 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 
 .LString.SanityCheck:
 	# Sanity checks.
-	bltz out_size, .LSigned.Panic.NegativeBufferSize
-	bltz out_idx, .LSigned.Panic.NegativeBufferPos
+	bltz out_size, .LString.Panic.NegativeBufferSize
+	bltz out_idx, .LString.Panic.NegativeBufferPos
 
 .LString.MinLength:
 	# min(value_size, out_size - out_idx)
@@ -86,7 +86,7 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	sub out_idx, out_end, out_data
 	ret
 
-.LSigned.Panic.NegativeBufferSize:
+.LString.Panic.NegativeBufferSize:
 	# This will have to do until we have a better panic handler.
 	li a0, STDLOG
 	li a1, negative_buffer_size_panic_size
@@ -96,7 +96,7 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 	li a0, 1
 	call "os.Exit"
 
-.LSigned.Panic.NegativeBufferPos:
+.LString.Panic.NegativeBufferPos:
 	# This will have to do until we have a better panic handler.
 	li a0, STDLOG
 	li a1, negative_buffer_pos_panic_size
