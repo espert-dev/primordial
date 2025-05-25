@@ -39,6 +39,7 @@
 #      not break the scanning of older source files.
 # ===========================================================================
 
+#include <compat.S>
 #include <millicode.S>
 #include <safe_str.S>
 #include <slice.S>
@@ -145,16 +146,16 @@ safe_str operator_chars, "!%&*+-./:<=>?@^|~"
 	la scanner_ptr, scanner
 
 	# Store the start position.
-	sd a0, Scanner.pos(scanner_ptr)
+	sw a0, Scanner.pos(scanner_ptr)
 
 	# Store the end pointer to simplify checking for EOF.
 	add a1, a1, a0
-	sd a1, Scanner.end(scanner_ptr)
+	sw a1, Scanner.end(scanner_ptr)
 
 	# Initialize line:column.
 	li t0, 1
-	sd t0, Scanner.line(scanner_ptr)
-	sd t0, Scanner.column(scanner_ptr)
+	sw t0, Scanner.line(scanner_ptr)
+	sw t0, Scanner.column(scanner_ptr)
 
 	ret
 	.cfi_endproc
@@ -197,10 +198,10 @@ safe_str operator_chars, "!%&*+-./:<=>?@^|~"
 
 	# Load global state.
 	la scanner_ptr, scanner
-	ld pos, "Scanner.pos"(scanner_ptr)
-	ld end, "Scanner.end"(scanner_ptr)
-	ld line, "Scanner.line"(scanner_ptr)
-	ld column, "Scanner.column"(scanner_ptr)
+	lx pos, "Scanner.pos"(scanner_ptr)
+	lx end, "Scanner.end"(scanner_ptr)
+	lx line, "Scanner.line"(scanner_ptr)
+	lx column, "Scanner.column"(scanner_ptr)
 
 	# Load the current character once instead of in every iteration,
 	# even if we need to repeat the EOF guard.
@@ -256,9 +257,9 @@ safe_str operator_chars, "!%&*+-./:<=>?@^|~"
 	la scanner_ptr, scanner
 
 	# Persist global state.
-	sd pos, "Scanner.pos"(scanner_ptr)
-	sd line, "Scanner.line"(scanner_ptr)
-	sd column, "Scanner.column"(scanner_ptr)
+	sw pos, "Scanner.pos"(scanner_ptr)
+	sw line, "Scanner.line"(scanner_ptr)
+	sw column, "Scanner.column"(scanner_ptr)
 
 	restore_10
 

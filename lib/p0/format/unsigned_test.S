@@ -2,6 +2,7 @@
 # String formatting tests - Unsigned integer
 # ===========================================================================
 
+#include <compat.S>
 #include <io.S>
 #include <millicode.S>
 #include <safe_str.S>
@@ -70,7 +71,7 @@ safe_str quote_end, "\"\n"
 		call "mem.Eq"
 		expect_eqi 1, a0
 
-		ld t0, "testing_state.test_failed"(tp)
+		lx t0, "testing_state.test_failed"(tp)
 		beqz t0, .LUnsigned_\value\()_\buffer_size\()_\idx\().end
 
 		li a0, STDLOG
@@ -310,10 +311,40 @@ check value=859, buffer_size=3, idx=0, updated_idx=3, expected="859"
 check value=950, buffer_size=3, idx=0, updated_idx=3, expected="950"
 check value=959, buffer_size=3, idx=0, updated_idx=3, expected="959"
 
-# Maximum value (exact space).
+# Maximum value in 32-bit (exact space).
+check value=4294967295, buffer_size=10, idx=0, updated_idx=10, expected="4294967295"
+
+# Maximum value in 32-bit (truncated).
+check value=4294967295, buffer_size=9, idx=0, updated_idx=9, expected="429496729"
+check value=4294967295, buffer_size=8, idx=0, updated_idx=8, expected="42949672"
+check value=4294967295, buffer_size=7, idx=0, updated_idx=7, expected="4294967"
+check value=4294967295, buffer_size=6, idx=0, updated_idx=6, expected="429496"
+check value=4294967295, buffer_size=5, idx=0, updated_idx=5, expected="42949"
+check value=4294967295, buffer_size=4, idx=0, updated_idx=4, expected="4294"
+check value=4294967295, buffer_size=3, idx=0, updated_idx=3, expected="429"
+check value=4294967295, buffer_size=2, idx=0, updated_idx=2, expected="42"
+check value=4294967295, buffer_size=1, idx=0, updated_idx=1, expected="4"
+check value=4294967295, buffer_size=0, idx=0, updated_idx=0, expected=""
+
+# Maximum value in 32-bit (offset, truncation in all but first).
+check value=4294967295, buffer_size=11, idx=1, updated_idx=11, expected="4294967295"
+check value=4294967295, buffer_size=10, idx=1, updated_idx=10, expected="429496729"
+check value=4294967295, buffer_size=9, idx=1, updated_idx=9, expected="42949672"
+check value=4294967295, buffer_size=8, idx=1, updated_idx=8, expected="4294967"
+check value=4294967295, buffer_size=7, idx=1, updated_idx=7, expected="429496"
+check value=4294967295, buffer_size=6, idx=1, updated_idx=6, expected="42949"
+check value=4294967295, buffer_size=5, idx=1, updated_idx=5, expected="4294"
+check value=4294967295, buffer_size=4, idx=1, updated_idx=4, expected="429"
+check value=4294967295, buffer_size=3, idx=1, updated_idx=3, expected="42"
+check value=4294967295, buffer_size=2, idx=1, updated_idx=2, expected="4"
+check value=4294967295, buffer_size=1, idx=1, updated_idx=1, expected=""
+
+#if XLEN >= 64
+
+# Maximum value in 64-bit (exact space).
 check value=18446744073709551615, buffer_size=20, idx=0, updated_idx=20, expected="18446744073709551615"
 
-# Maximum value (truncated).
+# Maximum value in 64-bit (truncated).
 check value=18446744073709551615, buffer_size=19, idx=0, updated_idx=19, expected="1844674407370955161"
 check value=18446744073709551615, buffer_size=18, idx=0, updated_idx=18, expected="184467440737095516"
 check value=18446744073709551615, buffer_size=17, idx=0, updated_idx=17, expected="18446744073709551"
@@ -335,7 +366,7 @@ check value=18446744073709551615, buffer_size=2, idx=0, updated_idx=2, expected=
 check value=18446744073709551615, buffer_size=1, idx=0, updated_idx=1, expected="1"
 check value=18446744073709551615, buffer_size=0, idx=0, updated_idx=0, expected=""
 
-# Maximum value (offset, truncation in all but first).
+# Maximum value in 64-bit (offset, truncation in all but first).
 check value=18446744073709551615, buffer_size=21, idx=1, updated_idx=21, expected="18446744073709551615"
 check value=18446744073709551615, buffer_size=20, idx=1, updated_idx=20, expected="1844674407370955161"
 check value=18446744073709551615, buffer_size=19, idx=1, updated_idx=19, expected="184467440737095516"
@@ -357,3 +388,5 @@ check value=18446744073709551615, buffer_size=4, idx=1, updated_idx=4, expected=
 check value=18446744073709551615, buffer_size=3, idx=1, updated_idx=3, expected="18"
 check value=18446744073709551615, buffer_size=2, idx=1, updated_idx=2, expected="1"
 check value=18446744073709551615, buffer_size=1, idx=1, updated_idx=1, expected=""
+
+#endif

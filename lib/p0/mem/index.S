@@ -2,6 +2,7 @@
 # Memory manipulation tests
 # ===========================================================================
 
+#include <compat.S>
 #include <millicode.S>
 #include <slice.S>
 
@@ -47,8 +48,8 @@
 
 	mv a0, xs_size
 	mv a1, xs_data
-	ld a2, slice.size(yss_data)
-	ld a3, slice.data(yss_data)
+	lx a2, slice.size(yss_data)
+	lx a3, slice.data(yss_data)
 	call "mem.Eq"
 	bnez a0, .LIndex.ok
 

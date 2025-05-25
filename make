@@ -29,6 +29,7 @@ NO_TEST="${NO_TEST:-}"
 # -T enhances, rather than replaces, the linker script.
 AS="${AS:-riscv64-unknown-elf-gcc}"
 ASFLAGS="${ASFLAGS:-
+	-DXLEN=${XLEN:-64}
 	-ggdb3
 	-Wa,--fatal-warnings
 	-Wl,-Tlinker.ld

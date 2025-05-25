@@ -46,10 +46,10 @@ test_case sentinel_left_and_right_point_to_itself
 
 	la sentinel, "strintern.sentinel"
 
-	ld l, "strintern.node.left"(sentinel)
+	lx l, "strintern.node.left"(sentinel)
 	expect_eq sentinel, l
 
-	ld r, "strintern.node.right"(sentinel)
+	lx r, "strintern.node.right"(sentinel)
 	expect_eq sentinel, r
 
 	ret
@@ -270,7 +270,7 @@ cleanSlate:
 	.cfi_startproc
 	la sentinel, "strintern.sentinel"
 	la root, "strintern.root"
-	sd sentinel, 0(root)
+	sw sentinel, 0(root)
 	ret
 	.cfi_endproc
 

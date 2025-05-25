@@ -2,6 +2,7 @@
 # forever package tests
 # ===========================================================================
 
+#include <compat.S>
 #include <millicode.S>
 #include <testing.S>
 
@@ -24,8 +25,8 @@ test_case can_write_to_allocated_memory_16b
 	#
 	# This will fault if the memory is not allocated.
 	# We allocated 16 bytes, so let's write two qwords.
-	sd zero, 0(a0)
-	sd zero, 8(a0)
+	sw zero, 0(a0)
+	sw zero, 8(a0)
 
 	restore_0
 end_test
@@ -52,7 +53,7 @@ test_case can_write_to_allocated_memory_64kib
 0:
 
 	bgeu p, end, 1f
-	sd zero, 0(p)
+	sw zero, 0(p)
 	addi p, p, 8
 
 1:

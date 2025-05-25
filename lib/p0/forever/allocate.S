@@ -6,6 +6,7 @@
 # easy to implement.
 # ===========================================================================
 
+#include <compat.S>
 #include <millicode.S>
 #include <io.S>
 #include <syscall.S>
@@ -110,8 +111,8 @@ safe_str allocation_panic, "PANIC: allocation failed!"
 
 	# Load current state.
 	la state_ptr, "forever.state"
-	ld state_limit, state.limit(state_ptr)
-	ld state_next, state.next(state_ptr)
+	lx state_limit, state.limit(state_ptr)
+	lx state_next, state.next(state_ptr)
 
 	# Coerce to a minimum request_size of 1 so that every allocated
 	# object has a unique memory address.
@@ -145,7 +146,7 @@ safe_str allocation_panic, "PANIC: allocation failed!"
 .Lallocate:
 	mv a0, state_next
 	li a1, 0
-	sd new_next, state.next(state_ptr)
+	sw new_next, state.next(state_ptr)
 
 	ret
 
@@ -170,7 +171,7 @@ safe_str allocation_panic, "PANIC: allocation failed!"
 	# The syscall failed if the returned limit is the original limit.
 	beq a0, state_limit, .Lfail
 
-	sd a0, state.limit(state_ptr)
+	sw a0, state.limit(state_ptr)
 	j .Lallocate
 
 .Lfail:

@@ -2,6 +2,7 @@
 # String formatting tests - append string to buffer
 # ===========================================================================
 
+#include <compat.S>
 #include <io.S>
 #include <millicode.S>
 #include <safe_str.S>
@@ -72,7 +73,7 @@ safe_str empty_string, ""
 		call "mem.Eq"
 		expect_eqi 1, a0
 
-		ld t0, "testing_state.test_failed"(tp)
+		lx t0, "testing_state.test_failed"(tp)
 		beqz t0, ".LString_\value\()_\buffer_size\()_\idx\().end"
 
 		li a0, STDLOG

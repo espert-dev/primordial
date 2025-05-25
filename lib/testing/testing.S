@@ -2,6 +2,9 @@
 # Test runner for arm64/linux
 # ===========================================================================
 
+#include <compat.S>
+
+
 # ===========================================================================
 # Design
 #
@@ -75,9 +78,9 @@ main:
 	j .Lmain.loop_cond
 
 .Lmain.loop:
-	ld a0, "test_case_entry.fn"(next)
-	ld a1, "test_case_entry.name_size"(next)
-	ld a2, "test_case_entry.name_data"(next)
+	lx a0, "test_case_entry.fn"(next)
+	lx a1, "test_case_entry.name_size"(next)
+	lx a2, "test_case_entry.name_data"(next)
 	call run_test
 
 	addi next, next, test_case_entry_size
@@ -86,7 +89,7 @@ main:
 	bltu next, end, .Lmain.loop
 
 	# Return 0 if no tests failed, 1 if any did.
-	ld a0, "testing_state.suite_failed"(tp)
+	lx a0, "testing_state.suite_failed"(tp)
 
 	restore_2
 	.cfi_endproc
@@ -142,16 +145,16 @@ run_test:
 	ecall
 
 	# Clear the failed state.
-	sd zero, "testing_state.test_failed"(tp)
+	sw zero, "testing_state.test_failed"(tp)
 
 	# Run the test case.
 	jalr test_fn
 
 	# Accumulate test case failures into test suite failures.
-	ld test_failed, "testing_state.test_failed"(tp)
-	ld suite_failed, "testing_state.suite_failed"(tp)
+	lx test_failed, "testing_state.test_failed"(tp)
+	lx suite_failed, "testing_state.suite_failed"(tp)
 	or suite_failed, suite_failed, test_failed
-	sd suite_failed, "testing_state.suite_failed"(tp)
+	sw suite_failed, "testing_state.suite_failed"(tp)
 
 	# Check if the test passed.
 	bnez test_failed, .Lfail

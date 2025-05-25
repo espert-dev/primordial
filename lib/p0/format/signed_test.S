@@ -2,6 +2,7 @@
 # String formatting tests - Signed integer
 # ===========================================================================
 
+#include <compat.S>
 #include <io.S>
 #include <millicode.S>
 #include <safe_str.S>
@@ -73,7 +74,7 @@ safe_str quote_end, "\"\n"
 		call "mem.Eq"
 		expect_eqi 1, a0
 
-		ld t0, "testing_state.test_failed"(tp)
+		lx t0, "testing_state.test_failed"(tp)
 		beqz t0, ".L\name\().end"
 
 		li a0, STDLOG
@@ -332,10 +333,40 @@ pcheck value=859, buffer_size=3, idx=0, updated_idx=3, expected="859"
 pcheck value=950, buffer_size=3, idx=0, updated_idx=3, expected="950"
 pcheck value=959, buffer_size=3, idx=0, updated_idx=3, expected="959"
 
-# Maximum value (exact space).
+# Maximum value in 32-bit (exact space).
+pcheck value=2147483647, buffer_size=10, idx=0, updated_idx=10, expected="2147483647"
+
+# Maximum value in 32-bit (truncated).
+pcheck value=2147483647, buffer_size=9, idx=0, updated_idx=9, expected="214748364"
+pcheck value=2147483647, buffer_size=8, idx=0, updated_idx=8, expected="21474836"
+pcheck value=2147483647, buffer_size=7, idx=0, updated_idx=7, expected="2147483"
+pcheck value=2147483647, buffer_size=6, idx=0, updated_idx=6, expected="214748"
+pcheck value=2147483647, buffer_size=5, idx=0, updated_idx=5, expected="21474"
+pcheck value=2147483647, buffer_size=4, idx=0, updated_idx=4, expected="2147"
+pcheck value=2147483647, buffer_size=3, idx=0, updated_idx=3, expected="214"
+pcheck value=2147483647, buffer_size=2, idx=0, updated_idx=2, expected="21"
+pcheck value=2147483647, buffer_size=1, idx=0, updated_idx=1, expected="2"
+pcheck value=2147483647, buffer_size=0, idx=0, updated_idx=0, expected=""
+
+# Maximum value in 32-bit (offset, truncation in all but first).
+pcheck value=2147483647, buffer_size=11, idx=1, updated_idx=11, expected="2147483647"
+pcheck value=2147483647, buffer_size=10, idx=1, updated_idx=10, expected="214748364"
+pcheck value=2147483647, buffer_size=9, idx=1, updated_idx=9, expected="21474836"
+pcheck value=2147483647, buffer_size=8, idx=1, updated_idx=8, expected="2147483"
+pcheck value=2147483647, buffer_size=7, idx=1, updated_idx=7, expected="214748"
+pcheck value=2147483647, buffer_size=6, idx=1, updated_idx=6, expected="21474"
+pcheck value=2147483647, buffer_size=5, idx=1, updated_idx=5, expected="2147"
+pcheck value=2147483647, buffer_size=4, idx=1, updated_idx=4, expected="214"
+pcheck value=2147483647, buffer_size=3, idx=1, updated_idx=3, expected="21"
+pcheck value=2147483647, buffer_size=2, idx=1, updated_idx=2, expected="2"
+pcheck value=2147483647, buffer_size=1, idx=1, updated_idx=1, expected=""
+
+# if XLEN >= 64
+
+# Maximum value in 64-bit (exact space).
 pcheck value=9223372036854775807, buffer_size=19, idx=0, updated_idx=19, expected="9223372036854775807"
 
-# Maximum value (truncated).
+# Maximum value in 64-bit (truncated).
 pcheck value=9223372036854775807, buffer_size=18, idx=0, updated_idx=18, expected="922337203685477580"
 pcheck value=9223372036854775807, buffer_size=17, idx=0, updated_idx=17, expected="92233720368547758"
 pcheck value=9223372036854775807, buffer_size=16, idx=0, updated_idx=16, expected="9223372036854775"
@@ -356,7 +387,7 @@ pcheck value=9223372036854775807, buffer_size=2, idx=0, updated_idx=2, expected=
 pcheck value=9223372036854775807, buffer_size=1, idx=0, updated_idx=1, expected="9"
 pcheck value=9223372036854775807, buffer_size=0, idx=0, updated_idx=0, expected=""
 
-# Maximum value (offset, truncation in all but first).
+# Maximum value in 64-bit (offset, truncation in all but first).
 pcheck value=9223372036854775807, buffer_size=20, idx=1, updated_idx=20, expected="9223372036854775807"
 pcheck value=9223372036854775807, buffer_size=19, idx=1, updated_idx=19, expected="922337203685477580"
 pcheck value=9223372036854775807, buffer_size=18, idx=1, updated_idx=18, expected="92233720368547758"
@@ -377,6 +408,8 @@ pcheck value=9223372036854775807, buffer_size=4, idx=1, updated_idx=4, expected=
 pcheck value=9223372036854775807, buffer_size=3, idx=1, updated_idx=3, expected="92"
 pcheck value=9223372036854775807, buffer_size=2, idx=1, updated_idx=2, expected="9"
 pcheck value=9223372036854775807, buffer_size=1, idx=1, updated_idx=1, expected=""
+
+#endif
 
 
 # ===========================================================================
@@ -578,10 +611,42 @@ ncheck value=859, buffer_size=4, idx=0, updated_idx=4, expected="-859"
 ncheck value=950, buffer_size=4, idx=0, updated_idx=4, expected="-950"
 ncheck value=959, buffer_size=4, idx=0, updated_idx=4, expected="-959"
 
-# Maximum value (exact space).
+# Minimum value in 32-bit (exact space).
+ncheck value=2147483648, buffer_size=11, idx=0, updated_idx=11, expected="-2147483648"
+
+# Minimum value in 32-bit (truncated).
+ncheck value=2147483648, buffer_size=10, idx=0, updated_idx=10, expected="-214748364"
+ncheck value=2147483648, buffer_size=9, idx=0, updated_idx=9, expected="-21474836"
+ncheck value=2147483648, buffer_size=8, idx=0, updated_idx=8, expected="-2147483"
+ncheck value=2147483648, buffer_size=7, idx=0, updated_idx=7, expected="-214748"
+ncheck value=2147483648, buffer_size=6, idx=0, updated_idx=6, expected="-21474"
+ncheck value=2147483648, buffer_size=5, idx=0, updated_idx=5, expected="-2147"
+ncheck value=2147483648, buffer_size=4, idx=0, updated_idx=4, expected="-214"
+ncheck value=2147483648, buffer_size=3, idx=0, updated_idx=3, expected="-21"
+ncheck value=2147483648, buffer_size=2, idx=0, updated_idx=2, expected="-2"
+ncheck value=2147483648, buffer_size=1, idx=0, updated_idx=1, expected="-"
+ncheck value=2147483648, buffer_size=0, idx=0, updated_idx=0, expected=""
+
+# Minimum value in 32-bit (offset, truncation in all but first).
+ncheck value=2147483648, buffer_size=12, idx=1, updated_idx=12, expected="-2147483648"
+ncheck value=2147483648, buffer_size=11, idx=1, updated_idx=11, expected="-214748364"
+ncheck value=2147483648, buffer_size=10, idx=1, updated_idx=10, expected="-21474836"
+ncheck value=2147483648, buffer_size=9, idx=1, updated_idx=9, expected="-2147483"
+ncheck value=2147483648, buffer_size=8, idx=1, updated_idx=8, expected="-214748"
+ncheck value=2147483648, buffer_size=7, idx=1, updated_idx=7, expected="-21474"
+ncheck value=2147483648, buffer_size=6, idx=1, updated_idx=6, expected="-2147"
+ncheck value=2147483648, buffer_size=5, idx=1, updated_idx=5, expected="-214"
+ncheck value=2147483648, buffer_size=4, idx=1, updated_idx=4, expected="-21"
+ncheck value=2147483648, buffer_size=3, idx=1, updated_idx=3, expected="-2"
+ncheck value=2147483648, buffer_size=2, idx=1, updated_idx=2, expected="-"
+ncheck value=2147483648, buffer_size=1, idx=1, updated_idx=1, expected=""
+
+#if XLEN >= 64
+
+# Minimum value in 64-bit (exact space).
 ncheck value=9223372036854775808, buffer_size=20, idx=0, updated_idx=20, expected="-9223372036854775808"
 
-# Maximum value (truncated).
+# Minimum value in 64-bit (truncated).
 ncheck value=9223372036854775808, buffer_size=19, idx=0, updated_idx=19, expected="-922337203685477580"
 ncheck value=9223372036854775808, buffer_size=18, idx=0, updated_idx=18, expected="-92233720368547758"
 ncheck value=9223372036854775808, buffer_size=17, idx=0, updated_idx=17, expected="-9223372036854775"
@@ -603,7 +668,7 @@ ncheck value=9223372036854775808, buffer_size=2, idx=0, updated_idx=2, expected=
 ncheck value=9223372036854775808, buffer_size=1, idx=0, updated_idx=1, expected="-"
 ncheck value=9223372036854775808, buffer_size=0, idx=0, updated_idx=0, expected=""
 
-# Maximum value (offset, truncation in all but first).
+# Minimum value in 64-bit (offset, truncation in all but first).
 ncheck value=9223372036854775808, buffer_size=21, idx=1, updated_idx=21, expected="-9223372036854775808"
 ncheck value=9223372036854775808, buffer_size=20, idx=1, updated_idx=20, expected="-922337203685477580"
 ncheck value=9223372036854775808, buffer_size=19, idx=1, updated_idx=19, expected="-92233720368547758"
@@ -625,3 +690,5 @@ ncheck value=9223372036854775808, buffer_size=4, idx=1, updated_idx=4, expected=
 ncheck value=9223372036854775808, buffer_size=3, idx=1, updated_idx=3, expected="-9"
 ncheck value=9223372036854775808, buffer_size=2, idx=1, updated_idx=2, expected="-"
 ncheck value=9223372036854775808, buffer_size=1, idx=1, updated_idx=1, expected=""
+
+#endif

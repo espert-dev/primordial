@@ -35,6 +35,7 @@
 #   - It uses shortlex to compare strings. It's faster than dictionary order,
 #     and the ordering itself doesn't matter, as long as there's one.
 
+#include <compat.S>
 #include <millicode.S>
 
 
@@ -110,11 +111,11 @@
 	la root_ptr, "strintern.root"
 
 	# a0-1 already have the values.
-	ld a2, 0(root_ptr)
+	lx a2, 0(root_ptr)
 	call "strintern.findOrInsert"
 
 	# The root pointer may have been modified.
-	sd a2, 0(root_ptr)
+	sw a2, 0(root_ptr)
 
 	mv sentinel, sentinel_backup
 	restore_2
@@ -158,7 +159,7 @@
 
 	# a0 and a1 are ready.
 	lw a2, "strintern.node.str_size"(tree)
-	ld a3, "strintern.node.str_data"(tree)
+	lx a3, "strintern.node.str_data"(tree)
 	call "mem/Shortlex"
 
 	bltz a0, .LfindOrUpdate.left
@@ -166,7 +167,7 @@
 
 .LfindOrUpdate.found:
 	# Return interned value.
-	ld str_data, "strintern.node.str_data"(tree)
+	lx str_data, "strintern.node.str_data"(tree)
 	lw str_size, "strintern.node.str_size"(tree)
 
 	j .LfindOrInsert.end
@@ -174,7 +175,7 @@
 .LfindOrUpdate.left:
 	mv a0, str_size
 	mv a1, str_data
-	ld a2, "strintern.node.left"(tree)
+	lx a2, "strintern.node.left"(tree)
 	call "strintern.findOrInsert"
 
 	j .LfindOrUpdate.rebalance
@@ -182,7 +183,7 @@
 .LfindOrUpdate.right:
 	mv a0, str_size
 	mv a1, str_data
-	ld a2, "strintern.node.right"(tree)
+	lx a2, "strintern.node.right"(tree)
 	call "strintern.findOrInsert"
 
 	# Fall through.
@@ -210,11 +211,11 @@
 	call "forever.MustAllocate"
 	mv tree, a0
 
-	sd sentinel, "strintern.node.left"(tree)
-	sd sentinel, "strintern.node.right"(tree)
+	sw sentinel, "strintern.node.left"(tree)
+	sw sentinel, "strintern.node.right"(tree)
 
 	li t0, 1
-	sd t0, "strintern.node.level"(tree)
+	sw t0, "strintern.node.level"(tree)
 
 	# Store a clone of the string that is guaranteed not to alias with
 	# anything, removing the need to compare string lengths and thus
@@ -224,8 +225,8 @@
 	call "mem.Clone"
 	mv str_data, a1
 
-	sd str_size, "strintern.node.str_size"(tree)
-	sd str_data, "strintern.node.str_data"(tree)
+	sw str_size, "strintern.node.str_size"(tree)
+	sw str_data, "strintern.node.str_data"(tree)
 
 	j .LfindOrInsert.end
 	.cfi_endproc
@@ -256,16 +257,16 @@
 	#define b       t3
 
 	.cfi_startproc
-	ld l, "strintern.node.left"(t)
+	lx l, "strintern.node.left"(t)
 	lw t_level, "strintern.node.level"(t)
 	lw l_level, "strintern.node.level"(l)
 	beq t_level, l_level, .Lskew.rotate
 	ret
 
 .Lskew.rotate:
-	ld b, "strintern.node.right"(l)
-	sd b, "strintern.node.left"(t)
-	sd t, "strintern.node.right"(l)
+	lx b, "strintern.node.right"(l)
+	sw b, "strintern.node.left"(t)
+	sw t, "strintern.node.right"(l)
 	mv t, l
 	ret
 	.cfi_endproc
@@ -300,8 +301,8 @@
 	#define r_level t5
 
 	.cfi_startproc
-	ld r, "strintern.node.right"(t)
-	ld x, "strintern.node.right"(r)
+	lx r, "strintern.node.right"(t)
+	lx x, "strintern.node.right"(r)
 
 	lw t_level, "strintern.node.level"(t)
 	lw x_level, "strintern.node.level"(x)
@@ -310,9 +311,9 @@
 	ret
 
 .Lsplit.rotate:
-	ld b, "strintern.node.left"(r)
-	sd b, "strintern.node.right"(t)
-	sd t, "strintern.node.left"(r)
+	lx b, "strintern.node.left"(r)
+	sw b, "strintern.node.right"(t)
+	sw t, "strintern.node.left"(r)
 
 	lw r_level, "strintern.node.level"(r)
 	addi r_level, r_level, 1

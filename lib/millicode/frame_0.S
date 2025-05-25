@@ -2,26 +2,38 @@
 # Millicode for procedure prologue and epilogue (0 saved registers)
 # ===========================================================================
 
+#include <compat.S>
+
+
 .section .text
 
-#define FRAME_SIZE 0x10
+#if XLEN == 32
+	#define FRAME_SIZE 0x10
+#elif XLEN == 64
+	#define FRAME_SIZE 0x10
+#else
+	#error invalid or undefined XLEN
+#endif
 
 .global prologue_0
 prologue_0:
 	.cfi_startproc
 	.cfi_return_column t0
+
 	addi sp, sp, -FRAME_SIZE
-	sd fp, 0x00(sp)
+	sx fp, 0(sp)
 	mv fp, sp
-	sd ra, 0x08(fp)
+	sx ra, (1*XLEN/8)(fp)
 	jr t0
 	.cfi_endproc
 
 .global epilogue_0
 epilogue_0:
 	.cfi_startproc
-	ld ra, 0x08(fp)
-	ld fp, 0x00(fp)
+	lx ra, (1*XLEN/8)(fp)
+	lx fp, 0(fp)
 	addi sp, sp, FRAME_SIZE
 	ret
 	.cfi_endproc
+
+#undef FRAME_SIZE
