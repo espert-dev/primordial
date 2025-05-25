@@ -146,16 +146,16 @@ safe_str operator_chars, "!%&*+-./:<=>?@^|~"
 	la scanner_ptr, scanner
 
 	# Store the start position.
-	sw a0, Scanner.pos(scanner_ptr)
+	sx a0, Scanner.pos(scanner_ptr)
 
 	# Store the end pointer to simplify checking for EOF.
 	add a1, a1, a0
-	sw a1, Scanner.end(scanner_ptr)
+	sx a1, Scanner.end(scanner_ptr)
 
 	# Initialize line:column.
 	li t0, 1
-	sw t0, Scanner.line(scanner_ptr)
-	sw t0, Scanner.column(scanner_ptr)
+	sx t0, Scanner.line(scanner_ptr)
+	sx t0, Scanner.column(scanner_ptr)
 
 	ret
 	.cfi_endproc
@@ -257,9 +257,9 @@ safe_str operator_chars, "!%&*+-./:<=>?@^|~"
 	la scanner_ptr, scanner
 
 	# Persist global state.
-	sw pos, "Scanner.pos"(scanner_ptr)
-	sw line, "Scanner.line"(scanner_ptr)
-	sw column, "Scanner.column"(scanner_ptr)
+	sx pos, "Scanner.pos"(scanner_ptr)
+	sx line, "Scanner.line"(scanner_ptr)
+	sx column, "Scanner.column"(scanner_ptr)
 
 	restore_10
 

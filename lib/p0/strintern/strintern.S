@@ -115,7 +115,7 @@
 	call "strintern.findOrInsert"
 
 	# The root pointer may have been modified.
-	sw a2, 0(root_ptr)
+	sx a2, 0(root_ptr)
 
 	mv sentinel, sentinel_backup
 	restore_2
@@ -211,8 +211,8 @@
 	call "forever.MustAllocate"
 	mv tree, a0
 
-	sw sentinel, "strintern.node.left"(tree)
-	sw sentinel, "strintern.node.right"(tree)
+	sx sentinel, "strintern.node.left"(tree)
+	sx sentinel, "strintern.node.right"(tree)
 
 	li t0, 1
 	sw t0, "strintern.node.level"(tree)
@@ -226,7 +226,7 @@
 	mv str_data, a1
 
 	sw str_size, "strintern.node.str_size"(tree)
-	sw str_data, "strintern.node.str_data"(tree)
+	sx str_data, "strintern.node.str_data"(tree)
 
 	j .LfindOrInsert.end
 	.cfi_endproc
@@ -265,8 +265,8 @@
 
 .Lskew.rotate:
 	lx b, "strintern.node.right"(l)
-	sw b, "strintern.node.left"(t)
-	sw t, "strintern.node.right"(l)
+	sx b, "strintern.node.left"(t)
+	sx t, "strintern.node.right"(l)
 	mv t, l
 	ret
 	.cfi_endproc
@@ -312,8 +312,8 @@
 
 .Lsplit.rotate:
 	lx b, "strintern.node.left"(r)
-	sw b, "strintern.node.right"(t)
-	sw t, "strintern.node.left"(r)
+	sx b, "strintern.node.right"(t)
+	sx t, "strintern.node.left"(r)
 
 	lw r_level, "strintern.node.level"(r)
 	addi r_level, r_level, 1

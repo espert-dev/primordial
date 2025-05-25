@@ -24,9 +24,12 @@ test_case can_write_to_allocated_memory_16b
 	# Try writing to the allocated memory.
 	#
 	# This will fault if the memory is not allocated.
-	# We allocated 16 bytes, so let's write two qwords.
+	# We allocated 16 bytes, so let's write four words
+	# (this works on any XLEN).
 	sw zero, 0(a0)
+	sw zero, 4(a0)
 	sw zero, 8(a0)
+	sw zero, 12(a0)
 
 	restore_0
 end_test
@@ -54,6 +57,7 @@ test_case can_write_to_allocated_memory_64kib
 
 	bgeu p, end, 1f
 	sw zero, 0(p)
+	sw zero, 4(p)
 	addi p, p, 8
 
 1:

@@ -146,7 +146,7 @@ safe_str allocation_panic, "PANIC: allocation failed!"
 .Lallocate:
 	mv a0, state_next
 	li a1, 0
-	sw new_next, state.next(state_ptr)
+	sx new_next, state.next(state_ptr)
 
 	ret
 
@@ -171,7 +171,7 @@ safe_str allocation_panic, "PANIC: allocation failed!"
 	# The syscall failed if the returned limit is the original limit.
 	beq a0, state_limit, .Lfail
 
-	sw a0, state.limit(state_ptr)
+	sx a0, state.limit(state_ptr)
 	j .Lallocate
 
 .Lfail:

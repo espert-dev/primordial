@@ -145,7 +145,7 @@ run_test:
 	ecall
 
 	# Clear the failed state.
-	sw zero, "testing_state.test_failed"(tp)
+	sx zero, "testing_state.test_failed"(tp)
 
 	# Run the test case.
 	jalr test_fn
@@ -154,7 +154,7 @@ run_test:
 	lx test_failed, "testing_state.test_failed"(tp)
 	lx suite_failed, "testing_state.suite_failed"(tp)
 	or suite_failed, suite_failed, test_failed
-	sw suite_failed, "testing_state.suite_failed"(tp)
+	sx suite_failed, "testing_state.suite_failed"(tp)
 
 	# Check if the test passed.
 	bnez test_failed, .Lfail

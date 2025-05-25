@@ -270,7 +270,7 @@ cleanSlate:
 	.cfi_startproc
 	la sentinel, "strintern.sentinel"
 	la root, "strintern.root"
-	sw sentinel, 0(root)
+	sx sentinel, 0(root)
 	ret
 	.cfi_endproc
 
