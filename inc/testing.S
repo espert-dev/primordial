@@ -11,18 +11,18 @@
 # the custom .test_cases section of the executable.
 .struct 0
 test_case_entry:
-"test_case_entry.fn": .space 8
-"test_case_entry.name_size": .space 8
-"test_case_entry.name_data": .space 8
+"test_case_entry.fn": .space XLEN_BYTES
+"test_case_entry.name_size": .space XLEN_BYTES
+"test_case_entry.name_data": .space XLEN_BYTES
 .equiv test_case_entry_size, . - test_case_entry
 
 # Testing state.
 .struct 0
 testing_state:
-"testing_state.suite_failed": .space 8
-"testing_state.test_failed": .space 8
-"testing_state.spill_0": .space 8
-"testing_state.spill_1": .space 8
+"testing_state.suite_failed": .space XLEN_BYTES
+"testing_state.test_failed": .space XLEN_BYTES
+"testing_state.spill_0": .space XLEN_BYTES
+"testing_state.spill_1": .space XLEN_BYTES
 .equiv testing_state_size, . - testing_state
 
 
@@ -43,10 +43,10 @@ testing_state:
 #
 # See https://sourceware.org/binutils/docs/as/Section.html
 .section .test_cases, "aMR", @progbits, test_case_entry_size
-.p2align 3
-.8byte "test_\t"
-.8byte "test_\t\()_name_size"
-.8byte "test_\t\()_name_data"
+Xalign
+Xbyte "test_\t"
+Xbyte "test_\t\()_name_size"
+Xbyte "test_\t\()_name_data"
 
 .section .rodata
 test_\t\()_name_data:

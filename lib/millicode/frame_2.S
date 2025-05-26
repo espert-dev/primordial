@@ -22,18 +22,18 @@ prologue_2:
 	addi sp, sp, -FRAME_SIZE
 	sx fp, 0(sp)
 	mv fp, sp
-	sx ra, (1*XLEN/8)(fp)
-	sx s1, (2*XLEN/8)(fp)
-	sx s2, (3*XLEN/8)(fp)
+	sx ra, (1*XLEN_BYTES)(fp)
+	sx s1, (2*XLEN_BYTES)(fp)
+	sx s2, (3*XLEN_BYTES)(fp)
 	jr t0
 	.cfi_endproc
 
 .global epilogue_2
 epilogue_2:
 	.cfi_startproc
-	lx s2, (3*XLEN/8)(fp)
-	lx s1, (2*XLEN/8)(fp)
-	lx ra, (1*XLEN/8)(fp)
+	lx s2, (3*XLEN_BYTES)(fp)
+	lx s1, (2*XLEN_BYTES)(fp)
+	lx ra, (1*XLEN_BYTES)(fp)
 	lx fp, 0(fp)
 	addi sp, sp, FRAME_SIZE
 	ret

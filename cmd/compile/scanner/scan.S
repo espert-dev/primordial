@@ -53,7 +53,7 @@
 .section .rodata
 
 # Keyword list.
-.p2align 4
+Xalign
 keywords_data:
 safe_str_slice if_kw
 safe_str_slice for_kw
@@ -61,7 +61,7 @@ safe_str_slice func_kw
 .equiv keywords_size, 3
 
 # Operator list.
-.p2align 4
+Xalign
 operators_data:
 safe_str_slice plus_op
 safe_str_slice minus_op
@@ -100,6 +100,7 @@ operator_token_types_data:
 .equiv operator_token_types_size, . - operator_token_types_data
 
 # Keyword strings.
+Xalign
 safe_str if_kw, "if"
 safe_str for_kw, "for"
 safe_str func_kw, "func"
@@ -123,6 +124,7 @@ safe_str operator_chars, "!%&*+-./:<=>?@^|~"
 
 .section .bss
 
+Xalign
 .lcomm scanner, Scanner_size
 
 

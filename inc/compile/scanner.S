@@ -26,8 +26,8 @@
 # Scanner state.
 .struct 0
 Scanner:
-Scanner.pos: .space 8
-Scanner.end: .space 8
-Scanner.line: .space 8
-Scanner.column: .space 8
+Scanner.pos: .space XLEN_BYTES
+Scanner.end: .space XLEN_BYTES
+Scanner.line: .space XLEN_BYTES
+Scanner.column: .space XLEN_BYTES
 .equiv Scanner_size, . - Scanner

@@ -2,13 +2,16 @@
 # Macros and definitions for slices
 # ===========================================================================
 
+#include <compat.S>
+
+
 .struct 0
 slice:
-slice.size: .space 8
-slice.data: .space 8
+slice.size: .space XLEN_BYTES
+slice.data: .space XLEN_BYTES
 .equiv slice_size, . - slice
 
 .macro safe_str_slice name
-.8byte \name\()_size
-.8byte \name\()_data
+Xbyte \name\()_size
+Xbyte \name\()_data
 .endm

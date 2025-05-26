@@ -2,6 +2,9 @@
 # String interning
 # ===========================================================================
 
+#include <compat.S>
+
+
 # Design
 #
 # String interning reduces string comparison to pointer comparison, which is
@@ -42,11 +45,21 @@
 # Tree node.
 .struct 0
 "strintern.node":
+#if XLEN == 32
+"strintern.node.left":      .space 4
+"strintern.node.right":     .space 4
+"strintern.node.level":     .space 2
+"strintern.node.str_size":  .space 2
+"strintern.node.str_data":  .space 4
+#elif XLEN == 64
 "strintern.node.left":      .space 8
 "strintern.node.right":     .space 8
 "strintern.node.level":     .space 4
 "strintern.node.str_size":  .space 4
 "strintern.node.str_data":  .space 8
+#else
+	#error invalid or unspecified XLEN
+#endif
 .equiv "strintern.node_size", . - "strintern.node"
 
 
@@ -59,13 +72,23 @@
 # Type: TreeNode
 #
 # The sentinel node has level 0, so no extra work is necessary to encode it.
-.align 4
+Xalign
 "strintern.sentinel":
+#if XLEN == 32
+.4byte "strintern.sentinel" # left
+.4byte "strintern.sentinel" # right
+.2byte 0 # level
+.2byte 0 # str_size
+.4byte 0 # str_data
+#elif XLEN == 64
 .8byte "strintern.sentinel" # left
 .8byte "strintern.sentinel" # right
 .4byte 0 # level
 .4byte 0 # str_size
 .8byte 0 # str_data
+#else
+	#error invalid or unspecified XLEN
+#endif
 .equiv "strintern.sentinel_size", . - "strintern.sentinel"
 
 
@@ -74,10 +97,11 @@
 # ===========================================================================
 
 .section .data
+Xalign
 
 # Stores a pointer to the tree root.
 "strintern.root":
-.8byte "strintern.sentinel"
+Xbyte "strintern.sentinel"
 
 
 # ===========================================================================
@@ -157,8 +181,16 @@
 	# Allocation should be rarer, so put it last.
 	beq tree, sentinel, .LfindOrInsert.allocate
 
-	# a0 and a1 are ready.
+#if XLEN == 32
+	lhu a2, "strintern.node.str_size"(tree)
+#elif XLEN == 64
 	lw a2, "strintern.node.str_size"(tree)
+#else
+	#error invalid or unspecified XLEN
+#endif
+
+	# a0 and a1 are ready.
+
 	lx a3, "strintern.node.str_data"(tree)
 	call "mem/Shortlex"
 
@@ -168,7 +200,14 @@
 .LfindOrUpdate.found:
 	# Return interned value.
 	lx str_data, "strintern.node.str_data"(tree)
-	lw str_size, "strintern.node.str_size"(tree)
+
+#if XLEN == 32
+	lhu str_size, "strintern.node.str_size"(tree)
+#elif XLEN == 64
+	lwu str_size, "strintern.node.str_size"(tree)
+#else
+	#error invalid or unspecified XLEN
+#endif
 
 	j .LfindOrInsert.end
 
@@ -215,7 +254,14 @@
 	sx sentinel, "strintern.node.right"(tree)
 
 	li t0, 1
+
+#if XLEN == 32
+	sh t0, "strintern.node.level"(tree)
+#elif XLEN == 64
 	sw t0, "strintern.node.level"(tree)
+#else
+	#error invalid or unspecified XLEN
+#endif
 
 	# Store a clone of the string that is guaranteed not to alias with
 	# anything, removing the need to compare string lengths and thus
@@ -225,7 +271,14 @@
 	call "mem.Clone"
 	mv str_data, a1
 
+#if XLEN == 32
+	sh str_size, "strintern.node.str_size"(tree)
+#elif XLEN == 64
 	sw str_size, "strintern.node.str_size"(tree)
+#else
+	#error invalid or unspecified XLEN
+#endif
+
 	sx str_data, "strintern.node.str_data"(tree)
 
 	j .LfindOrInsert.end
@@ -258,8 +311,17 @@
 
 	.cfi_startproc
 	lx l, "strintern.node.left"(t)
+
+#if XLEN == 32
+	lhu t_level, "strintern.node.level"(t)
+	lhu l_level, "strintern.node.level"(l)
+#elif XLEN == 64
 	lw t_level, "strintern.node.level"(t)
 	lw l_level, "strintern.node.level"(l)
+#else
+	#error invalid or unspecified XLEN
+#endif
+
 	beq t_level, l_level, .Lskew.rotate
 	ret
 
@@ -304,8 +366,16 @@
 	lx r, "strintern.node.right"(t)
 	lx x, "strintern.node.right"(r)
 
+#if XLEN == 32
+	lhu t_level, "strintern.node.level"(t)
+	lhu x_level, "strintern.node.level"(x)
+#elif XLEN == 64
 	lw t_level, "strintern.node.level"(t)
 	lw x_level, "strintern.node.level"(x)
+#else
+	#error invalid or unspecified XLEN
+#endif
+
 	beq t_level, x_level, .Lsplit.rotate
 
 	ret
@@ -315,9 +385,23 @@
 	sx b, "strintern.node.right"(t)
 	sx t, "strintern.node.left"(r)
 
+#if XLEN == 32
+	lhu r_level, "strintern.node.level"(r)
+#elif XLEN == 64
 	lw r_level, "strintern.node.level"(r)
+#else
+	#error invalid or unspecified XLEN
+#endif
+
 	addi r_level, r_level, 1
+
+#if XLEN == 32
+	sh r_level, "strintern.node.level"(r)
+#elif XLEN == 64
 	sw r_level, "strintern.node.level"(r)
+#else
+	#error invalid or unspecified XLEN
+#endif
 
 	ret
 	.cfi_endproc

@@ -20,8 +20,8 @@
 # Allocator state type.
 .struct 0
 state:
-state.limit: .space 8
-state.next: .space 8
+state.limit: .space XLEN_BYTES
+state.next: .space XLEN_BYTES
 .equiv state_size, . - state
 
 # Constants

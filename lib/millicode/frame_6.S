@@ -22,26 +22,26 @@ prologue_6:
 	addi sp, sp, -FRAME_SIZE
 	sx fp, 0(sp)
 	mv fp, sp
-	sx ra, (1*XLEN/8)(fp)
-	sx s1, (2*XLEN/8)(fp)
-	sx s2, (3*XLEN/8)(fp)
-	sx s3, (4*XLEN/8)(fp)
-	sx s4, (5*XLEN/8)(fp)
-	sx s5, (6*XLEN/8)(fp)
-	sx s6, (7*XLEN/8)(fp)
+	sx ra, (1*XLEN_BYTES)(fp)
+	sx s1, (2*XLEN_BYTES)(fp)
+	sx s2, (3*XLEN_BYTES)(fp)
+	sx s3, (4*XLEN_BYTES)(fp)
+	sx s4, (5*XLEN_BYTES)(fp)
+	sx s5, (6*XLEN_BYTES)(fp)
+	sx s6, (7*XLEN_BYTES)(fp)
 	jr t0
 	.cfi_endproc
 
 .global epilogue_6
 epilogue_6:
 	.cfi_startproc
-	lx s6, (7*XLEN/8)(fp)
-	lx s5, (6*XLEN/8)(fp)
-	lx s4, (5*XLEN/8)(fp)
-	lx s3, (4*XLEN/8)(fp)
-	lx s2, (3*XLEN/8)(fp)
-	lx s1, (2*XLEN/8)(fp)
-	lx ra, (1*XLEN/8)(fp)
+	lx s6, (7*XLEN_BYTES)(fp)
+	lx s5, (6*XLEN_BYTES)(fp)
+	lx s4, (5*XLEN_BYTES)(fp)
+	lx s3, (4*XLEN_BYTES)(fp)
+	lx s2, (3*XLEN_BYTES)(fp)
+	lx s1, (2*XLEN_BYTES)(fp)
+	lx ra, (1*XLEN_BYTES)(fp)
 	lx fp, 0(fp)
 	addi sp, sp, FRAME_SIZE
 	ret

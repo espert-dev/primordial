@@ -40,7 +40,14 @@
 	mv xs_data, a1
 	mv yss_data, a3
 
+#if XLEN == 32
+	sll yss_end, a2, 3  # Entries are 8 bytes.
+#elif XLEN == 64
 	sll yss_end, a2, 4  # Entries are 16 bytes.
+#else
+	#error invalid or unspecified XLEN
+#endif
+
 	add yss_end, yss_end, yss_data
 
 .LIndex.loop:
@@ -54,7 +61,15 @@
 	bnez a0, .LIndex.ok
 
 	add pos, pos, 1
+
+#if XLEN == 32
+	add yss_data, yss_data, 8
+#elif XLEN == 64
 	add yss_data, yss_data, 16
+#else
+	#error invalid or unspecified XLEN
+#endif
+
 	j .LIndex.loop
 
 .LIndex.fail:
