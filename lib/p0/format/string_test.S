@@ -33,11 +33,11 @@ safe_str empty_string, ""
 	# Reserve 32 bytes regardless of intended buffer size to mitigate the
 	# risk of buffer overruns affecting other test cases.
 	.section .bss
-	.p2align 3
+	Xalign
 	.lcomm "String_\value\()_\buffer_size\()_\idx\()_buffer_data", 32
 
 	.section .rodata
-	.p2align 3
+	Xalign
 	safe_str "String_\value\()_\buffer_size\()_\idx\()_input", "\value"
 	safe_str "String_\value\()_\buffer_size\()_\idx\()_expected", "\expected"
 

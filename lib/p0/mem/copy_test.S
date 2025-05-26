@@ -16,6 +16,7 @@
 .equiv nil_data, 0
 .equiv nil_size, 0
 
+Xalign
 safe_str source, "abc"
 
 
@@ -25,7 +26,7 @@ safe_str source, "abc"
 
 .section .bss
 
-.p2align 4
+Xalign
 .lcomm destination, source_size
 
 

@@ -48,7 +48,7 @@ safe_str test_result_trailer, "]\n\n"
 
 # When a test fails, this variable will be set to 1.
 # It will normally be returned as the exit code of the test suite.
-.p2align 4
+Xalign
 .lcomm "testing.state", testing_state_size
 
 
