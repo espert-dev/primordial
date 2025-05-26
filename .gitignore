@@ -1,5 +1,6 @@
 # Configuration and overrides.
 .env
 
-# Build artefacts.
+# Build dependencies and artefacts.
 build
+toolchain

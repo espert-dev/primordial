@@ -17,7 +17,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-riscv64-unknown-elf qemu-user-static
+          sudo apt-get install -y qemu-user-static
 
       - name: Acceptance test
         run: ./make
