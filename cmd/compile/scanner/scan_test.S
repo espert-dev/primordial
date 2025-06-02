@@ -155,6 +155,10 @@ scan_test comma_separator, ","
 	scan_token type=TK_COMMA, start=0, size=1, line=1, column=1
 end_scan
 
+scan_test period_separator, "."
+	scan_token type=TK_PERIOD, start=0, size=1, line=1, column=1
+end_scan
+
 scan_test plus_operator, "+"
 	scan_token type=TK_PLUS, start=0, size=1, line=1, column=1
 end_scan

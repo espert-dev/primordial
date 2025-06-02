@@ -14,14 +14,15 @@
 .equiv TK_RCUR, 8
 .equiv TK_SEMI, 9
 .equiv TK_COMMA, 10
-.equiv TK_ID, 11
-.equiv TK_IF, 12
-.equiv TK_FOR, 13
-.equiv TK_FUNC, 14
-.equiv TK_PLUS, 15
-.equiv TK_MINUS, 16
-.equiv TK_MULT, 17
-.equiv TK_DIV, 18
+.equiv TK_PERIOD, 11
+.equiv TK_ID, 12
+.equiv TK_IF, 13
+.equiv TK_FOR, 14
+.equiv TK_FUNC, 15
+.equiv TK_PLUS, 16
+.equiv TK_MINUS, 17
+.equiv TK_MULT, 18
+.equiv TK_DIV, 19
 
 # Scanner state.
 .struct 0

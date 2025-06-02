@@ -77,7 +77,7 @@ keyword_token_types_data:
 .byte TK_FUNC
 .equiv keyword_token_types_size, . - keyword_token_types_data
 
-# Mapping of separators to token types (must be in sync with separator_strings).
+# Mapping of separators to token types (must be in sync with separator_list).
 .p2align 0
 separator_token_types_data:
 .byte TK_LPAR
@@ -88,9 +88,10 @@ separator_token_types_data:
 .byte TK_RCUR
 .byte TK_SEMI
 .byte TK_COMMA
+.byte TK_PERIOD
 .equiv separator_token_types_size, . - separator_token_types_data
 
-# Mapping of operators to token types (must be in sync with operator_strings).
+# Mapping of operators to token types (must be in sync with operator_chars).
 .p2align 0
 operator_token_types_data:
 .byte TK_PLUS
@@ -112,7 +113,7 @@ safe_str mult_op, "*"
 safe_str div_op, "/"
 
 # Separator characters. Note that separators are always one character long.
-safe_str separator_list, "()[]{};,"
+safe_str separator_list, "()[]{};,."
 
 # Characters that can be part of an operator.
 safe_str operator_chars, "!%&*+-./:<=>?@^|~"
