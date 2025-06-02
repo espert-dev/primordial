@@ -176,8 +176,8 @@ Xalign
 #
 # Output:
 #   a0 -> token_type (0 if none)
-#   a1 -> token_start
-#   a2 -> token_end
+#   a1 -> token_size
+#   a2 -> token_start
 #   a3 -> token_line
 #   a4 -> token_column
 .global "compile/scanner.Scan"
@@ -252,8 +252,8 @@ Xalign
 
 .Lscan_OK:
 	# a0 was set by an accepter and is the token type (or 0 if none).
-	mv a1, token_start
-	sub a2, token_end, token_start
+	sub a1, token_end, token_start
+	mv a2, token_start
 	mv a3, token_line
 	mv a4, token_column
 

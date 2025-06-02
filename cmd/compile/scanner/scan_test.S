@@ -35,8 +35,8 @@ safe_str \name\()_input, "\value"
 
 	mv a0, a1
 	mv a1, a2
-	la a2, \start
-	li a3, \size
+	li a2, \size
+	la a3, \start
 	call "mem.Eq"
 	expect_nz a0
 .endm
