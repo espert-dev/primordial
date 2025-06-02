@@ -160,7 +160,14 @@ with_test() {
 
 	# Run test.
 	info "Running test $target..."
-	if ! "$target" >"$target.out" 2>&1; then
+	input="/dev/null"
+
+	stdin_data="${source_base}.in"
+	if [ -f "${stdin_data}" ]; then
+		input="${stdin_data}"
+	fi
+
+	if ! "$target" <"${input}" >"$target.out" 2>&1; then
 		# Avoid failure when the out file is missing or empty.
 		if ! grep "^\[FAIL:" <"$target.out"; then
 			tail -n5 "$target.out" || :true
@@ -251,6 +258,7 @@ assemble lib/p0/format/signed.S
 assemble lib/p0/format/space.S
 assemble lib/p0/format/string.S
 assemble lib/p0/format/unsigned.S
+assemble lib/p0/io/read.S
 assemble lib/p0/io/write.S
 assemble lib/p0/os/exit.S
 assemble lib/p0/mem/eq.S
@@ -266,6 +274,7 @@ build_library lib/libp0.a \
 	"$BUILD_ROOT/lib/p0/format/space.o" \
 	"$BUILD_ROOT/lib/p0/format/string.o" \
 	"$BUILD_ROOT/lib/p0/format/unsigned.o" \
+	"$BUILD_ROOT/lib/p0/io/read.o" \
 	"$BUILD_ROOT/lib/p0/io/write.o" \
 	"$BUILD_ROOT/lib/p0/os/exit.o" \
 	"$BUILD_ROOT/lib/p0/mem/clone.o" \
@@ -295,6 +304,9 @@ with_test lib/p0/format/string_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/format/unsigned_test \
+	"$BUILD_ROOT/lib/libp0.a"
+
+with_test lib/p0/io/read_test \
 	"$BUILD_ROOT/lib/libp0.a"
 
 with_test lib/p0/io/write_test \
