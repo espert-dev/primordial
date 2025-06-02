@@ -1,0 +1,7 @@
+[TEST: write_ok]
+test message
+[PASS: write_ok]
+
+[TEST: write_fails_on_invalid_descriptor]
+[PASS: write_fails_on_invalid_descriptor]
+

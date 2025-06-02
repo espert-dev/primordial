@@ -1,3 +1,5 @@
+root = true
+
 [*]
 charset = utf-8
 indent_size = 8
@@ -10,3 +12,13 @@ max_line_length = 80
 [*.md]
 indent_size = 2
 indent_style = space
+
+# The extensions out and err are used by approval tests, where we need
+# exact reproducibility. Unset all formats from [*].
+[{*.out,*.err}]
+charset = unset
+indent_size = unset
+indent_style = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+max_line_length = unset

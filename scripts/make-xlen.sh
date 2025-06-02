@@ -139,6 +139,8 @@ with_test() {
 	source="$1.S"
 	shift
 
+	source_base="$(dirname "$source")/$(basename "$source" .S)"
+
 	# Build test.
 	info "Building test $target ..."
 
@@ -164,6 +166,14 @@ with_test() {
 			tail -n5 "$target.out" || :true
 		fi
 		die "Test $target failed!"
+	fi
+
+	approved_out="${source_base}.out"
+	if [ -f "${approved_out}" ]; then
+		info "Reviewing test output ..."
+		if ! diff "${target}.out" "${approved_out}"; then
+			die "Approval testing of $target failed!"
+		fi
 	fi
 }
 
