@@ -21,8 +21,8 @@ safe_str \name\()_input, "\value"
 
 .macro with_input input
 	.section .text
-	la a0, \input\()_data
-	li a1, \input\()_size
+	li a0, \input\()_size
+	la a1, \input\()_data
 	call "compile/scanner.Init"
 .endm
 

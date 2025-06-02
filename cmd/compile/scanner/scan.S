@@ -141,18 +141,23 @@ Xalign
 #   a1 -> Size of the input
 .global "compile/scanner.Init"
 "compile/scanner.Init":
+	# Arguments.
+	#define input_size a0
+	#define input_data a1
+
 	# Temporary registers.
 	#define scanner_ptr t1
+	#define input_end   t2
 
 	.cfi_startproc
 	la scanner_ptr, scanner
 
 	# Store the start position.
-	sx a0, Scanner.pos(scanner_ptr)
+	sx input_data, Scanner.pos(scanner_ptr)
 
 	# Store the end pointer to simplify checking for EOF.
-	add a1, a1, a0
-	sx a1, Scanner.end(scanner_ptr)
+	add input_end, input_data, input_size
+	sx input_end, Scanner.end(scanner_ptr)
 
 	# Initialize line:column.
 	li t0, 1
