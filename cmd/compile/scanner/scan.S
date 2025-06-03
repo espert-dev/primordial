@@ -82,13 +82,13 @@ keyword_token_types_data:
 separator_token_types_data:
 .byte TK_LPAR
 .byte TK_RPAR
+.byte TK_COMMA
+.byte TK_PERIOD
+.byte TK_SEMI
 .byte TK_LBRA
 .byte TK_RBRA
 .byte TK_LCUR
 .byte TK_RCUR
-.byte TK_SEMI
-.byte TK_COMMA
-.byte TK_PERIOD
 .equiv separator_token_types_size, . - separator_token_types_data
 
 # Mapping of operators to token types (must be in sync with operator_chars).
@@ -113,11 +113,14 @@ safe_str mult_op, "*"
 safe_str div_op, "/"
 
 # Separator characters. Note that separators are always one character long.
-safe_str separator_list, "()[]{};,."
+safe_str separator_list, "(),.;[]{}"
 
 # Characters that can be part of an operator.
-safe_str operator_chars, "!%&*+-/:<=>?@^|~"
+safe_str operator_chars, "!%&*+-/:<=>?@\^|~"
 
+# Characters used by symbols and quoting: "$'`
+
+# Characters used by comments: #
 
 # ===========================================================================
 # Global state
