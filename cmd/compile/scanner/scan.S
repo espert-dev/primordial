@@ -230,6 +230,9 @@ Xalign
 	call accept_number
 	bnez a0, .Lscan_OK
 
+	call accept_interpreted_string
+	bnez a0, .Lscan_OK
+
 	call accept_raw_string
 	bnez a0, .Lscan_OK
 
@@ -589,6 +592,51 @@ accept_number:
 
 .Lnumber.return:
 	restore_0
+	.cfi_endproc
+
+
+accept_interpreted_string:
+	.cfi_startproc
+
+	# Optimise for failed matching because it's the most frequent case.
+	li t0, '"'
+	beq ch, t0, .Linterpreted_string.started
+	ret
+
+.Linterpreted_string.started:
+	save_1
+
+	# Reload into s1, since save_1 destroyed it.
+	li s1, '"'
+
+	call start_token
+
+.Linterpreted_string.loop:
+	call consume
+	beqz a0, .Linterpreted_string.error
+
+	li t0, '\'
+	beq ch, t0, .Linterpreted_string.escape
+
+	bne ch, s1, .Linterpreted_string.loop
+
+.Linterpreted_string.accept:
+	call consume
+	li a0, TK_STRING
+
+.Linterpreted_string.return:
+	restore_1
+
+.Linterpreted_string.escape:
+	# We only care about escaping '"'.
+	# All the other escaping cases can be handled by post-processing.
+	call consume
+	beqz a0, .Linterpreted_string.error
+	j .Linterpreted_string.loop
+
+.Linterpreted_string.error:
+	li a0, TK_BAD_STRING
+	j .Linterpreted_string.return
 	.cfi_endproc
 
 

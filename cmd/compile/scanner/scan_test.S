@@ -345,6 +345,35 @@ scan_test number_12_34_56, "12 34 56"
 	scan_token type=TK_NUMBER, start=6, size=2, line=1, column=7
 end_scan
 
+scan_test empty_interpreted_string_literal, "\"\""
+	scan_token type=TK_STRING, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test interpreted_string_literal_1, "\"a\""
+	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
+end_scan
+
+# Technically not valid, but interpreting the string isn't done in the lexer.
+scan_test interpreted_string_literal_2, "`\\`"
+	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test interpreted_string_literal_3, "`\\n`"
+	scan_token type=TK_STRING, start=0, size=4, line=1, column=1
+end_scan
+
+scan_test unterminated_interpreted_string_literal_1, "\""
+	scan_token type=TK_BAD_STRING, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test unterminated_interpreted_string_literal_2, "\"a"
+	scan_token type=TK_BAD_STRING, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test unterminated_interpreted_string_literal_3, "\"foo bar   "
+	scan_token type=TK_BAD_STRING, start=0, size=11, line=1, column=1
+end_scan
+
 scan_test empty_raw_string_literal, "``"
 	scan_token type=TK_STRING, start=0, size=2, line=1, column=1
 end_scan
