@@ -20,6 +20,31 @@
 
 	.cfi_endproc
 
+# Matches [a-z]
+.global "ascii.IsLower"
+"ascii.IsLower":
+	.cfi_startproc
+
+	# c >= 'A' && c <= 'Z'
+	addi a0, a0, -'a'
+	sltiu a0, a0, 'z' - 'a' + 1
+
+	ret
+
+	.cfi_endproc
+
+# Matches [A-Z]
+.global "ascii.IsUpper"
+"ascii.IsUpper":
+	.cfi_startproc
+
+	# c >= 'A' && c <= 'Z'
+	addi a0, a0, -'A'
+	sltiu a0, a0, 'Z' - 'A' + 1
+
+	ret
+
+	.cfi_endproc
 
 # Matches [0-9]
 .global "ascii.IsDigit"

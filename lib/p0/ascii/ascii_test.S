@@ -64,6 +64,34 @@ test_case IsLetter_rejects_between_Z_and_a
 	tail reject_range
 end_test
 
+test_case IsLower_accepts_lowercase_letters
+	la a0, "ascii.IsLower"
+	li a1, 'a'
+	li a2, 'z' + 1
+	tail accept_range
+end_test
+
+test_case IsLower_rejects_uppercase_letters
+	la a0, "ascii.IsLower"
+	li a1, 'A'
+	li a2, 'Z'
+	tail reject_range
+end_test
+
+test_case IsUpper_accepts_uppercase_letters
+	la a0, "ascii.IsUpper"
+	li a1, 'A'
+	li a2, 'Z'
+	tail accept_range
+end_test
+
+test_case IsUpper_rejects_lowercase_letters
+	la a0, "ascii.IsUpper"
+	li a1, 'a'
+	li a2, 'z' + 1
+	tail reject_range
+end_test
+
 test_case IsDigit_accepts_digits
 	la a0, "ascii.IsDigit"
 	li a1, '0'
