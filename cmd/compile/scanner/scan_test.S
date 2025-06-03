@@ -261,3 +261,86 @@ scan_test addition, "x+y"
 	scan_token type=TK_PLUS, start=1, size=1, line=1, column=2
 	scan_token type=TK_VALUE_ID, start=2, size=1, line=1, column=3
 end_scan
+
+# Negative numbers do not need to be included because the minus sign is handled
+# during syntax parsing to prevent ambiguities.
+
+scan_test number_0, "0"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_1, "1"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_2, "2"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_3, "3"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_4, "4"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_5, "5"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_6, "6"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_7, "7"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_8, "8"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_9, "9"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test number_10, "10"
+	scan_token type=TK_NUMBER, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test number_99, "99"
+	scan_token type=TK_NUMBER, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test number_100, "100"
+	scan_token type=TK_NUMBER, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test number_999, "999"
+	scan_token type=TK_NUMBER, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test number_1000, "1000"
+	scan_token type=TK_NUMBER, start=0, size=4, line=1, column=1
+end_scan
+
+scan_test number_9999, "9999"
+	scan_token type=TK_NUMBER, start=0, size=4, line=1, column=1
+end_scan
+
+scan_test number_1234567890, "1234567890"
+	scan_token type=TK_NUMBER, start=0, size=10, line=1, column=1
+end_scan
+
+scan_test number_1_2_3, "1 2 3"
+	scan_token type=TK_NUMBER, start=0, size=1, line=1, column=1
+	scan_token type=TK_NUMBER, start=2, size=1, line=1, column=3
+	scan_token type=TK_NUMBER, start=4, size=1, line=1, column=5
+end_scan
+
+scan_test number_12_34_56, "12 34 56"
+	scan_token type=TK_NUMBER, start=0, size=2, line=1, column=1
+	scan_token type=TK_NUMBER, start=3, size=2, line=1, column=4
+	scan_token type=TK_NUMBER, start=6, size=2, line=1, column=7
+end_scan

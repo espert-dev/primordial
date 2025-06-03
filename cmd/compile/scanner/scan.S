@@ -225,6 +225,9 @@ Xalign
 	call accept_operator
 	bnez a0, .Lscan_OK
 
+	call accept_number
+	bnez a0, .Lscan_OK
+
 	# Discard bad character and report error.
 	call start_token
 	call consume
@@ -555,6 +558,32 @@ accept_separator:
 	li a0, 0
 	j .Lseparator_end
 
+	.cfi_endproc
+
+
+accept_number:
+	.cfi_startproc
+	save_0
+
+	mv a0, ch
+	call "ascii.IsDigit"
+	beqz a0, .Lnumber.return
+
+	call start_token
+
+.Lnumber.loop:
+	call consume
+	beqz a0, .Lnumber.accept
+
+	mv a0, ch
+	call "ascii.IsDigit"
+	bnez a0, .Lnumber.loop
+
+.Lnumber.accept:
+	li a0, TK_NUMBER
+
+.Lnumber.return:
+	restore_0
 	.cfi_endproc
 
 
