@@ -364,3 +364,15 @@ end_scan
 scan_test raw_string_literal_4, "`\"abc def !!\"`"
 	scan_token type=TK_STRING, start=0, size=14, line=1, column=1
 end_scan
+
+scan_test unterminated_raw_string_literal_1, "`"
+	scan_token type=TK_BAD_STRING, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test unterminated_raw_string_literal_2, "`a"
+	scan_token type=TK_BAD_STRING, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test unterminated_raw_string_literal_3, "`foo bar   "
+	scan_token type=TK_BAD_STRING, start=0, size=11, line=1, column=1
+end_scan
