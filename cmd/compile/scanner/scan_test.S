@@ -354,11 +354,11 @@ scan_test interpreted_string_literal_1, "\"a\""
 end_scan
 
 # Semantically valid, but interpreting the string isn't done in the lexer.
-scan_test interpreted_string_literal_2, "`\\`"
+scan_test interpreted_string_literal_2, "\"\\\""
 	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
 end_scan
 
-scan_test interpreted_string_literal_3, "`\\n`"
+scan_test interpreted_string_literal_3, "\"\\n\""
 	scan_token type=TK_STRING, start=0, size=4, line=1, column=1
 end_scan
 
