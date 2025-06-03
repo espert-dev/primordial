@@ -199,10 +199,10 @@ Xalign
 
 	# Call all the possible skippers in sequence.
 	#
-	# They merely consume input and cannot generate tokens, but we still need to
-	# check their result to see if we need to apply them more, because
-	# multiple skippers may need to be applied (e.g., whitespace followed by
-	# comments, followed by whitespace on the next line).
+	# They merely consume input and cannot generate tokens, but we still
+	# need to check their result to see if we need to apply them more,
+	# because multiple skippers may need to be applied (e.g., whitespace
+	# followed by comments, followed by whitespace on the next line).
 	call skip_whitespace
 	bnez a0, .LScan.match
 
