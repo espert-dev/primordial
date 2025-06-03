@@ -236,6 +236,9 @@ Xalign
 	call accept_raw_string
 	bnez a0, .Lscan_OK
 
+	call accept_char
+	bnez a0, .Lscan_OK
+
 	# Discard bad character and report error.
 	call start_token
 	call consume
@@ -671,6 +674,51 @@ accept_raw_string:
 .Lraw_string.error:
 	li a0, TK_BAD_STRING
 	j .Lraw_string.return
+	.cfi_endproc
+
+
+accept_char:
+	.cfi_startproc
+
+	# Optimise for failed matching because it's the most frequent case.
+	li t0, '\''
+	beq ch, t0, .Lchar.started
+	ret
+
+.Lchar.started:
+	save_1
+
+	# Reload into s1, since save_1 destroyed it.
+	li s1, '\''
+
+	call start_token
+
+.Lchar.loop:
+	call consume
+	beqz a0, .Lchar.error
+
+	li t0, '\\'
+	beq ch, t0, .Lchar.escape
+
+	bne ch, s1, .Lchar.loop
+
+.Lchar.accept:
+	call consume
+	li a0, TK_CHAR
+
+.Lchar.return:
+	restore_1
+
+.Lchar.escape:
+	# We only care about escaping '\''.
+	# All the other escaping cases can be handled by post-processing.
+	call consume
+	beqz a0, .Lchar.error
+	j .Lchar.loop
+
+.Lchar.error:
+	li a0, TK_BAD_CHAR
+	j .Lchar.return
 	.cfi_endproc
 
 

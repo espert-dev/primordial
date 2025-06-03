@@ -353,7 +353,7 @@ scan_test interpreted_string_literal_1, "\"a\""
 	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
 end_scan
 
-# Technically not valid, but interpreting the string isn't done in the lexer.
+# Semantically valid, but interpreting the string isn't done in the lexer.
 scan_test interpreted_string_literal_2, "`\\`"
 	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
 end_scan
@@ -404,4 +404,37 @@ end_scan
 
 scan_test unterminated_raw_string_literal_3, "`foo bar   "
 	scan_token type=TK_BAD_STRING, start=0, size=11, line=1, column=1
+end_scan
+
+# Semantically invalid, but not a concern for the lexer.
+scan_test empty_char_literal, "''"
+	scan_token type=TK_CHAR, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test char_literal_1, "'a'"
+	scan_token type=TK_CHAR, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test char_literal_2, "'3'"
+	scan_token type=TK_CHAR, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test escaped_char_literal_1, "'\\n'"
+	scan_token type=TK_CHAR, start=0, size=4, line=1, column=1
+end_scan
+
+scan_test escaped_char_literal_2, "'\\''"
+	scan_token type=TK_CHAR, start=0, size=4, line=1, column=1
+end_scan
+
+scan_test unterminated_char_literal_0, "'"
+	scan_token type=TK_BAD_CHAR, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test unterminated_char_literal_1, "'a"
+	scan_token type=TK_BAD_CHAR, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test unterminated_char_literal_2, "'ab"
+	scan_token type=TK_BAD_CHAR, start=0, size=3, line=1, column=1
 end_scan

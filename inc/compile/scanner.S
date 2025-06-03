@@ -13,8 +13,9 @@
 .equiv TK_TYPE_ID, 5
 .equiv TK_NUMBER, 6
 .equiv TK_STRING, 7
+.equiv TK_CHAR, 8
 
-.equiv TK_KEYWORD_BASE, 8
+.equiv TK_KEYWORD_BASE, 9
 .equiv TK_IF, TK_KEYWORD_BASE + 0
 .equiv TK_FOR, TK_KEYWORD_BASE + 1
 .equiv TK_FUNC, TK_KEYWORD_BASE + 2
