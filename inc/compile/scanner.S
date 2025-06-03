@@ -8,9 +8,10 @@
 .equiv TK_NONE, 0
 .equiv TK_BAD_CHAR, 1
 .equiv TK_BAD_OPERATOR, 2
-.equiv TK_ID, 3
+.equiv TK_VALUE_ID, 3
+.equiv TK_TYPE_ID, 4
 
-.equiv TK_KEYWORD_BASE, 4
+.equiv TK_KEYWORD_BASE, 5
 .equiv TK_IF, TK_KEYWORD_BASE + 0
 .equiv TK_FOR, TK_KEYWORD_BASE + 1
 .equiv TK_FUNC, TK_KEYWORD_BASE + 2
