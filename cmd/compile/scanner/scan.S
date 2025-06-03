@@ -79,22 +79,6 @@ keyword_token_types_data:
 .byte TK_FUNC
 .equiv keyword_token_types_size, . - keyword_token_types_data
 
-# Mapping of separators to token types.
-.p2align 0
-separator_token_types_data:
-.byte TK_LPAR
-.byte TK_RPAR
-.byte TK_COMMA
-.byte TK_PERIOD
-.byte TK_SEMI
-.byte TK_MAYBE
-.byte TK_AT
-.byte TK_LBRA
-.byte TK_RBRA
-.byte TK_LCUR
-.byte TK_RCUR
-.equiv separator_token_types_size, . - separator_token_types_data
-
 # Keyword strings.
 Xalign
 safe_str if_kw, "if"
@@ -108,6 +92,8 @@ safe_str mult_op, "*"
 safe_str div_op, "/"
 
 # Separator characters. Note that separators are always one character long.
+#
+# Token types must be listed the in same order as inc/scanner.S.
 safe_str separator_list, "(),.;?@[]{}"
 
 # Characters that can be part of an operator.
@@ -532,10 +518,11 @@ accept_separator:
 	call start_token
 	call consume
 
-	# Recognise the operator.
-	la token_type_ptr, separator_token_types_data
-	add token_type_ptr, token_type_ptr, found_pos
-	lb a0, 0(token_type_ptr)
+	# Obtain the token type.
+	#
+	# Exploit the fact that operators_data is sorted in the same order
+	# used by the operator token IDs.
+	addi a0, found_pos, TK_SEPARATOR_BASE
 
 .Lseparator_end:
 	restore_1
