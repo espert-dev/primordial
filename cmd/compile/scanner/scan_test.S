@@ -344,3 +344,23 @@ scan_test number_12_34_56, "12 34 56"
 	scan_token type=TK_NUMBER, start=3, size=2, line=1, column=4
 	scan_token type=TK_NUMBER, start=6, size=2, line=1, column=7
 end_scan
+
+scan_test empty_raw_string_literal, "``"
+	scan_token type=TK_STRING, start=0, size=2, line=1, column=1
+end_scan
+
+scan_test raw_string_literal_1, "`a`"
+	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test raw_string_literal_2, "`\\`"
+	scan_token type=TK_STRING, start=0, size=3, line=1, column=1
+end_scan
+
+scan_test raw_string_literal_3, "`\\n`"
+	scan_token type=TK_STRING, start=0, size=4, line=1, column=1
+end_scan
+
+scan_test raw_string_literal_4, "`\"abc def !!\"`"
+	scan_token type=TK_STRING, start=0, size=14, line=1, column=1
+end_scan

@@ -93,7 +93,9 @@ safe_str separator_list, "(),.;?@[]{}"
 # Characters that can be part of an operator.
 safe_str operator_chars, "!%&*+-/:<=>\^|~"
 
-# Characters used by symbols and quoting: "$'`
+# Characters used by string and character literals: "`'
+
+# Starting characters for symbol strings: $
 
 # Characters used by comments: #
 
@@ -226,6 +228,9 @@ Xalign
 	bnez a0, .Lscan_OK
 
 	call accept_number
+	bnez a0, .Lscan_OK
+
+	call accept_raw_string
 	bnez a0, .Lscan_OK
 
 	# Discard bad character and report error.
@@ -584,6 +589,40 @@ accept_number:
 
 .Lnumber.return:
 	restore_0
+	.cfi_endproc
+
+
+accept_raw_string:
+	.cfi_startproc
+
+	# Optimise for failed matching because it's the most frequent case.
+	li t0, '`'
+	beq ch, t0, .Lraw_string.started
+	ret
+
+.Lraw_string.started:
+	save_1
+
+	# Reload into s1, since save_1 destroyed it.
+	li s1, '`'
+
+	call start_token
+
+.Lraw_string.loop:
+	call consume
+	beqz a0, .Lraw_string.error
+	bne ch, s1, .Lraw_string.loop
+
+.Lraw_string.accept:
+	call consume
+	li a0, TK_STRING
+
+.Lraw_string.return:
+	restore_1
+
+.Lraw_string.error:
+	li a0, TK_BAD_STRING
+	j .Lraw_string.return
 	.cfi_endproc
 
 
