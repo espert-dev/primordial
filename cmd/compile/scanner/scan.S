@@ -53,6 +53,8 @@
 .section .rodata
 
 # Keyword list.
+#
+# Token types must be listed the in same order as inc/scanner.S.
 Xalign
 keywords_data:
 safe_str_slice if_kw
@@ -70,14 +72,6 @@ safe_str_slice minus_op
 safe_str_slice mult_op
 safe_str_slice div_op
 .equiv operators_size, 4
-
-# Mapping of keywords to token types (must be in sync with keywords_data).
-.p2align 0
-keyword_token_types_data:
-.byte TK_IF
-.byte TK_FOR
-.byte TK_FUNC
-.equiv keyword_token_types_size, . - keyword_token_types_data
 
 # Keyword strings.
 Xalign
@@ -435,10 +429,12 @@ accept_id_or_kw:
 	call "mem.Index"
 	bltz a0, .Lid.return_id
 
-	# A keyword was identified. Its position (a0) determines its type.
-	la t0, keyword_token_types_data
-	add t0, t0, a0
-	lbu a0, 0(t0)
+	# Obtain the token type.
+	#
+	# Exploit the fact that keywords_data is sorted in the same order
+	# used by the operator token IDs.
+	add a0, a0, TK_KEYWORD_BASE
+
 	j .Lid.return
 
 .Lid.return_id:
