@@ -61,6 +61,8 @@ safe_str_slice func_kw
 .equiv keywords_size, 3
 
 # Operator list.
+#
+# Token types must be listed the in same order as inc/scanner.S.
 Xalign
 operators_data:
 safe_str_slice plus_op
@@ -78,10 +80,6 @@ keyword_token_types_data:
 .equiv keyword_token_types_size, . - keyword_token_types_data
 
 # Mapping of separators to token types.
-#
-# Must be in sync with:
-#  * separator_list
-#  * inc/scanner.S
 .p2align 0
 separator_token_types_data:
 .byte TK_LPAR
@@ -96,19 +94,6 @@ separator_token_types_data:
 .byte TK_LCUR
 .byte TK_RCUR
 .equiv separator_token_types_size, . - separator_token_types_data
-
-# Mapping of operators to token types.
-#
-# Must be in sync with:
-#  * operators_data
-#  * inc/scanner.S
-.p2align 0
-operator_token_types_data:
-.byte TK_PLUS
-.byte TK_MINUS
-.byte TK_MULT
-.byte TK_DIV
-.equiv operator_token_types_size, . - operator_token_types_data
 
 # Keyword strings.
 Xalign
@@ -507,10 +492,11 @@ accept_operator:
 	call "mem.Index"
 	beqz a1, .Loperator_error
 
-	# An operator was identified. Its position (a0) determines its type.
-	la t0, operator_token_types_data
-	add t0, t0, a0
-	lbu a0, 0(t0)
+	# Obtain the token type.
+	#
+	# Exploit the fact that operators_data is sorted in the same order
+	# used by the operator token IDs.
+	addi a0, a0, TK_OPERATOR_BASE
 
 .Loperator_return:
 	restore_0
