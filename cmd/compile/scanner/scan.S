@@ -116,7 +116,7 @@ safe_str div_op, "/"
 safe_str separator_list, "()[]{};,."
 
 # Characters that can be part of an operator.
-safe_str operator_chars, "!%&*+-./:<=>?@^|~"
+safe_str operator_chars, "!%&*+-/:<=>?@^|~"
 
 
 # ===========================================================================
