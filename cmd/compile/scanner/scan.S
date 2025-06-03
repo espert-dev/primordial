@@ -69,7 +69,7 @@ safe_str_slice mult_op
 safe_str_slice div_op
 .equiv operators_size, 4
 
-# Mapping of keywords to token types (must be in sync with keyword_strings).
+# Mapping of keywords to token types (must be in sync with keywords_data).
 .p2align 0
 keyword_token_types_data:
 .byte TK_IF
@@ -77,7 +77,11 @@ keyword_token_types_data:
 .byte TK_FUNC
 .equiv keyword_token_types_size, . - keyword_token_types_data
 
-# Mapping of separators to token types (must be in sync with separator_list).
+# Mapping of separators to token types.
+#
+# Must be in sync with:
+#  * separator_list
+#  * inc/scanner.S
 .p2align 0
 separator_token_types_data:
 .byte TK_LPAR
@@ -85,13 +89,19 @@ separator_token_types_data:
 .byte TK_COMMA
 .byte TK_PERIOD
 .byte TK_SEMI
+.byte TK_MAYBE
+.byte TK_AT
 .byte TK_LBRA
 .byte TK_RBRA
 .byte TK_LCUR
 .byte TK_RCUR
 .equiv separator_token_types_size, . - separator_token_types_data
 
-# Mapping of operators to token types (must be in sync with operator_chars).
+# Mapping of operators to token types.
+#
+# Must be in sync with:
+#  * operators_data
+#  * inc/scanner.S
 .p2align 0
 operator_token_types_data:
 .byte TK_PLUS
@@ -113,10 +123,10 @@ safe_str mult_op, "*"
 safe_str div_op, "/"
 
 # Separator characters. Note that separators are always one character long.
-safe_str separator_list, "(),.;[]{}"
+safe_str separator_list, "(),.;?@[]{}"
 
 # Characters that can be part of an operator.
-safe_str operator_chars, "!%&*+-/:<=>?@\^|~"
+safe_str operator_chars, "!%&*+-/:<=>\^|~"
 
 # Characters used by symbols and quoting: "$'`
 

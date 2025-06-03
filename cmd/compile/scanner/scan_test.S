@@ -69,7 +69,7 @@ end_test
 
 
 # ===========================================================================
-# Test cases
+# Scanning test cases
 # ===========================================================================
 
 .equiv nil_input_data, 0
@@ -123,41 +123,106 @@ scan_test func_keyword, "func"
 	scan_token type=TK_FUNC, start=0, size=4, line=1, column=1
 end_scan
 
-scan_test lpar_separator, "("
+scan_test lpar_separator_1, "("
 	scan_token type=TK_LPAR, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test rpar_separator, ")"
+# Test the parsing of a single separator.
+
+scan_test rpar_separator_1, ")"
 	scan_token type=TK_RPAR, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test lbra_separator, "["
+scan_test lbra_separator_1, "["
 	scan_token type=TK_LBRA, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test rbra_separator, "]"
+scan_test rbra_separator_1, "]"
 	scan_token type=TK_RBRA, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test lcur_separator, "{"
+scan_test lcur_separator_1, "{"
 	scan_token type=TK_LCUR, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test rcur_separator, "}"
+scan_test rcur_separator_1, "}"
 	scan_token type=TK_RCUR, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test semi_separator, ";"
+scan_test semi_separator_1, ";"
 	scan_token type=TK_SEMI, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test comma_separator, ","
+scan_test comma_separator_1, ","
 	scan_token type=TK_COMMA, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test period_separator, "."
+scan_test period_separator_1, "."
 	scan_token type=TK_PERIOD, start=0, size=1, line=1, column=1
 end_scan
+
+scan_test maybe_separator_1, "?"
+	scan_token type=TK_MAYBE, start=0, size=1, line=1, column=1
+end_scan
+
+scan_test at_separator_1, "@"
+	scan_token type=TK_AT, start=0, size=1, line=1, column=1
+end_scan
+
+# Test the parsing of adjacent separators without no whitespace inbetween.
+# This ensures that they are indeed parsed as separators, not operators.
+
+scan_test rpar_separator_2, "))"
+	scan_token type=TK_RPAR, start=0, size=1, line=1, column=1
+	scan_token type=TK_RPAR, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test lbra_separator_2, "[["
+	scan_token type=TK_LBRA, start=0, size=1, line=1, column=1
+	scan_token type=TK_LBRA, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test rbra_separator_2, "]]"
+	scan_token type=TK_RBRA, start=0, size=1, line=1, column=1
+	scan_token type=TK_RBRA, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test lcur_separator_2, "{{"
+	scan_token type=TK_LCUR, start=0, size=1, line=1, column=1
+	scan_token type=TK_LCUR, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test rcur_separator_2, "}}"
+	scan_token type=TK_RCUR, start=0, size=1, line=1, column=1
+	scan_token type=TK_RCUR, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test semi_separator_2, ";;"
+	scan_token type=TK_SEMI, start=0, size=1, line=1, column=1
+	scan_token type=TK_SEMI, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test comma_separator_2, ",,"
+	scan_token type=TK_COMMA, start=0, size=1, line=1, column=1
+	scan_token type=TK_COMMA, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test period_separator_2, ".."
+	scan_token type=TK_PERIOD, start=0, size=1, line=1, column=1
+	scan_token type=TK_PERIOD, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test maybe_separator_2, "??"
+	scan_token type=TK_MAYBE, start=0, size=1, line=1, column=1
+	scan_token type=TK_MAYBE, start=1, size=1, line=1, column=2
+end_scan
+
+scan_test at_separator_2, "@@"
+	scan_token type=TK_AT, start=0, size=1, line=1, column=1
+	scan_token type=TK_AT, start=1, size=1, line=1, column=2
+end_scan
+
+# Test the parsing of operators.
 
 scan_test plus_operator, "+"
 	scan_token type=TK_PLUS, start=0, size=1, line=1, column=1
