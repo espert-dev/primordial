@@ -26,7 +26,7 @@ safe_str negative_buffer_pos_panic, "PANIC: negative buffer position!"
 # Format an unsigned number.
 #
 # Input:
-#   a0 out_size: Output buffer sizallocation_panic_datae
+#   a0 out_size: Output buffer size
 #   a1 out_data: Output buffer data
 #   a2 out_idx:  Output buffer current index
 #   a3 value:    Value to format
