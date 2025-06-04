@@ -96,35 +96,35 @@ end_scan
 scan_test whitespace, "\n\t "
 end_scan
 
-scan_test single_value_id, "foo"
-	scan_token type=TK_VALUE_ID, start=0, size=3, line=1, column=1
+scan_test single_lower_id, "foo"
+	scan_token type=TK_LOWER_ID, start=0, size=3, line=1, column=1
 end_scan
 
-scan_test anonymous_value_id, "_"
-	scan_token type=TK_VALUE_ID, start=0, size=1, line=1, column=1
+scan_test anonymous_lower_id, "_"
+	scan_token type=TK_LOWER_ID, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test single_value_id_with_leading_underscore, "_Foo"
-	scan_token type=TK_VALUE_ID, start=0, size=4, line=1, column=1
+scan_test single_lower_id_with_leading_underscore, "_Foo"
+	scan_token type=TK_LOWER_ID, start=0, size=4, line=1, column=1
 end_scan
 
-scan_test single_letter_type_id, "T"
-	scan_token type=TK_TYPE_ID, start=0, size=1, line=1, column=1
+scan_test single_letter_upper_id, "T"
+	scan_token type=TK_UPPER_ID, start=0, size=1, line=1, column=1
 end_scan
 
-scan_test single_type_id, "List"
-	scan_token type=TK_TYPE_ID, start=0, size=4, line=1, column=1
+scan_test single_upper_id, "List"
+	scan_token type=TK_UPPER_ID, start=0, size=4, line=1, column=1
 end_scan
 
 scan_test comments_stop_at_the_end_of_the_line, "foo # comment\nfoo"
-	scan_token type=TK_VALUE_ID, start=0, size=3, line=1, column=1
-	scan_token type=TK_VALUE_ID, start=14, size=3, line=2, column=1
+	scan_token type=TK_LOWER_ID, start=0, size=3, line=1, column=1
+	scan_token type=TK_LOWER_ID, start=14, size=3, line=2, column=1
 end_scan
 
 scan_test TK_BAD_CHAR_is_discarded, "foo \xff bar"
-	scan_token type=TK_VALUE_ID, start=0, size=3, line=1, column=1
+	scan_token type=TK_LOWER_ID, start=0, size=3, line=1, column=1
 	scan_token type=TK_BAD_CHAR, start=4, size=1, line=1, column=5
-	scan_token type=TK_VALUE_ID, start=6, size=3, line=1, column=7
+	scan_token type=TK_LOWER_ID, start=6, size=3, line=1, column=7
 end_scan
 
 scan_test if_keyword, "if"
@@ -257,9 +257,9 @@ scan_test div_operator, "/"
 end_scan
 
 scan_test addition, "x+y"
-	scan_token type=TK_VALUE_ID, start=0, size=1, line=1, column=1
+	scan_token type=TK_LOWER_ID, start=0, size=1, line=1, column=1
 	scan_token type=TK_PLUS, start=1, size=1, line=1, column=2
-	scan_token type=TK_VALUE_ID, start=2, size=1, line=1, column=3
+	scan_token type=TK_LOWER_ID, start=2, size=1, line=1, column=3
 end_scan
 
 # Negative numbers do not need to be included because the minus sign is handled

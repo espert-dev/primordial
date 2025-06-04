@@ -215,10 +215,10 @@ Xalign
 	# They will update pos on match.
 	#
 	# The token accepters return the recognised token type (0 if none).
-	call accept_type_id
+	call accept_upper_id
         bnez a0, .Lscan_OK
 
-	call accept_value_id_or_kw
+	call accept_lower_id_or_kw
 	bnez a0, .Lscan_OK
 
 	call accept_separator
@@ -417,59 +417,59 @@ skip_comments:
 #   a0: token_type (0 if no token was recognised)
 # ===========================================================================
 
-accept_type_id:
+accept_upper_id:
 	.cfi_startproc
 	save_0
 
 	mv a0, ch
 	call "ascii.IsUpper"
-	beqz a0, .Ltype_id.return
+	beqz a0, .Lupper_id.return
 
 	call start_token
 
-.Ltype_id.loop:
+.Lupper_id.loop:
 	call consume
-	beqz a0, .Ltype_id.accept
+	beqz a0, .Lupper_id.accept
 
 	call continues_id_or_kw
-	bnez a0, .Ltype_id.loop
+	bnez a0, .Lupper_id.loop
 
-.Ltype_id.accept:
-	li a0, TK_TYPE_ID
+.Lupper_id.accept:
+	li a0, TK_UPPER_ID
 
-.Ltype_id.return:
+.Lupper_id.return:
 	restore_0
 	.cfi_endproc
 
 
-accept_value_id_or_kw:
+accept_lower_id_or_kw:
 	.cfi_startproc
 	save_0
 
-	call starts_value_id_or_kw
-	bnez a0, .Lvalue_id.started
+	call starts_lower_id_or_kw
+	bnez a0, .Llower_id.started
 
 	# Reject (a0 is already 0 by construction).
-	j .Lvalue_id.return
+	j .Llower_id.return
 
-.Lvalue_id.started:
+.Llower_id.started:
 	call start_token
 
-.Lvalue_id.loop:
+.Llower_id.loop:
 	call consume
-	beqz a0, .Lvalue_id.detect_keywords
+	beqz a0, .Llower_id.detect_keywords
 
 	call continues_id_or_kw
-	bnez a0, .Lvalue_id.loop
+	bnez a0, .Llower_id.loop
 
-.Lvalue_id.detect_keywords:
+.Llower_id.detect_keywords:
 	# Recognise keywords. If none is found, return an identifier.
 	sub a0, token_end, token_start
 	mv a1, token_start
 	li a2, keywords_size
 	la a3, keywords_data
 	call "mem.Index"
-	bltz a0, .Lvalue_id.return_id
+	bltz a0, .Llower_id.return_id
 
 	# Obtain the token type.
 	#
@@ -477,12 +477,12 @@ accept_value_id_or_kw:
 	# used by the operator token IDs.
 	add a0, a0, TK_KEYWORD_BASE
 
-	j .Lvalue_id.return
+	j .Llower_id.return
 
-.Lvalue_id.return_id:
-	li a0, TK_VALUE_ID
+.Llower_id.return_id:
+	li a0, TK_LOWER_ID
 
-.Lvalue_id.return:
+.Llower_id.return:
 	restore_0
 	.cfi_endproc
 
@@ -727,19 +727,19 @@ accept_char:
 # ===========================================================================
 
 # Match: [_a-z]
-starts_value_id_or_kw:
+starts_lower_id_or_kw:
 	.cfi_startproc
 	save_0
 
 	mv a0, ch
 	call "ascii.IsLetter"
-	bnez a0, .Lstarts_value_id_or_kw.end
+	bnez a0, .Lstarts_lower_id_or_kw.end
 
 	# c == '_'
 	addi t0, ch, -'_'
 	seqz a0, t0
 
-.Lstarts_value_id_or_kw.end:
+.Lstarts_lower_id_or_kw.end:
 	restore_0
 	.cfi_endproc
 
@@ -751,17 +751,17 @@ continues_id_or_kw:
 
 	mv a0, ch
 	call "ascii.IsLetter"
-	bnez a0, ".Lstarts_value_id_or_kw.end"
+	bnez a0, ".Lstarts_lower_id_or_kw.end"
 
 	mv a0, ch
 	call "ascii.IsDigit"
-	bnez a0, ".Lstarts_value_id_or_kw.end"
+	bnez a0, ".Lstarts_lower_id_or_kw.end"
 
 	# c == '_'
 	addi t0, ch, -'_'
 	seqz a0, t0
 
-".Lstarts_value_id_or_kw.end":
+".Lstarts_lower_id_or_kw.end":
 	restore_0
 	.cfi_endproc
 

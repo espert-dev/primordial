@@ -9,8 +9,8 @@
 .equiv TK_BAD_CHAR, 1
 .equiv TK_BAD_OPERATOR, 2
 .equiv TK_BAD_STRING, 3
-.equiv TK_VALUE_ID, 4
-.equiv TK_TYPE_ID, 5
+.equiv TK_LOWER_ID, 4
+.equiv TK_UPPER_ID, 5
 .equiv TK_NUMBER, 6
 .equiv TK_STRING, 7
 .equiv TK_CHAR, 8
