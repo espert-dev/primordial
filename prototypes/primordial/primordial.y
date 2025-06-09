@@ -34,11 +34,15 @@ void yyerror(const char* s);
 %token PACKAGE "package"
 
 /* Identifiers */
-%token UPPER_ID "upper identifier"
-%token LOWER_ID "lower identifier"
+%token <text> UPPER_ID "upper identifier"
+%token <text> LOWER_ID "lower identifier"
 
 /* Literals */
-%token STR_LITERAL "string literal"
+%token <text> STR_LITERAL "string literal"
+
+%union {
+	const char *text;
+}
 
 %%
 
@@ -47,7 +51,7 @@ File
     ;
 
 PackageDecl
-    : "package" UPPER_ID ";"
+    : "package" UPPER_ID ";"  { printf("Package(%s)\n", $2); }
     ;
 
 Imports
@@ -61,15 +65,14 @@ Import
     ;
 
 ImportItem
-    : STR_LITERAL /* default alias */
-    | UPPER_ID STR_LITERAL /* alias override */
+    : STR_LITERAL  { printf("Import(%s)\n", $1); }
+    | UPPER_ID STR_LITERAL  { printf("Import(%s as %s)\n", $2, $1); }
     ;
 
 GroupedImportItems
     : %empty
     | GroupedImportItems ImportItem ";"
     ;
-
 
 %%
 

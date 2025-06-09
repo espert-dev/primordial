@@ -1,3 +1,7 @@
+Package(Example)
+Import("IO")
+Import("Fmt")
+Import("HTTP")
 
 PASS
 

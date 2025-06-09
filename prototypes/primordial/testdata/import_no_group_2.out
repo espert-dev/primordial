@@ -1,3 +1,6 @@
+Package(Example)
+Import("IO")
+Import("Fmt")
 
 PASS
 

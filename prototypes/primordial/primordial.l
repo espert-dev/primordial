@@ -38,10 +38,10 @@ static int last_token = -1;
 "import"               { emit(IMPORT); }
 "package"              { emit(PACKAGE); }
 
-[A-Z][0-9A-Za-z_]*     { emit(UPPER_ID); }
-[a-z_][0-9A-Za-z_]*    { emit(LOWER_ID); }
+[A-Z][0-9A-Za-z_]*     { yylval.text = strdup(yytext); emit(UPPER_ID); }
+[a-z_][0-9A-Za-z_]*    { yylval.text = strdup(yytext); emit(LOWER_ID); }
 
-\"(\\.|[^"\\])*\"      { emit(STR_LITERAL); }
+\"(\\.|[^"\\])*\"      { yylval.text = strdup(yytext); emit(STR_LITERAL); }
 
 [ \t]+                 { /* ignore spaces */ }
 

@@ -1,3 +1,5 @@
+Package(Example)
+Import("IO" as IO1)
 
 PASS
 
