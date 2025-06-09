@@ -43,6 +43,8 @@ static int last_token = -1;
 
 \"(\\.|[^"\\])*\"      { emit(STR_LITERAL); }
 
+[ \t]+                 { /* ignore spaces */ }
+
 \n+                    {
 	/* Adapt BCPL's and Go's rules for automatic semicolons */
 	switch (last_token) {
@@ -64,8 +66,6 @@ static int last_token = -1;
 			/* No implicit semicolon */
 	}
 }
-
-[ \t]+                 { /* ignore spaces */ }
 
 .                      {
 	printf(
