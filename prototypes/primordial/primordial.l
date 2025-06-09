@@ -23,17 +23,22 @@
 "#"[^\n]*              {/* ignore comments */}
 
 ";"                    { return SEMI; }
+"("                    { return LPAR; }
+")"                    { return RPAR; }
 
+"import"               { return IMPORT; }
 "package"              { return PACKAGE; }
 
 [A-Z][0-9A-Za-z_]*     { return UPPER_ID; }
 [a-z_][0-9A-Za-z_]*    { return LOWER_ID; }
 
+\"(\\.|[^"\\])*\"      { return STR_LITERAL; }
+
 [ \t\n]+               {/* ignore spaces */}
 
 .                      {
 	printf(
-		"** Line %d, column %d: unrecognized symbol \"%s\"\n",
+		"** Line %d, column %d: unrecognized symbol \u2018%s\u2019\n",
 		yylloc.first_line,
 		yylloc.first_column,
         	yytext

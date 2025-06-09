@@ -38,15 +38,15 @@ for input_file in "${src_testdata_dir}"/*.p; do
 	fi
 
 	actual_output="${build_testdata_dir}/${name}.out"
-	diff_file="${build_testdata_dir}/${name}.diff"
+	diff="${build_testdata_dir}/${name}.diff"
 	"${build_dir}/parser" < "${input_file}" > "${actual_output}"
-	if ! diff "${approved_output}" "${actual_output}" >"${diff_file}" 2>&1; then
+	if ! diff "${approved_output}" "${actual_output}" >"${diff}" 2>&1; then
 		exit_code=1
 		echo "[FAIL: ${name}]"
 		echo "Approved: ${approved_output}"
 		echo "Actual:   ${actual_output}"
 		echo "Diff:"
-		cat "${diff_file}"
+		cat "${diff}"
 		echo
 	fi
 done

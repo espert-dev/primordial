@@ -24,20 +24,52 @@ void yyerror(const char* s);
 
 %start File
 
+/* Separators */
+%token LPAR "("
+%token RPAR ")"
+%token SEMI ";"
+
+/* Keywords */
+%token IMPORT "import"
 %token PACKAGE "package"
+
+/* Identifiers */
 %token UPPER_ID "upper identifier"
 %token LOWER_ID "lower identifier"
-%token SEMI ";"
+
+/* Literals */
+%token STR_LITERAL "string literal"
 
 %%
 
 File
-    : PackageDecl
+    : PackageDecl Imports
     ;
 
 PackageDecl
     : "package" UPPER_ID ";"
     ;
+
+Imports
+    : %empty
+    | Imports Import ";"
+    ;
+
+Import
+    : "import" ImportItem
+    | "import" "(" GroupedImportItems ")"
+    ;
+
+ImportItem
+    : STR_LITERAL /* default alias */
+    | UPPER_ID STR_LITERAL /* alias override */
+    ;
+
+GroupedImportItems
+    : %empty
+    | GroupedImportItems ImportItem ";"
+    ;
+
 
 %%
 
