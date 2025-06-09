@@ -1,5 +1,5 @@
 # OK
-package Example;
+package Example
 
-import IO1 "IO";
-import Fmt2 "Fmt";
+import IO1 "IO"
+import Fmt2 "Fmt"

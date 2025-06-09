@@ -1,4 +1,4 @@
 # OK
-package Example;
+package Example
 
-import ();
+import ()

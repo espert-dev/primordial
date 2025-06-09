@@ -1,2 +1,2 @@
 # Expected: pass
-package Example;
+package Example

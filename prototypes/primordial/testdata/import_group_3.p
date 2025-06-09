@@ -1,8 +1,8 @@
 # OK
-package Example;
+package Example
 
 import (
-	"IO";
-	"Fmt";
-	"HTTP";
-);
+	"IO"
+	"Fmt"
+	"HTTP"
+)

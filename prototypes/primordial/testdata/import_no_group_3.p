@@ -1,6 +1,6 @@
 # OK
-package Example;
+package Example
 
-import "IO";
-import "Fmt";
-import "HTTP";
+import "IO"
+import "Fmt"
+import "HTTP"

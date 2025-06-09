@@ -19,7 +19,7 @@ void yyerror(const char* s);
 %define lr.type lalr
 
 %define parse.trace
-%define parse.error verbose
+%define parse.error detailed
 %locations
 
 %start File

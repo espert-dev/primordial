@@ -1,7 +1,7 @@
 # OK
-package Example;
+package Example
 
 import (
-	IO1 "IO";
-	Fmt2 "Fmt";
-);
+	IO1 "IO"
+	Fmt2 "Fmt"
+)

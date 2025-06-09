@@ -1,6 +1,6 @@
 # OK
-package Example;
+package Example
 
 import (
-	IO1 "IO";
-);
+	IO1 "IO"
+)
