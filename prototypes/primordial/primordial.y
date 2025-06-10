@@ -254,7 +254,12 @@ Block
 
 StatementList
 	: %empty
-	| StatementList Statement ";"
+	| XStatementList MaybeSemi
+	;
+
+XStatementList
+	: Statement
+	| XStatementList ";" Statement
 	;
 
 Statement
@@ -562,6 +567,11 @@ InterfaceItem
 MaybeComma
 	: %empty
 	| ","
+	;
+
+MaybeSemi
+	: %empty
+	| ";"
 	;
 
 %%

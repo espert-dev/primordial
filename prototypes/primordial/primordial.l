@@ -71,6 +71,7 @@ static bool can_insert_semicolon = false;
 ")"                     { final(RPAR); }
 "]"                     { final(RBRA); }
 "}"                     { final(RCUR); }
+"@"                     { final(AT); }
 ","                     { final(COMMA); }
 ";"                     { non_final(SEMI); }
 "."                     {
