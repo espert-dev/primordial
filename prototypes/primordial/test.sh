@@ -1,9 +1,41 @@
-#!/bin/sh
+#!/bin/bash
+# Run the prototype tests.
+#
+# We need bash on this one to allow ways of setting globals from while loops.
 set -eu
+
+section() {
+	if [ -n "$COLORIZE" -a "$COLORIZE" != 0 ]; then
+		echo -e "\e[1;35m$*\e[0m" >&2
+	else
+		echo -e "$*" >&2
+	fi
+}
+
+success() {
+	if [ -t 1 ]; then
+		echo -e "\n\e[1;32mDone.\e[0m"
+	else
+		echo -e "\nDone."
+	fi
+}
+
+fail() {
+	if [ -n "$COLORIZE" -a "$COLORIZE" != 0 ]; then
+		echo -e "\n\e[1;31mFAILED!\e[0m"
+	else
+		echo -e "\nFAILED!"
+	fi
+}
 
 all_test_cases() {
 	find prototypes/primordial/testdata/ -type f -name '*.p' -printf '%P\n'
 }
+
+COLORIZE="${COLORIZE:-}"
+if [ -z "$COLORIZE" ] && [ -t 1 ]; then
+	COLORIZE=1
+fi
 
 cd "$(dirname "$0")/../.."
 
@@ -12,6 +44,7 @@ if [ -f .env ]; then
 	. ./.env
 fi
 
+section "Building Primordial parser prototype..."
 BUILD_ROOT="${BUILD_ROOT:-build}"
 build_dir="${BUILD_ROOT}/prototypes/primordial"
 mkdir -p "${build_dir}"
@@ -25,14 +58,17 @@ flex\
 	"${src_dir}/primordial.l"
 
 bison -d -o "${build_dir}/parser.c" "${src_dir}/primordial.y"
-gcc -o "${build_dir}/parser" "${build_dir}/parser.c" "${build_dir}/scanner.c"
+gcc -O2 -o "${build_dir}/parse"\
+	"${build_dir}/parser.c"\
+	"${build_dir}/scanner.c"
 
 # Run acceptance tests.
 build_testdata_dir="${build_dir}/testdata"
 src_testdata_dir="${src_dir}/testdata"
 exit_code=0
 
-all_test_cases | while IFS= read -r test_case; do
+section "Running Primordial grammar prototype tests..."
+while IFS= read -r test_case; do
 	input_file="${src_testdata_dir}/${test_case}"
 	base="$(dirname "${test_case}")/$(basename "${test_case}" .p)"
 	actual_output="${build_testdata_dir}/${base}.out"
@@ -45,16 +81,23 @@ all_test_cases | while IFS= read -r test_case; do
 
 	mkdir -p "$(dirname "${actual_output}")"
 
-	"${build_dir}/parser" <"${input_file}" >"${actual_output}" 2>&1
+	"${build_dir}/parse" <"${input_file}" >"${actual_output}" 2>&1
 	if ! diff "${approved_output}" "${actual_output}" >"${diff}" 2>&1; then
 		exit_code=1
 		echo "[FAIL: ${base}]"
+		echo "Input:    ${input_file}"
 		echo "Approved: ${approved_output}"
 		echo "Actual:   ${actual_output}"
 		echo "Diff:"
 		cat "${diff}"
 		echo
 	fi
-done
+done <<<"$(all_test_cases)"
+
+if [ "${exit_code}" = 0 ]; then
+	success
+else
+	fail
+fi
 
 exit "${exit_code}"
