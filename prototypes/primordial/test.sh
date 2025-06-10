@@ -45,7 +45,7 @@ all_test_cases | while IFS= read -r test_case; do
 
 	mkdir -p "$(dirname "${actual_output}")"
 
-	"${build_dir}/parser" < "${input_file}" > "${actual_output}"
+	"${build_dir}/parser" <"${input_file}" >"${actual_output}" 2>&1
 	if ! diff "${approved_output}" "${actual_output}" >"${diff}" 2>&1; then
 		exit_code=1
 		echo "[FAIL: ${base}]"
