@@ -340,9 +340,9 @@ While
 /*
  * Unlike C and Go, we can have an arbitrary number of setup assignments:
  *
- *   for i := 0; l := len(l); i < l; i++ {
- *           # ...
- *   }
+ *	for i := 0; l := len(l); i < l; i++ {
+ *		# ...
+ *	}
  *
  */
 For
@@ -352,15 +352,15 @@ For
 /*
  * Unlike Go, we can have more than one statement in a Condition.
  *
- *   if la := len(a); lb := len(b); la < lb {
- *           # ...
- *   }
+ *	if la := len(a); lb := len(b); la < lb {
+ *		# ...
+ *	}
  *
  * In my opinion, this is more readable than:
  *
- *   if la, lb := len(a), len(b); la < lb {
- *           # ...
- *   }
+ *	if la, lb := len(a), len(b); la < lb {
+ *		# ...
+ *	}
  *
  * Don't abuse it and it should be fine.
  *
@@ -442,7 +442,7 @@ Term
 /*
  * We cannot use the full Type here because otherwise, e.g.,
  *
- *   x := func(){}
+ *	x := func(){}
  *
  * could be interpreted as a struct literal, instead of an anonymous
  * function definition.
