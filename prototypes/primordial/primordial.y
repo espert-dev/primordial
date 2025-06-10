@@ -47,50 +47,50 @@ void yyerror(const char* s);
 %%
 
 File
-    : PackageDecl Imports
-    ;
+	: PackageDecl Imports
+	;
 
 PackageDecl
-    : "package" UPPER_ID ";"  { printf("Package(%s)\n", $2); }
-    ;
+	: "package" UPPER_ID ";"  { printf("Package(%s)\n", $2); }
+	;
 
 Imports
-    : %empty
-    | Imports Import ";"
-    ;
+	: %empty
+	| Imports Import ";"
+	;
 
 Import
-    : "import" ImportItem
-    | "import" "(" GroupedImportItems ")"
-    ;
+	: "import" ImportItem
+	| "import" "(" GroupedImportItems ")"
+	;
 
 ImportItem
-    : STR_LITERAL  { printf("Import(%s)\n", $1); }
-    | UPPER_ID STR_LITERAL  { printf("Import(%s as %s)\n", $2, $1); }
-    ;
+	: STR_LITERAL  { printf("Import(%s)\n", $1); }
+	| UPPER_ID STR_LITERAL  { printf("Import(%s as %s)\n", $2, $1); }
+	;
 
 GroupedImportItems
-    : %empty
-    | GroupedImportItems ImportItem ";"
-    ;
+	: %empty
+	| GroupedImportItems ImportItem ";"
+	;
 
 %%
 
 int main(int argc, char **argv) {
-   if (yyparse()) {
-   	puts("\nFAIL\n");
-   } else {
-   	puts("\nPASS\n");
-   }
+	if (yyparse()) {
+		puts("\nFAIL\n");
+	} else {
+		puts("\nPASS\n");
+	}
 
-   return 0;
+	return 0;
 }
 
 void yyerror(const char *msg) {
-   printf(
-   	"** Line %d, column %d: %s\n",
-   	yylloc.first_line,
-   	yylloc.first_column,
-   	msg
-   );
+	printf(
+		"** Line %d, column %d: %s\n",
+		yylloc.first_line,
+		yylloc.first_column,
+		msg
+	);
 }
