@@ -57,7 +57,10 @@ flex\
 	-o "${build_dir}/scanner.c"\
 	"${src_dir}/primordial.l"
 
-bison -d -o "${build_dir}/parser.c" "${src_dir}/primordial.y"
+bison -d -Wcounterexamples --report=all\
+	-o "${build_dir}/parser.c"\
+	"${src_dir}/primordial.y"
+
 gcc -O2 -o "${build_dir}/parse"\
 	"${build_dir}/parser.c"\
 	"${build_dir}/scanner.c"
