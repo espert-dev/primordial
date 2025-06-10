@@ -1,3 +1,30 @@
+/*
+ * Grammar for the Primordial language.
+ *
+ * Design decisions:
+ *
+ * - Supports declarations, which allows the implementation of single-pass
+ *   variants (e.g., for p0).
+ *
+ * - Value and type identifiers have been segregated at the lexical level,
+ *   following a common convention among many programming languages by which
+ *   types are denoted by uppercase letters. This, in turn, allows us to have
+ *   a more precise grammar, that for example removes the C typedef ambiguity.
+ *
+ * - Expressions and statements are strictly separated to minimise unintended
+ *   side-effects.
+ *
+ * - All lists separated by commas are left-associative to minimise stack
+ *   usage in bottom-up parsers.
+ *
+ * - All binary operators are left-associative.
+ *
+ * - All value expression operators are prefix.
+ *
+ * - All type modifiers are postfix.
+ *
+ */
+
 %{
 #include <stdbool.h>
 #include "parser.h"
