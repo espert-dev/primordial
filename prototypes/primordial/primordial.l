@@ -36,29 +36,99 @@ static bool can_insert_semicolon = false;
 
 %%
 
-"#"[^\n]*              {/* ignore comments */}
+"#"[^\n]*               {/* ignore comments */}
 
-";"                    { non_final(SEMI); }
-"("                    { non_final(LPAR); }
-")"                    { final(RPAR); }
+"("                     { non_final(LPAR); }
+"["                     { non_final(LBRA); }
+"{"                     { non_final(LCUR); }
+")"                     { final(RPAR); }
+"]"                     { final(RBRA); }
+"}"                     { final(RCUR); }
+","                     { final(COMMA); }
+";"                     { non_final(SEMI); }
+"."                     {
+	/*
+	 * This one has to be final because of the possibility of a pointer
+	 * dereference happening at the end of an expression.
+	 */
+	final(PERIOD);
+}
 
-"import"               { non_final(IMPORT); }
-"package"              { non_final(PACKAGE); }
+"->"                    { non_final(TO); }
+":"                     { non_final(COLON); }
+"||"                    { non_final(LOGIC_OR); }
+"&&"                    { non_final(LOGIC_AND); }
+"=="                    { non_final(CMP_EQ); }
+"!="                    { non_final(CMP_NE); }
+"<="                    { non_final(CMP_LE); }
+">="                    { non_final(CMP_GE); }
+"<"                     { non_final(CMP_LT); }
+">"                     { non_final(CMP_GT); }
+"+"                     { non_final(ADD); }
+"-"                     { non_final(SUB); }
+"|"                     { non_final(BITWISE_OR); }
+"^"                     { non_final(BITWISE_XOR); }
+"*"                     { non_final(MUL); }
+"/"                     { non_final(DIV); }
+"%"                     { non_final(REM); }
+"&"                     { non_final(BITWISE_AND); }
+"&^"                    { non_final(BITWISE_AND_NOT); }
+"<<"                    { non_final(LSHIFT); }
+">>"                    { non_final(RSHIFT); }
+"!"                     { non_final(LOGICAL_NOT); }
+"~"                     { non_final(BITWISE_NOT); }
 
-[A-Z][0-9A-Za-z_]*     { yylval.text = strdup(yytext); final(UPPER_ID); }
-[a-z_][0-9A-Za-z_]*    { yylval.text = strdup(yytext); final(LOWER_ID); }
+[!%&*+-/:<=>\\^|~]+     {
+	/*
+	 * Catch anything else that looks like an operator and report it as an
+	 * error. This allows us to add additional operators without generating
+	 * incompatibilities with existing code.
+	 */
+	printf(
+		"** Line %d, column %d: unrecognized operator \u2018%s\u2019\n",
+		yylloc.first_line,
+		yylloc.first_column,
+        	yytext
+        );
+        exit(0);
+}
 
-\"(\\.|[^"\\])*\"      { yylval.text = strdup(yytext); final(STR_LITERAL); }
+"import"                { non_final(IMPORT); }
+"package"               { non_final(PACKAGE); }
+"let"                   { non_final(LET); }
+"var"                   { non_final(VAR); }
+"if"                    { non_final(IF); }
+"else"                  { non_final(ELSE); }
+"while"                 { non_final(WHILE); }
+"for"                   { non_final(FOR); }
+"type"                  { non_final(TYPE); }
+"func"                  { non_final(FUNC); }
+"struct"                { non_final(STRUCT); }
+"union"                 { non_final(UNION); }
+"interface"             { non_final(INTERFACE); }
+"continue"              { final(CONTINUE); }
+"break"                 { final(BREAK); }
+"goto"                  { final(GOTO); }
 
-[ \t]+                 { /* ignore spaces */ }
+[A-Z][0-9A-Za-z_]*      { yylval.text = strdup(yytext); final(UPPER_ID); }
+[a-z_][0-9A-Za-z_]*     { yylval.text = strdup(yytext); final(LOWER_ID); }
 
-\n+                    {
+([0-9]*[0-9.][0-9]*([Ee][-+]?[0-9]+)?|"0x"[0-9A-Fa-f]+) {
+ 	yylval.text = strdup(yytext);
+	final(NUM_LITERAL);
+}
+
+\"(\\.|[^"\\])*\"       { yylval.text = strdup(yytext); final(STR_LITERAL); }
+
+[ \t]+                  { /* ignore spaces */ }
+
+\n+                     {
 	if (can_insert_semicolon) {
 		non_final(SEMI);
 	}
 }
 
-.                      {
+.                       {
 	printf(
 		"** Line %d, column %d: unrecognized symbol \u2018%s\u2019\n",
 		yylloc.first_line,
