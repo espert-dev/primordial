@@ -81,6 +81,8 @@ static bool can_insert_semicolon = false;
 	final(PERIOD);
 }
 
+"="                     { non_final(ASSIGN); }
+":="                    { non_final(DEFINE); }
 "->"                    { non_final(TO); }
 ":"                     { non_final(COLON); }
 "||"                    { non_final(LOGIC_OR); }
@@ -136,6 +138,8 @@ static bool can_insert_semicolon = false;
 "continue"              { final(CONTINUE); }
 "break"                 { final(BREAK); }
 "goto"                  { final(GOTO); }
+"true"                  { final(TRUE); }
+"false"                 { final(FALSE); }
 
 [A-Z][0-9A-Za-z_]*      { yylval.text = strdup(yytext); final(UPPER_ID); }
 [a-z_][0-9A-Za-z_]*     { yylval.text = strdup(yytext); final(LOWER_ID); }

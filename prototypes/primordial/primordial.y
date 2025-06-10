@@ -38,6 +38,8 @@ void yyerror(const char* s);
 %token AT "@"
 
 /* Operators */
+%token ASSIGN "="
+%token DEFINE ":="
 %token TO "->"
 %token COLON ":"
 %token LOGIC_OR "||"
@@ -87,6 +89,8 @@ void yyerror(const char* s);
 /* Literals */
 %token <text> NUM_LITERAL "numeric literal"
 %token <text> STR_LITERAL "string literal"
+%token TRUE "true"
+%token FALSE "false"
 
 %union {
 	const char *text;
@@ -137,8 +141,8 @@ TopItem
 	;
 
 Let
-	: "let" NELOWER_IDList "=" NEExpressionList
-	: "let" NELOWER_IDList Type "=" NEExpressionList
+	: "let" NELowerIDList "=" NEExpressionList
+	| "let" NELowerIDList Type "=" NEExpressionList
 	| "let" "(" LetDefinitionGroup ")"
 	;
 
@@ -153,10 +157,10 @@ LetDefinitionGroup
 	;
 
 Var
-	: "var" NELOWER_IDList
-	| "var" NELOWER_IDList Type
-	| "var" NELOWER_IDList "=" NEExpressionList
-	| "var" NELOWER_IDList Type "=" NEExpressionList
+	: "var" NELowerIDList
+	| "var" NELowerIDList Type
+	| "var" NELowerIDList "=" NEExpressionList
+	| "var" NELowerIDList Type "=" NEExpressionList
 	| "var" "(" VarDefinitionGroup ")"
 	;
 
@@ -301,13 +305,13 @@ AssignmentSeq
 	| AssignmentSeq Assignment ";"
 	;
 
-NELOWER_IDList
-	: XLOWER_IDList MaybeComma
+NELowerIDList
+	: XLowerIDList MaybeComma
 	;
 
-XLOWER_IDList
+XLowerIDList
 	: LOWER_ID
-	| XLOWER_IDList "," LOWER_ID
+	| XLowerIDList "," LOWER_ID
 	;
 
 FunctionCall
@@ -425,6 +429,8 @@ Term
 	| Term "." /* Pointer dereference */
 	| Type "(" Expression ")"
 	| LOWER_ID
+	| TRUE { puts("true"); }
+	| FALSE { puts("false"); }
 	| STR_LITERAL
 	| NUM_LITERAL
 	;
