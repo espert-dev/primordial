@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+all_test_cases() {
+	find prototypes/primordial/testdata/ -type f -name '*.p' -printf '%P\n'
+}
+
 cd "$(dirname "$0")/../.."
 
 # Read custom configuration from file.
@@ -25,24 +29,26 @@ gcc -o "${build_dir}/parser" "${build_dir}/parser.c" "${build_dir}/scanner.c"
 
 # Run acceptance tests.
 build_testdata_dir="${build_dir}/testdata"
-mkdir -p "${build_testdata_dir}"
-
-exit_code=0
 src_testdata_dir="${src_dir}/testdata"
-for input_file in "${src_testdata_dir}"/*.p; do
-	name="$(basename "${input_file}" .p)"
+exit_code=0
 
-	approved_output="${src_testdata_dir}/${name}.out"
+all_test_cases | while IFS= read -r test_case; do
+	input_file="${src_testdata_dir}/${test_case}"
+	base="$(dirname "${test_case}")/$(basename "${test_case}" .p)"
+	actual_output="${build_testdata_dir}/${base}.out"
+	diff="${build_testdata_dir}/${base}.diff"
+	approved_output="${src_testdata_dir}/${base}.out"
+
 	if ! [ -e "${approved_output}" ]; then
 		touch "${approved_output}"
 	fi
 
-	actual_output="${build_testdata_dir}/${name}.out"
-	diff="${build_testdata_dir}/${name}.diff"
+	mkdir -p "$(dirname "${actual_output}")"
+
 	"${build_dir}/parser" < "${input_file}" > "${actual_output}"
 	if ! diff "${approved_output}" "${actual_output}" >"${diff}" 2>&1; then
 		exit_code=1
-		echo "[FAIL: ${name}]"
+		echo "[FAIL: ${base}]"
 		echo "Approved: ${approved_output}"
 		echo "Actual:   ${actual_output}"
 		echo "Diff:"
