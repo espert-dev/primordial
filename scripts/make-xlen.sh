@@ -21,7 +21,6 @@ fi
 # A good alternative location for this is something like /tmp/primordial.
 # If it's on tmpfs, you will hammer your drive a bit less.
 BUILD_ROOT="${BUILD_ROOT:-build}/${XLEN}"
-COLORIZE="${COLORIZE:-}"
 NO_TEST="${NO_TEST:-}"
 
 # Even if we only use assembler, it still needs a compiler (gcc).
@@ -42,7 +41,8 @@ ASFLAGS="${ASFLAGS:-
 # Helpers
 # ===========================================================================
 
-if [ -z "$COLORIZE" -a -t 1 ]; then
+COLORIZE="${COLORIZE:-}"
+if [ -z "$COLORIZE" ] && [ -t 1 ]; then
 	COLORIZE=1
 fi
 
