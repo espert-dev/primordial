@@ -1,4 +1,5 @@
 %{
+#include <stdbool.h>
 #include "parser.h"
 
 #define YY_USER_ACTION {\
@@ -14,14 +15,20 @@
 	}\
 }
 
-/* Record the token for the implicit semicolon rule and return it */
-#define emit(x) {\
-	last_token = x;\
+/* Return, indicating that an implicit semicolon can follow this token */
+#define final(x) {\
+	can_insert_semicolon = true;\
+	return x;\
+}
+
+/* Return, indicating that an implicit semicolon cannot follow this token */
+#define non_final(x) {\
+	can_insert_semicolon = false;\
 	return x;\
 }
 
 /* Track the last token for the implicit semicolon rule */
-static int last_token = -1;
+static bool can_insert_semicolon = false;
 %}
 
 %option noyywrap
@@ -31,39 +38,23 @@ static int last_token = -1;
 
 "#"[^\n]*              {/* ignore comments */}
 
-";"                    { emit(SEMI); }
-"("                    { emit(LPAR); }
-")"                    { emit(RPAR); }
+";"                    { non_final(SEMI); }
+"("                    { non_final(LPAR); }
+")"                    { final(RPAR); }
 
-"import"               { emit(IMPORT); }
-"package"              { emit(PACKAGE); }
+"import"               { non_final(IMPORT); }
+"package"              { non_final(PACKAGE); }
 
-[A-Z][0-9A-Za-z_]*     { yylval.text = strdup(yytext); emit(UPPER_ID); }
-[a-z_][0-9A-Za-z_]*    { yylval.text = strdup(yytext); emit(LOWER_ID); }
+[A-Z][0-9A-Za-z_]*     { yylval.text = strdup(yytext); final(UPPER_ID); }
+[a-z_][0-9A-Za-z_]*    { yylval.text = strdup(yytext); final(LOWER_ID); }
 
-\"(\\.|[^"\\])*\"      { yylval.text = strdup(yytext); emit(STR_LITERAL); }
+\"(\\.|[^"\\])*\"      { yylval.text = strdup(yytext); final(STR_LITERAL); }
 
 [ \t]+                 { /* ignore spaces */ }
 
 \n+                    {
-	/* Adapt BCPL's and Go's rules for automatic semicolons */
-	switch (last_token) {
-		/* After IDs */
-		case UPPER_ID: [[fallthrough]];
-		case LOWER_ID: [[fallthrough]];
-		case STR_LITERAL: [[fallthrough]];
-
-		/* After control flow keywords */
-
-		/* After operators */
-
-		/* After closing brackets and separators other than SEMI */
-		case RPAR:
-			emit(SEMI);
-			break;
-
-		default:
-			/* No implicit semicolon */
+	if (can_insert_semicolon) {
+		non_final(SEMI);
 	}
 }
 
