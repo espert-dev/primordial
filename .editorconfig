@@ -1,17 +1,10 @@
-root = true
-
 [*]
 charset = utf-8
-indent_size = 8
 indent_style = tab
+indent_size = tab
 insert_final_newline = true
 trim_trailing_whitespace = true
-tab_width = 8
 max_line_length = 80
-
-[*.md]
-indent_size = 2
-indent_style = space
 
 # The extensions out and err are used by approval tests, where we need
 # exact reproducibility. Unset all formats from [*].
