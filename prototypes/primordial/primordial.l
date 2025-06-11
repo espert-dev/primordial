@@ -26,148 +26,296 @@
  */
 
 %{
-#include <stdbool.h>
-#include "parser.h"
+#include <iostream>
 
-#define YY_USER_ACTION {\
-	yylloc.first_line = yylloc.last_line;\
-	yylloc.first_column = yylloc.last_column;\
-	for (int i = 0; yytext[i] != '\0'; i++) {\
-		if (yytext[i] == '\n') {\
-			yylloc.last_line++;\
-			yylloc.last_column = 1;\
-		} else {\
-			yylloc.last_column++;\
-		}\
-	}\
-}
+#define YY_DECL yy::Parser::symbol_type\
+	yylex(yyscan_t yyscanner, yy::location& loc)
 
-/* Return, indicating that an implicit semicolon can follow this token */
-#define final(x) {\
-	can_insert_semicolon = true;\
-	return x;\
-}
+#define YY_USER_ACTION\
+	loc.columns(yyleng);
 
-/* Return, indicating that an implicit semicolon cannot follow this token */
-#define non_final(x) {\
-	can_insert_semicolon = false;\
-	return x;\
-}
+#define yyterminate()\
+	return yy::Parser::make_END(loc)
 
-/* Track the last token for the implicit semicolon rule */
+#include "parser.hpp"
+
+// Track the last token for the implicit semicolon rule
 static bool can_insert_semicolon = false;
 %}
 
+%option reentrant
+%option nounput
 %option noyywrap
 %option yylineno
 
 %%
 
-"#"[^\n]*               {/* ignore comments */}
+%{
+	loc.step();
+%}
 
-"("                     { non_final(LPAR); }
-"["                     { non_final(LBRA); }
-"{"                     { non_final(LCUR); }
-")"                     { final(RPAR); }
-"]"                     { final(RBRA); }
-"}"                     { final(RCUR); }
-"@"                     { final(AT); }
-","                     { final(COMMA); }
-";"                     { non_final(SEMI); }
-"."                     {
-	/*
-	 * This one has to be final because of the possibility of a pointer
-	 * dereference happening at the end of an expression.
-	 */
-	final(PERIOD);
+"#"[^\n]* {
+	// ignore comments
 }
 
-"="                     { non_final(ASSIGN); }
-":="                    { non_final(DEFINE); }
-"->"                    { non_final(TO); }
-":"                     { non_final(COLON); }
-"||"                    { non_final(LOGIC_OR); }
-"&&"                    { non_final(LOGIC_AND); }
-"=="                    { non_final(CMP_EQ); }
-"!="                    { non_final(CMP_NE); }
-"<="                    { non_final(CMP_LE); }
-">="                    { non_final(CMP_GE); }
-"<"                     { non_final(CMP_LT); }
-">"                     { non_final(CMP_GT); }
-"+"                     { non_final(ADD); }
-"-"                     { non_final(SUB); }
-"|"                     { non_final(BITWISE_OR); }
-"^"                     { non_final(BITWISE_XOR); }
-"*"                     { non_final(MUL); }
-"/"                     { non_final(DIV); }
-"%"                     { non_final(REM); }
-"&"                     { non_final(BITWISE_AND); }
-"&^"                    { non_final(BITWISE_AND_NOT); }
-"<<"                    { non_final(LSHIFT); }
-">>"                    { non_final(RSHIFT); }
-"!"                     { non_final(LOGICAL_NOT); }
-"~"                     { non_final(BITWISE_NOT); }
+"(" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LPAR(loc);
+}
+"[" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LBRA(loc);
+}
+"{" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LCUR(loc);
+}
+")" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_RPAR(loc);
+}
+"]" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_RBRA(loc);
+}
+"}" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_RCUR(loc);
+}
+"@" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_AT(loc);
+}
+"," {
+	can_insert_semicolon = true;
+	return yy::Parser::make_COMMA(loc);
+}
+";" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_SEMI(loc);
+}
+"." {
+	// This one has to be final because of the possibility of a pointer
+	// dereference happening at the end of an expression.
+	can_insert_semicolon = true;
+	return yy::Parser::make_PERIOD(loc);
+}
+
+"=" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_ASSIGN(loc);
+}
+":=" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_DEFINE(loc);
+}
+"->" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_TO(loc);
+}
+":" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_COLON(loc);
+}
+"||" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LOGIC_OR(loc);
+}
+"&&" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LOGIC_AND(loc);
+}
+"==" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_CMP_EQ(loc);
+}
+"!=" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_CMP_NE(loc);
+}
+"<=" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_CMP_LE(loc);
+}
+">=" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_CMP_GE(loc);
+}
+"<" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_CMP_LT(loc);
+}
+">" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_CMP_GT(loc);
+}
+"+" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_ADD(loc);
+}
+"-" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_SUB(loc);
+}
+"|" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_BITWISE_OR(loc);
+}
+"^" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_BITWISE_XOR(loc);
+}
+"*" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_MUL(loc);
+}
+"/" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_DIV(loc);
+}
+"%" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_REM(loc);
+}
+"&" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_BITWISE_AND(loc);
+}
+"&^" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_BITWISE_AND_NOT(loc);
+}
+"<<" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LSHIFT(loc);
+}
+">>" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_RSHIFT(loc);
+}
+"!" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_LOGICAL_NOT(loc);
+}
+"~" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_BITWISE_NOT(loc);
+}
 
 [!%&*+-/:<=>\\^|~]+     {
-	/*
-	 * Catch anything else that looks like an operator and report it as an
-	 * error. This allows us to add additional operators without generating
-	 * incompatibilities with existing code.
-	 */
-	printf(
-		"** Line %d, column %d: unrecognized operator \u2018%s\u2019\n",
-		yylloc.first_line,
-		yylloc.first_column,
-        	yytext
-        );
-        exit(0);
+	// Handle unknown operator.
+	can_insert_semicolon = false;
+	exit(42);
 }
 
-"import"                { non_final(IMPORT); }
-"package"               { non_final(PACKAGE); }
-"let"                   { non_final(LET); }
-"var"                   { non_final(VAR); }
-"if"                    { non_final(IF); }
-"else"                  { non_final(ELSE); }
-"while"                 { non_final(WHILE); }
-"for"                   { non_final(FOR); }
-"type"                  { non_final(TYPE); }
-"func"                  { non_final(FUNC); }
-"struct"                { non_final(STRUCT); }
-"union"                 { non_final(UNION); }
-"interface"             { non_final(INTERFACE); }
-"continue"              { final(CONTINUE); }
-"break"                 { final(BREAK); }
-"goto"                  { final(GOTO); }
-"true"                  { final(TRUE); }
-"false"                 { final(FALSE); }
+"import" {
+ 	can_insert_semicolon = false;
+ 	return yy::Parser::make_IMPORT(loc);
+ }
+"package" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_PACKAGE(loc);
+}
+"let" {
+ 	can_insert_semicolon = false;
+ 	return yy::Parser::make_LET(loc);
+ }
+"var" {
+	can_insert_semicolon = false;
+ 	return yy::Parser::make_VAR(loc);
+ }
+"if" {
+	can_insert_semicolon = false;
+ 	return yy::Parser::make_IF(loc);
+ }
+"else" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_ELSE(loc);
+}
+"while" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_WHILE(loc);
+}
+"for" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_FOR(loc);
+}
+"type" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_TYPE(loc);
+}
+"func" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_FUNC(loc);
+}
+"struct" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_STRUCT(loc);
+}
+"union" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_UNION(loc);
+}
+"interface" {
+	can_insert_semicolon = false;
+	return yy::Parser::make_INTERFACE(loc);
+}
+"continue" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_CONTINUE(loc);
+}
+"break" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_BREAK(loc);
+}
+"goto" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_GOTO(loc);
+}
+"true" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_BOOL_LITERAL(true, loc);
+}
+"false" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_BOOL_LITERAL(false, loc);
+}
 
-[A-Z][0-9A-Za-z_]*      { yylval.text = strdup(yytext); final(UPPER_ID); }
-[a-z_][0-9A-Za-z_]*     { yylval.text = strdup(yytext); final(LOWER_ID); }
+[A-Z][0-9A-Za-z_]* {
+	can_insert_semicolon = true;
+	return yy::Parser::make_UPPER_ID(yytext, loc);
+}
+
+[a-z_][0-9A-Za-z_]* {
+	can_insert_semicolon = true;
+	return yy::Parser::make_LOWER_ID(yytext, loc);
+}
 
 ([0-9]*[0-9.][0-9]*([Ee][-+]?[0-9]+)?|"0x"[0-9A-Fa-f]+) {
- 	yylval.text = strdup(yytext);
-	final(NUM_LITERAL);
+	can_insert_semicolon = true;
+	return yy::Parser::make_NUM_LITERAL(yytext, loc);
 }
 
-\"(\\.|[^"\\])*\"       { yylval.text = strdup(yytext); final(STR_LITERAL); }
+\"(\\.|[^"\\])*\" {
+	can_insert_semicolon = true;
+	return yy::Parser::make_STR_LITERAL(yytext, loc);
+}
 
-[ \t]+                  { /* ignore spaces */ }
+[ \t]+ {
+	// Ignore spaces.
+}
 
-\n+                     {
+\n+ {
 	if (can_insert_semicolon) {
-		non_final(SEMI);
+		can_insert_semicolon = false;
+		return yy::Parser::make_SEMI(loc);
 	}
 }
 
-.                       {
-	printf(
-		"** Line %d, column %d: unrecognized symbol \u2018%s\u2019\n",
-		yylloc.first_line,
-		yylloc.first_column,
-        	yytext
-        );
-        exit(0);
+. {
+	// Handle lexical error.
+	can_insert_semicolon = true;
+	exit(41);
 }
 
 %%

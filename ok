@@ -2,7 +2,7 @@
 set -eu
 
 cd "$(dirname "$0")"
-prototypes/primordial/test.sh
+prototypes/primordial/make
 ./make
 
 exit 0

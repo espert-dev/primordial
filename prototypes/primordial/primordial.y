@@ -1,28 +1,50 @@
-/*
- * Grammar of the Primordial language.
- *
- * We use Bison and Flex to prototype and validate the adequacy of the grammar
- * against a test suite. These tests will also be reused in the future to
- * validate the compiler.
- */
+// Grammar of the Primordial language.
+//
+// We use Bison and Flex to prototype and validate the adequacy of the grammar
+// against a test suite. These tests will also be reused in the future to
+// validate the compiler.
 
-%{
-
-#include <stdio.h>
-#include "scanner.h"
-
-int yylex(void);
-void yyerror(const char* s);
-
-%}
+%require "3.8.0"
+%language "c++"
 
 %define lr.type lalr
+%skeleton "lalr1.cc"
+%locations
+%defines
 
+%define api.token.raw
+%define api.prefix {yy}
+%define api.parser.class {Parser}
+%define api.token.constructor
+%define api.value.type variant
+
+%define parse.assert
 %define parse.trace
 %define parse.error detailed
-%locations
+
+%lex-param {void *scanner} {yy::location &loc}
+%parse-param {void *scanner} {yy::location &loc} {Primordial::Driver &drv}
+
+%code requires {
+
+#include <list>
+#include <string>
+#include <functional>
+#include "primordial.hpp"
+
+}
+
+%code {
+
+#include "scanner.hpp"
+
+yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
+
+}
 
 %start File
+
+%token END 0
 
 /* Separators */
 %token LPAR "("
@@ -83,18 +105,13 @@ void yyerror(const char* s);
 %token GOTO "goto"
 
 /* Identifiers */
-%token <text> UPPER_ID "upper identifier"
-%token <text> LOWER_ID "lower identifier"
+%token <std::string> UPPER_ID "upper identifier"
+%token <std::string> LOWER_ID "lower identifier"
 
 /* Literals */
-%token <text> NUM_LITERAL "numeric literal"
-%token <text> STR_LITERAL "string literal"
-%token TRUE "true"
-%token FALSE "false"
-
-%union {
-	const char *text;
-}
+%token <bool> BOOL_LITERAL "Boolean literal"
+%token <std::string> NUM_LITERAL "numeric literal"
+%token <std::string> STR_LITERAL "string literal"
 
 %%
 
@@ -102,9 +119,9 @@ File
 	: PackageDecl Imports TopItems
 	;
 
-PackageDecl
-	: "package" UPPER_ID ";"  { printf("Package(%s)\n", $2); }
-	;
+PackageDecl : "package" UPPER_ID ";" {
+	std::cout << "Package(" << $2 << ")\n";
+};
 
 Imports
 	: %empty
@@ -116,10 +133,12 @@ Import
 	| "import" "(" GroupedImportItems ")"
 	;
 
-ImportItem
-	: STR_LITERAL  { printf("Import(%s)\n", $1); }
-	| UPPER_ID STR_LITERAL  { printf("Import(%s as %s)\n", $2, $1); }
-	;
+ImportItem : STR_LITERAL {
+	std::cout << "Import(" << $1 << ")\n";
+};
+ImportItem : UPPER_ID STR_LITERAL {
+	std::cout << "Import(" << $2 << " as " << $1 << ")\n";
+};
 
 GroupedImportItems
 	: %empty
@@ -434,8 +453,7 @@ Term
 	| Term "." /* Pointer dereference */
 	| Type "(" Expression ")"
 	| LOWER_ID
-	| TRUE { puts("true"); }
-	| FALSE { puts("false"); }
+	| BOOL_LITERAL { std::cout << ($1 ? "true": "false") << "\n"; }
 	| STR_LITERAL
 	| NUM_LITERAL
 	;
@@ -559,9 +577,9 @@ InterfaceItems
 	;
 
 InterfaceItem
-	: Type /* Embedding or type constraint */
+	: Type
 	| "~" Type
-	| LOWER_ID Signature /* Method */
+	| LOWER_ID Signature
 	;
 
 MaybeComma
@@ -576,25 +594,6 @@ MaybeSemi
 
 %%
 
-int main(int argc, char **argv) {
-	if (argc > 1 && strcmp(argv[1], "-v") == 0) {
-		yydebug = 1;
-	}
-
-	if (yyparse()) {
-		puts("\nFAIL\n");
-	} else {
-		puts("\nPASS\n");
-	}
-
-	return 0;
-}
-
-void yyerror(const char *msg) {
-	printf(
-		"** Line %d, column %d: %s\n",
-		yylloc.first_line,
-		yylloc.first_column,
-		msg
-	);
+void yy::Parser::error(const yy::location& l, const std::string& m) {
+	std::cerr << l << ": " << m << std::endl;
 }

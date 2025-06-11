@@ -52,18 +52,27 @@ mkdir -p "${build_dir}"
 # Build.
 src_dir="prototypes/primordial"
 
+cp -f "${src_dir}"/{*.cpp,*.hpp} "${build_dir}/"
+
 flex\
-	--header-file="${build_dir}/scanner.h"\
-	-o "${build_dir}/scanner.c"\
+	--header-file="${build_dir}/scanner.hpp"\
+	-o "${build_dir}/scanner.cpp"\
 	"${src_dir}/primordial.l"
 
 bison -d -Wcounterexamples --report=all\
-	-o "${build_dir}/parser.c"\
+	-o "${build_dir}/parser.cpp"\
 	"${src_dir}/primordial.y"
 
-gcc -O2 -o "${build_dir}/parse"\
-	"${build_dir}/parser.c"\
-	"${build_dir}/scanner.c"
+g++ -O2 -o "${build_dir}/parse"\
+	"${build_dir}/parser.cpp"\
+	"${build_dir}/scanner.cpp"\
+	"${build_dir}/primordial.cpp"\
+	"${build_dir}/main.cpp"
+
+if [ -n "${NO_TEST:-}" ]; then
+	echo "Skipping tests."
+	exit 0
+fi
 
 # Run acceptance tests.
 build_testdata_dir="${build_dir}/testdata"
