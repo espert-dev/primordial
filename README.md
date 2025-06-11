@@ -13,17 +13,18 @@ A non-bootstrapped development toolchain.
 
 ### Debugging via QEMU
 
-Unless you are are on a RISC-V 64 system, you will need QEMU, gdb-multiarch,
+Unless you are on a RISC-V 64 system, you will need QEMU, gdb-multiarch,
 and a remote session.
 
 1. Add a new Run/Debug Configuration of type "Remote Debug"
-   * Name: Debug via QEMU
-   * Debugger: Bundled GDB
-   * 'target remote' args: `localhost:1234` (assumes port 1234)
+	* Name: Debug via QEMU
+	* Debugger: Bundled GDB
+	* 'target remote' args: `localhost:1234` (assumes port 1234)
 
 2. In the terminal, use QEMU to run the test or program that you want to debug:
-   ```bash
-   NO_TEST=1 ./make && qemu-riscv64-static -g 1234 build/cmd/hello/hello
-   ```
+
+	```bash
+	NO_TEST=1 ./make && qemu-riscv64-static -g 1234 build/cmd/hello/hello
+	```
 
 3. Start debugging from CLion.
