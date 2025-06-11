@@ -31,6 +31,7 @@
 #include <string>
 #include <functional>
 #include "primordial.hpp"
+#include "ast.hpp"
 
 }
 
@@ -113,37 +114,56 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %token <std::string> NUM_LITERAL "numeric literal"
 %token <std::string> STR_LITERAL "string literal"
 
+/* Non-terminals */
+%nterm <std::unique_ptr<AST::File>> File
+%nterm <std::string> PackageDecl;
+%nterm <std::vector<AST::Import>> ImportList
+%nterm <std::vector<AST::Import>> ImportGroup
+%nterm <AST::Import> Import
+
 %%
 
-File
-	: PackageDecl Imports TopItems
-	;
+File : PackageDecl ImportList TopItems {
+	$$ = std::make_unique<AST::File>(std::move($1), std::move($2));
+};
 
 PackageDecl : "package" UPPER_ID ";" {
 	std::cout << "Package(" << $2 << ")\n";
+	$$ = std::string(std::move($2));
 };
 
-Imports
-	: %empty
-	| Imports Import ";"
-	;
+ImportList : %empty {
+	$$ = std::vector<AST::Import>{};
+};
 
-Import
-	: "import" ImportItem
-	| "import" "(" GroupedImportItems ")"
-	;
+ImportList : ImportList "import" Import ";" {
+	$$ = std::move($1);
+	$$.push_back(std::move($3));
+};
 
-ImportItem : STR_LITERAL {
+ImportList : ImportList "import" "(" ImportGroup ")" ";" {
+	$$ = std::move($1);
+	$$.insert(std::end($$), std::begin($4), std::end($4));
+};
+
+ImportGroup : %empty {
+	$$ = std::vector<AST::Import>{};
+};
+
+ImportGroup : ImportGroup Import ";"	{
+	$$ = std::move($1);
+	$$.push_back(std::move($2));
+};
+
+Import : STR_LITERAL {
 	std::cout << "Import(" << $1 << ")\n";
-};
-ImportItem : UPPER_ID STR_LITERAL {
-	std::cout << "Import(" << $2 << " as " << $1 << ")\n";
+	$$ = AST::Import($1);
 };
 
-GroupedImportItems
-	: %empty
-	| GroupedImportItems ImportItem ";"
-	;
+Import : UPPER_ID STR_LITERAL {
+	std::cout << "Import(" << $2 << " as " << $1 << ")\n";
+	$$ = AST::Import($1, $2);
+};
 
 TopItems
 	: %empty

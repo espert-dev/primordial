@@ -63,7 +63,8 @@ bison -d -Wcounterexamples --report=all\
 	-o "${build_dir}/parser.cpp"\
 	"${src_dir}/primordial.y"
 
-g++ -O2 -o "${build_dir}/parse"\
+g++ -std=c++23 -O2 -o "${build_dir}/parse"\
+	"${build_dir}/ast.cpp"\
 	"${build_dir}/parser.cpp"\
 	"${build_dir}/scanner.cpp"\
 	"${build_dir}/primordial.cpp"\
