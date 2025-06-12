@@ -9,6 +9,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (drv.parse() == 0) {
+		auto result = drv.result();
+		result->print(std::cout);
 		std::cout << "\nPASS\n\n";
 	} else {
 		std::cout << "\nFAIL\n\n";

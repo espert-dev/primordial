@@ -115,7 +115,6 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %token <std::string> STR_LITERAL "string literal"
 
 /* Non-terminals */
-%nterm <std::unique_ptr<AST::File>> File
 %nterm <std::string> PackageDecl;
 %nterm <std::vector<AST::Import>> ImportList
 %nterm <std::vector<AST::Import>> ImportGroup
@@ -124,11 +123,11 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %%
 
 File : PackageDecl ImportList TopItems {
-	$$ = std::make_unique<AST::File>(std::move($1), std::move($2));
+	auto file = std::make_unique<AST::File>(std::move($1), std::move($2));
+	drv.set_result(std::move(file));
 };
 
 PackageDecl : "package" UPPER_ID ";" {
-	std::cout << "Package(" << $2 << ")\n";
 	$$ = std::string(std::move($2));
 };
 
@@ -156,13 +155,11 @@ ImportGroup : ImportGroup Import ";"	{
 };
 
 Import : STR_LITERAL {
-	std::cout << "Import(" << $1 << ")\n";
 	$$ = AST::Import($1);
 };
 
 Import : UPPER_ID STR_LITERAL {
-	std::cout << "Import(" << $2 << " as " << $1 << ")\n";
-	$$ = AST::Import($1, $2);
+	$$ = AST::Import($2, $1);
 };
 
 TopItems
@@ -473,7 +470,7 @@ Term
 	| Term "." /* Pointer dereference */
 	| Type "(" Expression ")"
 	| LOWER_ID
-	| BOOL_LITERAL { std::cout << ($1 ? "true": "false") << "\n"; }
+	| BOOL_LITERAL
 	| STR_LITERAL
 	| NUM_LITERAL
 	;

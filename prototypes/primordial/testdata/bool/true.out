@@ -1,5 +1,5 @@
-Package(Example)
-true
+package Example
+
 
 PASS
 

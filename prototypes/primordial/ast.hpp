@@ -9,6 +9,7 @@ namespace AST {
 	class Node {
 	public:
 		virtual ~Node() {};
+		virtual void print(std::ostream &os, int level=0) const = 0;
 	};
 
 	class Import : public Node {
@@ -17,6 +18,9 @@ namespace AST {
 		Import(Import const &other);
 		Import(std::string const &path);
 		Import(std::string const &path, std::string const &alias);
+
+		void print(std::ostream &os, int level=0) const override;
+
 		~Import();
 
 	private:
@@ -31,6 +35,8 @@ namespace AST {
 			std::vector<Import> &&imports
 		);
 		~File();
+
+		void print(std::ostream &os, int level=0) const override;
 
 	private:
 		std::string name_;

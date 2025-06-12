@@ -2,12 +2,34 @@
 
 namespace AST {
 
+	void indent(std::ostream &os, int level) {
+		for (int i = 0; i < level; ++i) {
+			os << '\t';
+		}
+	}
+
 	File::File(
 		std::string const &name,
 		std::vector<Import> &&imports
 	) : name_(name), imports_(imports) {}
 
 	File::~File() {}
+
+	void File::print(std::ostream &os, int level) const {
+		indent(os, level);
+		os << "package " << name_ << "\n\n";
+
+		if (imports_.size() == 1) {
+			imports_.at(0).print(os, level);
+			os << "\n";
+		} else if (imports_.size() > 1) {
+			for (auto import : imports_) {
+				import.print(os, level);
+			}
+
+			os << "\n";
+		}
+	}
 
 	Import::Import() {}
 
@@ -19,6 +41,17 @@ namespace AST {
 
 	Import::Import(std::string const &path, std::string const &alias)
 		: path_(path), alias_(alias) {
+	}
+
+	void Import::print(std::ostream &os, int level) const {
+		indent(os, level);
+		os << "import ";
+
+		if (!alias_.empty()) {
+			os << alias_ << " ";
+		}
+
+		os << path_ << "\n";
 	}
 
 	Import::~Import() {}

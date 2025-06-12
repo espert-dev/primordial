@@ -1,6 +1,8 @@
-Package(Example)
-Import("IO" as IO1)
-Import("Fmt" as Fmt2)
+package Example
+
+import IO1 "IO"
+import Fmt2 "Fmt"
+
 
 PASS
 

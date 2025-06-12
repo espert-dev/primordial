@@ -1,5 +1,7 @@
-Package(Example)
-Import("IO")
+package Example
+
+import "IO"
+
 
 PASS
 

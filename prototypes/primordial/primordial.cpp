@@ -1,6 +1,7 @@
 #include "primordial.hpp"
 #include "scanner.hpp"
 #include "parser.hpp"
+#include "ast.hpp"
 
 namespace Primordial {
 
@@ -18,6 +19,14 @@ namespace Primordial {
 
 	int Driver::parse() {
 		return parser->parse();
+	}
+
+	void Driver::set_result(std::unique_ptr<AST::File> &&file) {
+		result_ = std::move(file);
+	}
+
+	auto Driver::result() -> std::unique_ptr<AST::File> {
+		return std::move(result_);
 	}
 
 	void Driver::enable_debug() {

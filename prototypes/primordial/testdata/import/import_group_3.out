@@ -1,7 +1,9 @@
-Package(Example)
-Import("IO")
-Import("Fmt")
-Import("HTTP")
+package Example
+
+import "IO"
+import "Fmt"
+import "HTTP"
+
 
 PASS
 
