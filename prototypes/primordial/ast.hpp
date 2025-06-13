@@ -12,14 +12,27 @@ namespace AST {
 		virtual void print(std::ostream &os, int level=0) const = 0;
 	};
 
+	class Type : public Node {};
+
+	class TypeName : public Type {
+	public:
+		~TypeName();
+		TypeName(std::string &&name);
+
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		std::string name_;
+	};
+
 	class Import : public Node {
 	public:
-		Import();
+		Import(); // Bison requires an empty constructor.
 		Import(Import const &other);
 		Import(std::string &&path);
 		Import(std::string &&path, std::string &&alias);
 
-		void print(std::ostream &os, int level=0) const override;
+		void print(std::ostream &os, int level=0) const override final;
 
 		~Import();
 
@@ -36,7 +49,7 @@ namespace AST {
 		);
 		~File();
 
-		void print(std::ostream &os, int level=0) const override;
+		void print(std::ostream &os, int level=0) const override final;
 
 	private:
 		std::string name_;

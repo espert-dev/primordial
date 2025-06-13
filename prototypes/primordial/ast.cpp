@@ -10,6 +10,14 @@ namespace AST {
 
 	Node::~Node() = default;
 
+	TypeName::~TypeName() = default;
+
+	TypeName::TypeName(std::string &&name) : name_(name) {}
+
+	void TypeName::print(std::ostream &os, int level) const {
+		os << name_;
+	}
+
 	File::File(
 		std::string const &name,
 		std::vector<Import> &&imports

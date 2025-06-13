@@ -115,10 +115,12 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %token <std::string> STR_LITERAL "string literal"
 
 /* Non-terminals */
-%nterm <std::string> PackageDecl;
+%nterm <std::string> PackageDecl
 %nterm <std::vector<AST::Import>> ImportList
 %nterm <std::vector<AST::Import>> ImportGroup
 %nterm <AST::Import> Import
+
+%nterm <std::unique_ptr<AST::Type>> Type
 
 %%
 
@@ -538,19 +540,49 @@ XTypeArgList
 	| XTypeArgList "," TypeArg
 	;
 
-Type
-	: UPPER_ID
-	| Type "." UPPER_ID
-	| Type "[" NETypeList "]"
-	| Type "[" Expression "]" /* Array */
-	| Type "[" "]" /* Slice */
-	| Type "?" /* Pointer (nullable) */
-	| Type "@" /* Reference (not nullable) */
-	| "func" Signature
-	| StructType
-	| UnionType
-	| InterfaceType
-	;
+Type : UPPER_ID {
+	$$ = std::make_unique<AST::TypeName>(std::move($1));
+};
+
+Type : Type "." UPPER_ID {
+ 	// TODO
+};
+
+Type : Type "[" NETypeList "]" {
+	// TODO
+};
+
+Type :Type "[" Expression "]" {
+	// TODO
+};
+
+Type : Type "[" "]" {
+	// TODO
+};
+
+Type : Type "?" {
+	// TODO
+};
+
+Type : Type "@" {
+	// TODO
+};
+
+Type : "func" Signature {
+	// TODO
+};
+
+Type : StructType {
+	// TODO
+};
+
+Type : UnionType {
+	// TODO
+};
+
+Type : InterfaceType {
+	// TODO
+};
 
 StructType
 	: "struct" "{" RecordItems "}"
