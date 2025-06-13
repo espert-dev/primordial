@@ -37,9 +37,9 @@ namespace AST {
 
 	Import::Import(Import const &other) = default;
 
-	Import::Import(std::string const &path) : path_(path) {}
+	Import::Import(std::string &&path) : path_(path) {}
 
-	Import::Import(std::string const &path, std::string const &alias)
+	Import::Import(std::string &&path, std::string &&alias)
 		: path_(path), alias_(alias) {
 	}
 

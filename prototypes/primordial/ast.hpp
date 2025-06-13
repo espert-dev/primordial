@@ -16,8 +16,8 @@ namespace AST {
 	public:
 		Import();
 		Import(Import const &other);
-		Import(std::string const &path);
-		Import(std::string const &path, std::string const &alias);
+		Import(std::string &&path);
+		Import(std::string &&path, std::string &&alias);
 
 		void print(std::ostream &os, int level=0) const override;
 

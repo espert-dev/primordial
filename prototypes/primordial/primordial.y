@@ -155,11 +155,11 @@ ImportGroup : ImportGroup Import ";"	{
 };
 
 Import : STR_LITERAL {
-	$$ = AST::Import($1);
+	$$ = AST::Import(std::move($1));
 };
 
 Import : UPPER_ID STR_LITERAL {
-	$$ = AST::Import($2, $1);
+	$$ = AST::Import(std::move($2), std::move($1));
 };
 
 TopItems
