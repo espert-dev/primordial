@@ -138,7 +138,7 @@ namespace AST {
 	class File : public Node {
 	public:
 		File(
-			std::string const &package_name,
+			std::string &&package_name,
 			std::vector<Import> &&imports
 		);
 		~File();

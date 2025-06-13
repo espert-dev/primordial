@@ -26,7 +26,7 @@ namespace AST {
 
 	Node::~Node() = default;
 
-	TypeName::TypeName(std::string &&name) : name_(name) {}
+	TypeName::TypeName(std::string &&name) : name_(std::move(name)) {}
 
 	void TypeName::print(std::ostream &os, int level) const {
 		os << name_;
@@ -108,9 +108,9 @@ namespace AST {
 	}
 
 	File::File(
-		std::string const &name,
+		std::string &&name,
 		std::vector<Import> &&imports
-	) : name_(name), imports_(imports) {}
+	) : name_(std::move(name)), imports_(imports) {}
 
 	File::~File() = default;
 
@@ -137,8 +137,7 @@ namespace AST {
 	Import::Import(std::string &&path) : path_(path) {}
 
 	Import::Import(std::string &&path, std::string &&alias)
-		: path_(path), alias_(alias) {
-	}
+	: path_(std::move(path)), alias_(std::move(alias)) {}
 
 	void Import::print(std::ostream &os, int level) const {
 		indent(os, level);
