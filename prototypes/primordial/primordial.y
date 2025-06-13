@@ -132,7 +132,6 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::ArrayType>> ArrayType
 %nterm <std::unique_ptr<AST::SliceType>> SliceType
 %nterm <std::unique_ptr<AST::PointerType>> PointerType
-%nterm <std::unique_ptr<AST::ReferenceType>> ReferenceType
 %nterm <std::unique_ptr<AST::FunctionType>> FunctionType
 %nterm <std::unique_ptr<AST::StructType>> StructType
 %nterm <std::unique_ptr<AST::UnionType>> UnionType
@@ -569,7 +568,6 @@ Type
 	| ArrayType { $$ = std::move($1); }
 	| SliceType { $$ = std::move($1); }
 	| PointerType { $$ = std::move($1); }
-	| ReferenceType { $$ = std::move($1); }
 	| FunctionType { $$ = std::move($1); }
 	| StructType { $$ = std::move($1); }
 	| UnionType { $$ = std::move($1); }
@@ -604,10 +602,6 @@ SliceType : Type "[" "]" {
 
 PointerType : Type "?" {
 	$$ = std::make_unique<AST::PointerType>(std::move($1));
-};
-
-ReferenceType : Type "@" {
-	// TODO
 };
 
 FunctionType : "func" Signature {

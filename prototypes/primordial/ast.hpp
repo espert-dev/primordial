@@ -81,15 +81,6 @@ namespace AST {
 		std::unique_ptr<Type> item_type_;
 	};
 
-	class ReferenceType : public Type {
-	public:
-		ReferenceType() = default; // TODO replace
-		void print(std::ostream &os, int level=0) const override final;
-
-	private:
-		// TODO
-	};
-
 	class FunctionType : public Type {
 	public:
 		FunctionType() = default; // TODO replace
