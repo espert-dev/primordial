@@ -6,10 +6,31 @@
  * - Supports declarations, which allows the implementation of single-pass
  *   variants (e.g., for p0).
  *
- * - Value and type identifiers have been segregated at the lexical level,
- *   following a common convention among many programming languages by which
- *   types are denoted by uppercase letters. This, in turn, allows us to have
- *   a more precise grammar, that for example removes the C typedef ambiguity.
+ * - Identifiers are segregated into 4 categories which are enforced and
+ *   exploited by the grammar:
+ *
+ *   - Exported upper IDs (`List`)
+ *   - Exported lower IDs (`printf`)
+ *   - Internal upper IDs (`_Impl`)
+ *   - Internal lower IDs (`_size`)
+ *
+ * - Exported symbols start with a letter. Internal symbols start with an
+ *   underscore. This is reminiscent of the Python naming convention, and is
+ *   convenient, for example, to avoid the naming ambiguity between a getter
+ *   (size) and the field that stores its value (_size).
+ *
+ * - The first letter in a lower ID, after possibly a number of underscores,
+ *   is lowercase. They denote values and constants. The first letter in an
+ *   upper ID, after possibly a number of underscores, is uppercase. They
+ *   denote types and packages. This segregation of type and value identifiers
+ *   prevents an analog of C's typedef ambiguity, and is helpful to humans. In
+ *   particular, we observe that we are merely enforcing a variant of what is
+ *   already a common convention in some popular programming languages.
+ *
+ * - Identifiers consisting exclusively of more than one underscore are invalid.
+ *
+ * - A single underscore is recognised as the omit token, which can be used to
+ *   discard results in assignments.
  *
  * - Expressions and statements are strictly separated to minimise unintended
  *   side-effects.
@@ -209,11 +230,14 @@ static bool can_insert_semicolon = false;
 	exit(42);
 }
 
+"_" {
+	return yy::Parser::make_OMIT(loc);
+}
 "import" {
  	can_insert_semicolon = false;
  	return yy::Parser::make_IMPORT(loc);
  }
-"package" {
+ "package" {
 	can_insert_semicolon = false;
 	return yy::Parser::make_PACKAGE(loc);
 }
@@ -282,13 +306,13 @@ static bool can_insert_semicolon = false;
 	return yy::Parser::make_BOOL_LITERAL(false, loc);
 }
 
-[A-Z][0-9A-Za-z_]* {
+[_]*[A-Z][_0-9A-Za-z]* {
 	// This rule must appear AFTER all keywords.
 	can_insert_semicolon = true;
 	return yy::Parser::make_UPPER_ID(yytext, loc);
 }
 
-[a-z_][0-9A-Za-z_]* {
+[_]*[a-z][_0-9A-Za-z]* {
 	// This rule must appear AFTER all keywords.
 	can_insert_semicolon = true;
 	return yy::Parser::make_LOWER_ID(yytext, loc);

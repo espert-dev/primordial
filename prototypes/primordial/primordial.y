@@ -88,6 +88,7 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %token BITWISE_NOT "~"
 
 /* Keywords */
+%token OMIT "_"
 %token IMPORT "import"
 %token PACKAGE "package"
 %token LET "let"
@@ -336,8 +337,8 @@ Goto
 	;
 
 Assignment
-	: NEExpressionList "=" NEExpressionList
-	| NEExpressionList ":=" NEExpressionList
+	: NELeftValueList "=" NEExpressionList
+	| NELeftValueList ":=" NEExpressionList
 	;
 
 MaybeAssignment
@@ -348,6 +349,20 @@ MaybeAssignment
 AssignmentSeq
 	: %empty
 	| AssignmentSeq Assignment ";"
+	;
+
+NELeftValueList
+	: XLeftValueList MaybeComma
+	;
+
+XLeftValueList
+	: LeftValue
+	| XLeftValueList "," LeftValue
+	;
+
+LeftValue
+	: OMIT
+	| Expression
 	;
 
 NELowerIDList
