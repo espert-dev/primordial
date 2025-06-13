@@ -204,6 +204,7 @@ static bool can_insert_semicolon = false;
 
 [!%&*+-/:<=>\\^|~]+     {
 	// Handle unknown operator.
+	// This rule must appear AFTER all known operators.
 	can_insert_semicolon = false;
 	exit(42);
 }
@@ -282,11 +283,13 @@ static bool can_insert_semicolon = false;
 }
 
 [A-Z][0-9A-Za-z_]* {
+	// This rule must appear AFTER all keywords.
 	can_insert_semicolon = true;
 	return yy::Parser::make_UPPER_ID(yytext, loc);
 }
 
 [a-z_][0-9A-Za-z_]* {
+	// This rule must appear AFTER all keywords.
 	can_insert_semicolon = true;
 	return yy::Parser::make_LOWER_ID(yytext, loc);
 }
