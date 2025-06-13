@@ -270,7 +270,8 @@ FunctionDecl
 	;
 
 FunctionSignature
-	: "(" ArgumentList ")" FunctionReturnValues
+	: "(" ArgumentList ")"
+	| "(" ArgumentList ")" "->" "(" NETypeList ")"
 	;
 
 ArgumentList
@@ -285,12 +286,6 @@ XArgumentList
 
 Argument
 	: LOWER_ID Type
-	;
-
-FunctionReturnValues
-	: %empty
-	| "->" "(" NETypeList ")"
-	| "->" "(" ArgumentList ")"
 	;
 
 Block
