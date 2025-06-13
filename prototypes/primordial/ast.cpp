@@ -33,13 +33,12 @@ namespace AST {
 	}
 
 	QualifiedTypeName::QualifiedTypeName(
-		std::unique_ptr<Type> &&parent,
+		std::string &&package,
 		std::string &&name
-	) : parent_(std::move(parent)), name_(std::move(name)) {}
+	) : package_(std::move(package)), name_(std::move(name)) {}
 
 	void QualifiedTypeName::print(std::ostream &os, int level) const {
-		parent_->print(os, level);
-		os << "." << name_;
+		os << package_ << "." << name_;
 	}
 
 	ArrayType::ArrayType(

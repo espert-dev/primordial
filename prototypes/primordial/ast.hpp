@@ -29,11 +29,11 @@ namespace AST {
 
 	class QualifiedTypeName : public Type {
 	public:
-		QualifiedTypeName(std::unique_ptr<Type> &&parent, std::string &&name);
+		QualifiedTypeName(std::string &&package, std::string &&name);
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
-		std::unique_ptr<Type> parent_;
+		std::string package_;
 		std::string name_;
 	};
 

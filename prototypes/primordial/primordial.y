@@ -577,7 +577,7 @@ TypeName : UPPER_ID {
 	$$ = std::make_unique<AST::TypeName>(std::move($1));
 };
 
-QualifiedTypeName : Type "." UPPER_ID {
+QualifiedTypeName : UPPER_ID "." UPPER_ID {
  	$$ = std::make_unique<AST::QualifiedTypeName>(
  		std::move($1),
  		std::move($3)
