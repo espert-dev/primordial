@@ -603,7 +603,7 @@ SliceType : Type "[" "]" {
 };
 
 PointerType : Type "?" {
-	// TODO
+	$$ = std::make_unique<AST::PointerType>(std::move($1));
 };
 
 ReferenceType : Type "@" {

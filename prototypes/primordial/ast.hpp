@@ -74,11 +74,11 @@ namespace AST {
 
 	class PointerType : public Type {
 	public:
-		PointerType() = default; // TODO replace
+		PointerType(std::unique_ptr<Type> &&item_type);
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
-		// TODO
+		std::unique_ptr<Type> item_type_;
 	};
 
 	class ReferenceType : public Type {
