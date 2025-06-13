@@ -8,7 +8,7 @@ namespace AST {
 
 	class Node {
 	public:
-		virtual ~Node() {};
+		virtual ~Node();
 		virtual void print(std::ostream &os, int level=0) const = 0;
 	};
 

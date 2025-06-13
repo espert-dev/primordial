@@ -8,12 +8,14 @@ namespace AST {
 		}
 	}
 
+	Node::~Node() = default;
+
 	File::File(
 		std::string const &name,
 		std::vector<Import> &&imports
 	) : name_(name), imports_(imports) {}
 
-	File::~File() {}
+	File::~File() = default;
 
 	void File::print(std::ostream &os, int level) const {
 		indent(os, level);
@@ -31,11 +33,9 @@ namespace AST {
 		}
 	}
 
-	Import::Import() {}
+	Import::Import() = default;
 
-	Import::Import(AST::Import const &other)
-		: path_(other.path_), alias_(other.alias_) {
-	}
+	Import::Import(Import const &other) = default;
 
 	Import::Import(std::string const &path) : path_(path) {}
 
