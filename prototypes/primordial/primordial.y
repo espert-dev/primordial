@@ -597,11 +597,11 @@ FunctionType : "func" "(" NETypeList ")" "->" "(" NETypeList ")" {
 	$$ = std::make_unique<AST::FunctionType>(std::move($3), std::move($7));
 };
 
-StructType : "struct" "{" RecordItems "}" {
+StructType : "struct" "{" FieldList "}" {
 	// TODO
 };
 
-UnionType :  "union" "{" RecordItems "}" {
+UnionType :  "union" "{" FieldList "}" {
 	// TODO
 };
 
@@ -623,12 +623,12 @@ XExpressionList
 	| XExpressionList "," Expression
 	;
 
-RecordItems
+FieldList
 	: %empty
-	| RecordItems RecordItem ";"
+	| FieldList Field ";"
 	;
 
-RecordItem
+Field
 	: Type /* Embedding */
 	| LOWER_ID Type /* Field */
 	;
