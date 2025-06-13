@@ -32,6 +32,11 @@
  * - A single underscore is recognised as the omit token, which can be used to
  *   discard results in assignments.
  *
+ * - Internal packages are denoted by internal upper IDs. They can only be
+ *   accessed by their parent and siblings. This is similar to Go, but with one
+ *   fewer level of package depth. "_" can be used as a directory name to
+ *   indicate an empty package that starts a subtree of internal packages.
+ *
  * - Expressions and statements are strictly separated to minimise unintended
  *   side-effects.
  *
