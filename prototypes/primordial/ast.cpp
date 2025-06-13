@@ -54,8 +54,12 @@ namespace AST {
 		os << "]";
 	}
 
+	SliceType::SliceType(std::unique_ptr<Type> &&item_type)
+	: item_type_(std::move(item_type)) {}
+
 	void SliceType::print(std::ostream &os, int level) const {
-		// TODO
+		item_type_->print(os, level);
+		os << "[]";
 	}
 
 	void PointerType::print(std::ostream &os, int level) const {

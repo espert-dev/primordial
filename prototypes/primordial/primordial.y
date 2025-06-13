@@ -599,7 +599,7 @@ ArrayType : Type "[" Expression "]" {
 };
 
 SliceType : Type "[" "]" {
-	// TODO
+	$$ = std::make_unique<AST::SliceType>(std::move($1));
 };
 
 PointerType : Type "?" {

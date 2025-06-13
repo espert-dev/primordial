@@ -65,11 +65,11 @@ namespace AST {
 
 	class SliceType : public Type {
 	public:
-		SliceType() = default; // TODO replace
+		SliceType(std::unique_ptr<Type> &&item_type);
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
-		// TODO
+		std::unique_ptr<Type> item_type_;
 	};
 
 	class PointerType : public Type {
