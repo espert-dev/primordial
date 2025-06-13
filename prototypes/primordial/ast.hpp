@@ -72,6 +72,15 @@ namespace AST {
 		std::unique_ptr<Type> item_type_;
 	};
 
+	class RawSliceType : public Type {
+	public:
+		RawSliceType(std::unique_ptr<Type> &&item_type);
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		std::unique_ptr<Type> item_type_;
+	};
+
 	class PointerType : public Type {
 	public:
 		PointerType(std::unique_ptr<Type> &&item_type);

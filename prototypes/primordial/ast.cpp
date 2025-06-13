@@ -61,6 +61,14 @@ namespace AST {
 		os << "[]";
 	}
 
+	RawSliceType::RawSliceType(std::unique_ptr<Type> &&item_type)
+	: item_type_(std::move(item_type)) {}
+
+	void RawSliceType::print(std::ostream &os, int level) const {
+		item_type_->print(os, level);
+		os << "[_]";
+	}
+
 	PointerType::PointerType(std::unique_ptr<Type> &&item_type)
 	: item_type_(std::move(item_type)) {}
 
