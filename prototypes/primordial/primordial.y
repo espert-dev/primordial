@@ -245,9 +245,9 @@ TypeDecl
 
 /* Methods cannot take generic parameters */
 FunctionDef
-	: "func" LOWER_ID FullSignature Block
-	| "func" LOWER_ID "[" NETypeArgList "]" FullSignature Block
-	| "func" Receiver LOWER_ID FullSignature Block
+	: "func" LOWER_ID FunctionSignature Block
+	| "func" LOWER_ID "[" NETypeArgList "]" FunctionSignature Block
+	| "func" Receiver LOWER_ID FunctionSignature Block
 	;
 
 /* Type already includes generic instantiation */
@@ -263,24 +263,18 @@ Receiver
  * compiler.
  */
 FunctionDecl
-	: "func" LOWER_ID Signature
-	| "func" LOWER_ID "[" NETypeArgList "]" Signature
-	| "func" LOWER_ID "[" NETypeList "]" Signature
-	| "func" Receiver LOWER_ID Signature
+	: "func" LOWER_ID FunctionSignature
+	| "func" LOWER_ID "[" NETypeArgList "]" FunctionSignature
+	| "func" LOWER_ID "[" NETypeList "]" FunctionSignature
+	| "func" Receiver LOWER_ID FunctionSignature
 	;
 
-/* Naming return values is always optional */
-Signature
-	: FullSignature
-	| PartialSignature
+FunctionSignature
+	: "(" ArgumentList ")" FunctionReturnValues
 	;
 
-FullSignature
-	: "(" ArgumentList ")" ReturnValues
-	;
-
-PartialSignature
-	: "(" NETypeList ")" ReturnValues
+FunctionTypeSignature
+	: "(" NETypeList ")" FunctionTypeReturnValues
 	;
 
 ArgumentList
@@ -297,9 +291,14 @@ Argument
 	: LOWER_ID Type
 	;
 
-ReturnValues
+FunctionReturnValues
 	: %empty
 	| "->" "(" NETypeList ")"
+	| "->" "(" ArgumentList ")"
+	;
+
+FunctionTypeReturnValues
+	: %empty
 	| "->" "(" ArgumentList ")"
 	;
 
@@ -380,7 +379,7 @@ FunctionCall
 	;
 
 AnonymousFunctionDef
-	: "func" Signature Block
+	: "func" FunctionSignature Block
 	;
 
 /*
@@ -604,7 +603,7 @@ PointerType : Type "?" {
 	$$ = std::make_unique<AST::PointerType>(std::move($1));
 };
 
-FunctionType : "func" Signature {
+FunctionType : "func" FunctionTypeSignature {
 	// TODO
 };
 
@@ -652,7 +651,7 @@ InterfaceItems
 InterfaceItem
 	: Type
 	| "~" Type
-	| LOWER_ID Signature
+	| LOWER_ID FunctionSignature
 	;
 
 MaybeComma
