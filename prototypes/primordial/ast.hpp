@@ -33,6 +33,91 @@ namespace AST {
 		std::string name_;
 	};
 
+	class TypeInstantiation : public Type {
+	public:
+		TypeInstantiation(
+			std::unique_ptr<Type> &&generic_type,
+			std::vector<std::unique_ptr<Type>> &&args
+		);
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		std::unique_ptr<Type> generic_type_;
+		std::vector<std::unique_ptr<Type>> args_;
+	};
+
+	class ArrayType : public Type {
+	public:
+		ArrayType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class SliceType : public Type {
+	public:
+		SliceType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class PointerType : public Type {
+	public:
+		PointerType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class ReferenceType : public Type {
+	public:
+		ReferenceType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class FunctionType : public Type {
+	public:
+		FunctionType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class StructType : public Type {
+	public:
+		StructType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class UnionType : public Type {
+	public:
+		UnionType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
+	class InterfaceType : public Type {
+	public:
+		InterfaceType() = default; // TODO replace
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		// TODO
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.

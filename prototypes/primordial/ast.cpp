@@ -8,6 +8,22 @@ namespace AST {
 		}
 	}
 
+	template <typename T>
+	void print_list(
+		std::ostream &os,
+		std::vector<std::unique_ptr<T>> const &v
+	) {
+		bool first = true;
+		for (auto const &node : v) {
+			if (!first) {
+				os << ", ";
+			}
+
+			node->print(os);
+			first = false;
+		}
+	}
+
 	Node::~Node() = default;
 
 	TypeName::TypeName(std::string &&name) : name_(name) {}
@@ -24,6 +40,46 @@ namespace AST {
 	void QualifiedTypeName::print(std::ostream &os, int level) const {
 		parent_->print(os, level);
 		os << "." << name_;
+	}
+
+	void ArrayType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	void SliceType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	void PointerType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	void FunctionType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	void StructType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	void UnionType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	void InterfaceType::print(std::ostream &os, int level) const {
+		// TODO
+	}
+
+	TypeInstantiation::TypeInstantiation(
+			std::unique_ptr<Type> &&generic_type,
+			std::vector<std::unique_ptr<Type>> &&args
+	) : generic_type_(std::move(generic_type)), args_(std::move(args)) {}
+
+	void TypeInstantiation::print(std::ostream &os, int level) const {
+		generic_type_->print(os, level);
+		os << "[";
+		print_list(os, args_);
+		os << "]";
 	}
 
 	File::File(

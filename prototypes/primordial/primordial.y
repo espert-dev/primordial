@@ -121,6 +121,22 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <AST::Import> Import
 
 %nterm <std::unique_ptr<AST::Type>> Type
+%nterm <std::unique_ptr<AST::Type>> CompoundLiteralType
+
+%nterm <std::vector<std::unique_ptr<AST::Type>>> NETypeList
+%nterm <std::vector<std::unique_ptr<AST::Type>>> XTypeList
+
+%nterm <std::unique_ptr<AST::TypeName>> TypeName
+%nterm <std::unique_ptr<AST::QualifiedTypeName>> QualifiedTypeName
+%nterm <std::unique_ptr<AST::TypeInstantiation>> TypeInstantiation
+%nterm <std::unique_ptr<AST::ArrayType>> ArrayType
+%nterm <std::unique_ptr<AST::SliceType>> SliceType
+%nterm <std::unique_ptr<AST::PointerType>> PointerType
+%nterm <std::unique_ptr<AST::ReferenceType>> ReferenceType
+%nterm <std::unique_ptr<AST::FunctionType>> FunctionType
+%nterm <std::unique_ptr<AST::StructType>> StructType
+%nterm <std::unique_ptr<AST::UnionType>> UnionType
+%nterm <std::unique_ptr<AST::InterfaceType>> InterfaceType
 
 %%
 
@@ -134,7 +150,7 @@ PackageDecl : "package" UPPER_ID ";" {
 };
 
 ImportList : %empty {
-	$$ = std::vector<AST::Import>{};
+	// $$ was default constructed.
 };
 
 ImportList : ImportList "import" Import ";" {
@@ -148,7 +164,7 @@ ImportList : ImportList "import" "(" ImportGroup ")" ";" {
 };
 
 ImportGroup : %empty {
-	$$ = std::vector<AST::Import>{};
+	// $$ was default constructed.
 };
 
 ImportGroup : ImportGroup Import ";"	{
@@ -496,13 +512,13 @@ Term
  * function definition.
  */
 CompoundLiteralType
-	: UPPER_ID
-	| Type "." UPPER_ID
-	| Type "[" NETypeList "]"
-	| Type "[" Expression "]"
-	| Type "[" "]"
-	| StructType
-	| UnionType
+	: TypeName { $$ = std::move($1); }
+	| QualifiedTypeName { $$ = std::move($1); }
+	| TypeInstantiation { $$ = std::move($1); }
+	| ArrayType { $$ = std::move($1); }
+	| SliceType { $$ = std::move($1); }
+	| StructType { $$ = std::move($1); }
+	| UnionType { $$ = std::move($1); }
 	;
 
 NEFieldAssignmentList
@@ -518,14 +534,18 @@ FieldAssignment
 	: LOWER_ID ":" Expression
 	;
 
-NETypeList
-	: XTypeList MaybeComma
-	;
+NETypeList : XTypeList MaybeComma {
+	$$ = std::move($1);
+};
 
-XTypeList
-	: Type
-	| XTypeList "," Type
-	;
+XTypeList : Type {
+	$$.push_back(std::move($1));
+};
+
+XTypeList : XTypeList "," Type {
+	$$ = std::move($1);
+	$$.push_back(std::move($3));
+};
 
 TypeArg
 	: UPPER_ID Type
@@ -540,64 +560,69 @@ XTypeArgList
 	| XTypeArgList "," TypeArg
 	;
 
-Type : UPPER_ID {
+Type
+	: TypeName { $$ = std::move($1); }
+	| QualifiedTypeName { $$ = std::move($1); }
+	| TypeInstantiation { $$ = std::move($1); }
+	| ArrayType { $$ = std::move($1); }
+	| SliceType { $$ = std::move($1); }
+	| PointerType { $$ = std::move($1); }
+	| ReferenceType { $$ = std::move($1); }
+	| FunctionType { $$ = std::move($1); }
+	| StructType { $$ = std::move($1); }
+	| UnionType { $$ = std::move($1); }
+	| InterfaceType { $$ = std::move($1); }
+	;
+
+TypeName : UPPER_ID {
 	$$ = std::make_unique<AST::TypeName>(std::move($1));
 };
 
-Type : Type "." UPPER_ID {
+QualifiedTypeName : Type "." UPPER_ID {
  	$$ = std::make_unique<AST::QualifiedTypeName>(
  		std::move($1),
  		std::move($3)
 	);
 };
 
-Type : Type "[" NETypeList "]" {
+TypeInstantiation : Type "[" NETypeList "]" {
+	$$ = std::make_unique<AST::TypeInstantiation>(
+		std::move($1),
+		std::move($3)
+	);
+};
+
+ArrayType : Type "[" Expression "]" {
 	// TODO
 };
 
-Type :Type "[" Expression "]" {
+SliceType : Type "[" "]" {
 	// TODO
 };
 
-Type : Type "[" "]" {
+PointerType : Type "?" {
 	// TODO
 };
 
-Type : Type "?" {
+ReferenceType : Type "@" {
 	// TODO
 };
 
-Type : Type "@" {
+FunctionType : "func" Signature {
 	// TODO
 };
 
-Type : "func" Signature {
+StructType : "struct" "{" RecordItems "}" {
 	// TODO
 };
 
-Type : StructType {
+UnionType :  "union" "{" RecordItems "}" {
 	// TODO
 };
 
-Type : UnionType {
+InterfaceType : "interface" "{" InterfaceItems "}" {
 	// TODO
 };
-
-Type : InterfaceType {
-	// TODO
-};
-
-StructType
-	: "struct" "{" RecordItems "}"
-	;
-
-UnionType
-	:  "union" "{" RecordItems "}"
-	;
-
-InterfaceType
-	: "interface" "{" InterfaceItems "}"
-	;
 
 ExpressionList
 	: %empty
