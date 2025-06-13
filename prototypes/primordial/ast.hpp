@@ -13,6 +13,10 @@ namespace AST {
 	};
 
 	class Type : public Node {};
+	class Expression : public Node {};
+
+	using TypeList = std::vector<std::unique_ptr<Type>>;
+	using ExpressionList = std::vector<std::unique_ptr<Expression>>;
 
 	class TypeName : public Type {
 	public:
@@ -37,13 +41,13 @@ namespace AST {
 	public:
 		TypeInstantiation(
 			std::unique_ptr<Type> &&generic_type,
-			std::vector<std::unique_ptr<Type>> &&args
+			TypeList &&args
 		);
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
 		std::unique_ptr<Type> generic_type_;
-		std::vector<std::unique_ptr<Type>> args_;
+		TypeList args_;
 	};
 
 	class ArrayType : public Type {

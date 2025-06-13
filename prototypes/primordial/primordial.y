@@ -123,8 +123,8 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::Type>> Type
 %nterm <std::unique_ptr<AST::Type>> CompoundLiteralType
 
-%nterm <std::vector<std::unique_ptr<AST::Type>>> NETypeList
-%nterm <std::vector<std::unique_ptr<AST::Type>>> XTypeList
+%nterm <AST::TypeList> NETypeList
+%nterm <AST::TypeList> XTypeList
 
 %nterm <std::unique_ptr<AST::TypeName>> TypeName
 %nterm <std::unique_ptr<AST::QualifiedTypeName>> QualifiedTypeName
