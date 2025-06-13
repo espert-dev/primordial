@@ -69,8 +69,18 @@ namespace AST {
 		os << "?";
 	}
 
+	FunctionType::FunctionType(AST::TypeList &&inputs)
+	: inputs_(std::move(inputs)) {}
+
+	FunctionType::FunctionType(AST::TypeList &&inputs, AST::TypeList &&outputs)
+	: inputs_(std::move(inputs)), outputs_(std::move(outputs)) {}
+
 	void FunctionType::print(std::ostream &os, int level) const {
-		// TODO
+		os << "func (";
+		print_list(os, inputs_);
+		os << ") -> (";
+		print_list(os, outputs_);
+		os << ")";
 	}
 
 	void StructType::print(std::ostream &os, int level) const {

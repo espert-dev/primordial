@@ -83,11 +83,13 @@ namespace AST {
 
 	class FunctionType : public Type {
 	public:
-		FunctionType() = default; // TODO replace
+		FunctionType(TypeList &&inputs);
+		FunctionType(TypeList &&inputs,TypeList &&outputs);
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
-		// TODO
+		TypeList inputs_;
+		TypeList outputs_;
 	};
 
 	class StructType : public Type {

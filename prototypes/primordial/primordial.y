@@ -595,11 +595,11 @@ PointerType : Type "?" {
 };
 
 FunctionType : "func" "(" NETypeList ")" {
-	// TODO
+	$$ = std::make_unique<AST::FunctionType>(std::move($3));
 };
 
-FunctionType : "func" "(" NETypeList ")" "->" "(" ArgumentList ")" {
-	// TODO
+FunctionType : "func" "(" NETypeList ")" "->" "(" NETypeList ")" {
+	$$ = std::make_unique<AST::FunctionType>(std::move($3), std::move($7));
 };
 
 StructType : "struct" "{" RecordItems "}" {
