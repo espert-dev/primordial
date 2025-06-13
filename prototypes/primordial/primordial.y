@@ -545,7 +545,10 @@ Type : UPPER_ID {
 };
 
 Type : Type "." UPPER_ID {
- 	// TODO
+ 	$$ = std::make_unique<AST::QualifiedTypeName>(
+ 		std::move($1),
+ 		std::move($3)
+	);
 };
 
 Type : Type "[" NETypeList "]" {

@@ -18,6 +18,18 @@ namespace AST {
 		os << name_;
 	}
 
+	QualifiedTypeName::~QualifiedTypeName() = default;
+
+	QualifiedTypeName::QualifiedTypeName(
+		std::unique_ptr<Type> &&parent,
+		std::string &&name
+	) : parent_(std::move(parent)), name_(std::move(name)) {}
+
+	void QualifiedTypeName::print(std::ostream &os, int level) const {
+		parent_->print(os, level);
+		os << "." << name_;
+	}
+
 	File::File(
 		std::string const &name,
 		std::vector<Import> &&imports

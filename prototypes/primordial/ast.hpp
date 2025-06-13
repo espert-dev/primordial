@@ -25,6 +25,18 @@ namespace AST {
 		std::string name_;
 	};
 
+	class QualifiedTypeName : public Type {
+	public:
+		~QualifiedTypeName();
+		QualifiedTypeName(std::unique_ptr<Type> &&parent, std::string &&name);
+
+		void print(std::ostream &os, int level=0) const override final;
+
+	private:
+		std::unique_ptr<Type> parent_;
+		std::string name_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.
