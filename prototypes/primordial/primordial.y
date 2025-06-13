@@ -300,10 +300,17 @@ FunctionDef
 	| "func" Receiver LOWER_ID FunctionSignature Block
 	;
 
-/* Type already includes generic instantiation */
+// The parentheses aren't really necessary, but might provide a visual cue.
 Receiver
-	: "(" Type ")"
-	| "(" LOWER_ID Type ")"
+	: "(" ReceiverType ")"
+	| "(" LOWER_ID ReceiverType ")"
+	;
+
+ReceiverType
+	: UPPER_ID
+	| UPPER_ID "?"
+	| UPPER_ID "[" NETypeList "]"
+	| UPPER_ID "[" NETypeList "]" "?"
 	;
 
 /*
