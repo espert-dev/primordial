@@ -236,8 +236,8 @@ static bool can_insert_semicolon = false;
 "import" {
  	can_insert_semicolon = false;
  	return yy::Parser::make_IMPORT(loc);
- }
- "package" {
+}
+"package" {
 	can_insert_semicolon = false;
 	return yy::Parser::make_PACKAGE(loc);
 }
