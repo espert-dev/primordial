@@ -10,15 +10,11 @@ namespace AST {
 
 	Node::~Node() = default;
 
-	TypeName::~TypeName() = default;
-
 	TypeName::TypeName(std::string &&name) : name_(name) {}
 
 	void TypeName::print(std::ostream &os, int level) const {
 		os << name_;
 	}
-
-	QualifiedTypeName::~QualifiedTypeName() = default;
 
 	QualifiedTypeName::QualifiedTypeName(
 		std::unique_ptr<Type> &&parent,

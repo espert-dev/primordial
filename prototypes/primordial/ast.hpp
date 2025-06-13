@@ -16,9 +16,7 @@ namespace AST {
 
 	class TypeName : public Type {
 	public:
-		~TypeName();
 		TypeName(std::string &&name);
-
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
@@ -27,9 +25,7 @@ namespace AST {
 
 	class QualifiedTypeName : public Type {
 	public:
-		~QualifiedTypeName();
 		QualifiedTypeName(std::unique_ptr<Type> &&parent, std::string &&name);
-
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
