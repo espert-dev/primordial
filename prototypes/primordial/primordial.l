@@ -1,54 +1,5 @@
 /*
- * Grammar for the Primordial language.
- *
- * Design decisions:
- *
- * - Supports declarations, which allows the implementation of single-pass
- *   variants (e.g., for p0).
- *
- * - Identifiers are segregated into 4 categories which are enforced and
- *   exploited by the grammar:
- *
- *   - Exported upper IDs (`List`)
- *   - Exported lower IDs (`printf`)
- *   - Internal upper IDs (`_Impl`)
- *   - Internal lower IDs (`_size`)
- *
- * - Exported symbols start with a letter. Internal symbols start with an
- *   underscore. This is reminiscent of the Python naming convention, and is
- *   convenient, for example, to avoid the naming ambiguity between a getter
- *   (size) and the field that stores its value (_size).
- *
- * - The first letter in a lower ID, after possibly a number of underscores,
- *   is lowercase. They denote values and constants. The first letter in an
- *   upper ID, after possibly a number of underscores, is uppercase. They
- *   denote types and packages. This segregation of type and value identifiers
- *   prevents an analog of C's typedef ambiguity, and is helpful to humans. In
- *   particular, we observe that we are merely enforcing a variant of what is
- *   already a common convention in some popular programming languages.
- *
- * - Identifiers consisting exclusively of more than one underscore are invalid.
- *
- * - A single underscore is recognised as the omit token, which can be used to
- *   discard results in assignments.
- *
- * - Internal packages are denoted by internal upper IDs. They can only be
- *   accessed by their parent and siblings. This is similar to Go, but with one
- *   fewer level of package depth. "_" can be used as a directory name to
- *   indicate an empty package that starts a subtree of internal packages.
- *
- * - Expressions and statements are strictly separated to minimise unintended
- *   side-effects.
- *
- * - All lists separated by commas are left-associative to minimise stack
- *   usage in bottom-up parsers.
- *
- * - All binary operators are left-associative.
- *
- * - All value expression operators are prefix.
- *
- * - All type modifiers are postfix.
- *
+ * Lexical grammar for the Primordial language.
  */
 
 %{
