@@ -273,10 +273,6 @@ FunctionSignature
 	: "(" ArgumentList ")" FunctionReturnValues
 	;
 
-FunctionTypeSignature
-	: "(" NETypeList ")" FunctionTypeReturnValues
-	;
-
 ArgumentList
 	: %empty
 	| XArgumentList MaybeComma
@@ -294,11 +290,6 @@ Argument
 FunctionReturnValues
 	: %empty
 	| "->" "(" NETypeList ")"
-	| "->" "(" ArgumentList ")"
-	;
-
-FunctionTypeReturnValues
-	: %empty
 	| "->" "(" ArgumentList ")"
 	;
 
@@ -603,7 +594,11 @@ PointerType : Type "?" {
 	$$ = std::make_unique<AST::PointerType>(std::move($1));
 };
 
-FunctionType : "func" FunctionTypeSignature {
+FunctionType : "func" "(" NETypeList ")" {
+	// TODO
+};
+
+FunctionType : "func" "(" NETypeList ")" "->" "(" ArgumentList ")" {
 	// TODO
 };
 
