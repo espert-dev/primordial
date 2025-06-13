@@ -52,11 +52,15 @@ namespace AST {
 
 	class ArrayType : public Type {
 	public:
-		ArrayType() = default; // TODO replace
+		ArrayType(
+			std::unique_ptr<Type> &&item_type,
+			std::unique_ptr<Expression> &&size
+		);
 		void print(std::ostream &os, int level=0) const override final;
 
 	private:
-		// TODO
+		std::unique_ptr<Type> item_type_;
+		std::unique_ptr<Expression> size_;
 	};
 
 	class SliceType : public Type {

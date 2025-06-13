@@ -42,8 +42,16 @@ namespace AST {
 		os << "." << name_;
 	}
 
+	ArrayType::ArrayType(
+		std::unique_ptr<Type> &&item_type,
+		std::unique_ptr<Expression> &&size
+	) : item_type_(std::move(item_type)), size_(std::move(size)) {}
+
 	void ArrayType::print(std::ostream &os, int level) const {
-		// TODO
+		item_type_->print(os, level);
+		os << "[";
+		size_->print(os, level);
+		os << "]";
 	}
 
 	void SliceType::print(std::ostream &os, int level) const {

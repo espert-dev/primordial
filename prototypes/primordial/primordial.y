@@ -138,6 +138,8 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::UnionType>> UnionType
 %nterm <std::unique_ptr<AST::InterfaceType>> InterfaceType
 
+%nterm <std::unique_ptr<AST::Expression>> Expression
+
 %%
 
 File : PackageDecl ImportList TopItems {
@@ -433,8 +435,8 @@ Condition
 	;
 
 Expression
-	: AndExpression
-	| Expression "||" AndExpression
+	: AndExpression { /* TODO */ }
+	| Expression "||" AndExpression { /* TODO */ }
 	;
 
 AndExpression
@@ -593,7 +595,7 @@ TypeInstantiation : Type "[" NETypeList "]" {
 };
 
 ArrayType : Type "[" Expression "]" {
-	// TODO
+	$$ = std::make_unique<AST::ArrayType>(std::move($1), std::move($3));
 };
 
 SliceType : Type "[" "]" {
