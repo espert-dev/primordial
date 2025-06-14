@@ -327,6 +327,16 @@ namespace AST {
 		os << ']';
 	}
 
+	FieldAccess::FieldAccess(
+		std::unique_ptr <Expression> &&record,
+		std::string &&field
+	) : record_(std::move(record)), field_(std::move(field)) {}
+
+	void FieldAccess::print(std::ostream &os, int level) const {
+		record_->print(os, level);
+		os << '.' << field_;
+	}
+
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports

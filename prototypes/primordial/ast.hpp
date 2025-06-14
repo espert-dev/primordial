@@ -241,6 +241,20 @@ namespace AST {
 		std::unique_ptr<Expression> index_;
 	};
 
+	class FieldAccess : public Expression {
+	public:
+		FieldAccess(
+			std::unique_ptr<Expression> &&record,
+			std::string &&field
+		);
+
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Expression> record_;
+		std::string field_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.

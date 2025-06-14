@@ -719,9 +719,9 @@ UnaryExpression	: "@" UnaryExpression {
 
 Term
 	: "(" Expression ")" { $$ = std::move($2); }
-	| ArrayAccess { $$ = std::move($1); }
 	| FunctionCall { $$ = std::move($1); }
 	| AnonymousFunctionDef { $$ = std::move($1); }
+	| ArrayAccess { $$ = std::move($1); }
 	| FieldAccess { $$ = std::move($1); }
 	| PointerDereference { $$ = std::move($1); }
 	| TypeCast { $$ = std::move($1); }
@@ -749,7 +749,7 @@ Literal : NUMERIC_LITERAL {
 };
 
 FieldAccess : Term "." LOWER_ID {
-	// TODO
+	$$ = std::make_unique<AST::FieldAccess>(std::move($1), std::move($3));
 };
 
 PointerDereference : Term "." {
