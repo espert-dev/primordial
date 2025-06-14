@@ -701,7 +701,12 @@ XExpressionList
 
 FieldList
 	: %empty
-	| FieldList Field ";"
+	| XFieldList MaybeSemi
+	;
+
+XFieldList
+	: Field
+	| XFieldList ";" Field
 	;
 
 Field
