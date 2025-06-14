@@ -206,12 +206,12 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 
 // These can have concrete types.
 %nterm <std::unique_ptr<AST::Expression>> FunctionCall
-%nterm <std::unique_ptr<AST::Expression>> ArrayAccess
-%nterm <std::unique_ptr<AST::Expression>> FieldAccess
-%nterm <std::unique_ptr<AST::Expression>> PackageAccess
+%nterm <std::unique_ptr<AST::ArrayAccess>> ArrayAccess
+%nterm <std::unique_ptr<AST::FieldAccess>> FieldAccess
+%nterm <std::unique_ptr<AST::PackageAccess>> PackageAccess
 %nterm <std::unique_ptr<AST::Expression>> AnonymousFunctionDef
-%nterm <std::unique_ptr<AST::Expression>> PointerDereference
-%nterm <std::unique_ptr<AST::Expression>> TypeCast
+%nterm <std::unique_ptr<AST::PointerDereference>> PointerDereference
+%nterm <std::unique_ptr<AST::TypeCast>> TypeCast
 %nterm <std::unique_ptr<AST::Expression>> VariableRead
 
 %%
@@ -763,7 +763,7 @@ PointerDereference : Term "." {
 };
 
 TypeCast : Type "(" Expression ")" {
-	// TODO
+	$$ = std::make_unique<AST::TypeCast>(std::move($1), std::move($3));
 };
 
 VariableRead : LOWER_ID {

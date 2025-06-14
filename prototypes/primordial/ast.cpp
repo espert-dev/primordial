@@ -283,7 +283,7 @@ namespace AST {
 
 	UnaryExpression::UnaryExpression(
 		AST::UnaryOperator op,
-		std::unique_ptr <Expression> &&arg
+		std::unique_ptr<Expression> &&arg
 	) : operator_(op), arg_(std::move(arg)) {}
 
 	void UnaryExpression::print(std::ostream &os, int level) const {
@@ -328,7 +328,7 @@ namespace AST {
 	}
 
 	FieldAccess::FieldAccess(
-		std::unique_ptr <Expression> &&record,
+		std::unique_ptr<Expression> &&record,
 		std::string &&field
 	) : record_(std::move(record)), field_(std::move(field)) {}
 
@@ -350,6 +350,18 @@ namespace AST {
 	void PointerDereference::print(std::ostream &os, int level) const {
 		ptr_->print(os, level);
 		os << '.';
+	}
+
+	TypeCast::TypeCast(
+		std::unique_ptr<Type> &&type,
+		std::unique_ptr<Expression> &&expr
+	) : type_(std::move(type_)), expr_(std::move(expr)) {}
+
+	void TypeCast::print(std::ostream &os, int level) const {
+		type_->print(os, level);
+		os << '(';
+		expr_->print(os, level);
+		os << ')';
 	}
 
 	File::File(

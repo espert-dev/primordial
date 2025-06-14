@@ -274,6 +274,20 @@ namespace AST {
 		std::unique_ptr<Expression> ptr_;
 	};
 
+	class TypeCast : public Expression {
+	public:
+		TypeCast(
+			std::unique_ptr<Type> &&type,
+			std::unique_ptr<Expression> &&expr
+		);
+
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Type> type_;
+		std::unique_ptr<Expression> expr_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.
