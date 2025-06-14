@@ -246,6 +246,36 @@ namespace AST {
 		ExpressionList values_;
 	};
 
+	class FieldAssignment : public Node {
+	public:
+		FieldAssignment(); // Required by Bison.
+		FieldAssignment(
+			std::string &&field,
+			std::unique_ptr<Expression> &&value
+		);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::string field_;
+		std::unique_ptr<Expression> value_;
+	};
+
+	using FieldAssignmentList = std::vector<FieldAssignment>;
+
+	class RecordLiteral : public Expression {
+	public:
+		RecordLiteral(
+			std::unique_ptr<Type> &&type,
+			FieldAssignmentList &&assignments
+		);
+
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Type> type_;
+		FieldAssignmentList assignments_;
+	};
+
 	class ArrayAccess : public Expression {
 	public:
 		ArrayAccess(

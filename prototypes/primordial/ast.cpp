@@ -341,6 +341,35 @@ namespace AST {
 		os << "};";
 	}
 
+	FieldAssignment::FieldAssignment() {}
+
+	FieldAssignment::FieldAssignment(
+		std::string &&field,
+		std::unique_ptr<Expression> &&value
+	) : field_(std::move(field)), value_(std::move(value)) {}
+
+	void FieldAssignment::print(std::ostream &os, int level) const {
+		os << field_ << ": ";
+		value_->print(os, level);
+	}
+
+	RecordLiteral::RecordLiteral(
+		std::unique_ptr <Type> &&type,
+		AST::FieldAssignmentList &&assignments
+	) : type_(std::move(type)), assignments_(std::move(assignments)) {}
+
+	void RecordLiteral::print(std::ostream &os, int level) const {
+		os << "{\n";
+
+		for (auto const &assignment : assignments_) {
+			assignment.print(os, level+1);
+			os << ",\n";
+		}
+
+		indent(os, level);
+		os << "}";
+	}
+
 	ArrayAccess::ArrayAccess(
 		std::unique_ptr <Expression> &&array,
 		std::unique_ptr <Expression> index

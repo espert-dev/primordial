@@ -204,7 +204,7 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::Expression>> Term
 %nterm <std::unique_ptr<AST::Expression>> Literal
 
-// These can have concrete types.
+// Leaves in the expression hierarchy can have concrete types.
 %nterm <std::unique_ptr<AST::Expression>> FunctionCall
 %nterm <std::unique_ptr<AST::ArrayAccess>> ArrayAccess
 %nterm <std::unique_ptr<AST::FieldAccess>> FieldAccess
@@ -217,6 +217,10 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <AST::ExpressionList> ExpressionList
 %nterm <AST::ExpressionList> NEExpressionList
 %nterm <AST::ExpressionList> XExpressionList
+
+%nterm <AST::FieldAssignment> FieldAssignment
+%nterm <AST::FieldAssignmentList> NEFieldAssignmentList
+%nterm <AST::FieldAssignmentList> XFieldAssignmentList
 
 %%
 
@@ -773,7 +777,7 @@ Literal : CompoundLiteralType "{" "}" {
 };
 
 Literal	: CompoundLiteralType "{" NEFieldAssignmentList "}" {
-	// TODO
+	$$ = std::make_unique<AST::RecordLiteral>(std::move($1), std::move($3));
 };
 
 Literal : CompoundLiteralType "{" NEExpressionList "}" {
@@ -806,18 +810,22 @@ CompoundLiteralType
 	| UnionType { $$ = std::move($1); }
 	;
 
-NEFieldAssignmentList
-	: XFieldAssignmentList MaybeComma
-	;
+NEFieldAssignmentList : XFieldAssignmentList MaybeComma {
+	$$ = std::move($1);
+};
 
-XFieldAssignmentList
-	: FieldAssignment
-	| XFieldAssignmentList "," FieldAssignment
-	;
+XFieldAssignmentList : FieldAssignment {
+	$$.push_back(std::move($1));
+};
 
-FieldAssignment
-	: LOWER_ID ":" Expression
-	;
+XFieldAssignmentList: XFieldAssignmentList "," FieldAssignment {
+	$$ = std::move($1);
+	$$.push_back(std::move($3));
+};
+
+FieldAssignment : LOWER_ID ":" Expression {
+	$$ = AST::FieldAssignment(std::move($1), std::move($3));
+};
 
 NETypeList : XTypeList MaybeComma {
 	$$ = std::move($1);
