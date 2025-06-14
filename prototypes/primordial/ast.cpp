@@ -11,6 +11,7 @@ namespace AST {
 	template <typename T>
 	void print_list(
 		std::ostream &os,
+		int level,
 		std::vector<std::unique_ptr<T>> const &v
 	) {
 		bool first = true;
@@ -19,7 +20,7 @@ namespace AST {
 				os << ", ";
 			}
 
-			node->print(os);
+			node->print(os, level);
 			first = false;
 		}
 	}
@@ -85,9 +86,9 @@ namespace AST {
 
 	void FunctionType::print(std::ostream &os, int level) const {
 		os << "func (";
-		print_list(os, inputs_);
+		print_list(os, level, inputs_);
 		os << ") -> (";
-		print_list(os, outputs_);
+		print_list(os, level, outputs_);
 		os << ")";
 	}
 
@@ -111,7 +112,7 @@ namespace AST {
 	void TypeInstantiation::print(std::ostream &os, int level) const {
 		generic_type_->print(os, level);
 		os << "[";
-		print_list(os, args_);
+		print_list(os, level, args_);
 		os << "]";
 	}
 

@@ -9,7 +9,7 @@ namespace AST {
 	class Node {
 	public:
 		virtual ~Node();
-		virtual void print(std::ostream &os, int level=0) const = 0;
+		virtual void print(std::ostream &os, int level) const = 0;
 	};
 
 	class Type : public Node {};
@@ -21,7 +21,7 @@ namespace AST {
 	class TypeName : public Type {
 	public:
 		TypeName(std::string &&name);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::string name_;
@@ -30,7 +30,7 @@ namespace AST {
 	class QualifiedTypeName : public Type {
 	public:
 		QualifiedTypeName(std::string &&package, std::string &&name);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::string package_;
@@ -43,7 +43,7 @@ namespace AST {
 			std::unique_ptr<Type> &&generic_type,
 			TypeList &&args
 		);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::unique_ptr<Type> generic_type_;
@@ -56,7 +56,7 @@ namespace AST {
 			std::unique_ptr<Type> &&item_type,
 			std::unique_ptr<Expression> &&size
 		);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::unique_ptr<Type> item_type_;
@@ -66,7 +66,7 @@ namespace AST {
 	class SliceType : public Type {
 	public:
 		SliceType(std::unique_ptr<Type> &&item_type);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::unique_ptr<Type> item_type_;
@@ -75,7 +75,7 @@ namespace AST {
 	class RawSliceType : public Type {
 	public:
 		RawSliceType(std::unique_ptr<Type> &&item_type);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::unique_ptr<Type> item_type_;
@@ -84,7 +84,7 @@ namespace AST {
 	class PointerType : public Type {
 	public:
 		PointerType(std::unique_ptr<Type> &&item_type);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::unique_ptr<Type> item_type_;
@@ -94,7 +94,7 @@ namespace AST {
 	public:
 		FunctionType(TypeList &&inputs);
 		FunctionType(TypeList &&inputs,TypeList &&outputs);
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		TypeList inputs_;
@@ -104,7 +104,7 @@ namespace AST {
 	class StructType : public Type {
 	public:
 		StructType() = default; // TODO replace
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		// TODO
@@ -113,7 +113,7 @@ namespace AST {
 	class UnionType : public Type {
 	public:
 		UnionType() = default; // TODO replace
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		// TODO
@@ -122,7 +122,7 @@ namespace AST {
 	class InterfaceType : public Type {
 	public:
 		InterfaceType() = default; // TODO replace
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		// TODO
@@ -135,7 +135,7 @@ namespace AST {
 		Import(std::string &&path);
 		Import(std::string &&path, std::string &&alias);
 
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 		~Import();
 
@@ -152,7 +152,7 @@ namespace AST {
 		);
 		~File();
 
-		void print(std::ostream &os, int level=0) const override final;
+		void print(std::ostream &os, int level) const override final;
 
 	private:
 		std::string name_;
