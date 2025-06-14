@@ -75,9 +75,11 @@
 
 %code requires {
 
+#include <algorithm>
+#include <functional>
+#include <iterator>
 #include <list>
 #include <string>
-#include <functional>
 #include "primordial.hpp"
 #include "ast.hpp"
 
@@ -215,7 +217,7 @@ ImportList : ImportList "import" Import ";" {
 
 ImportList : ImportList "import" "(" ImportGroup ")" ";" {
 	$$ = std::move($1);
-	$$.insert(std::end($$), std::begin($4), std::end($4));
+	std::move(std::begin($4), std::end($4), std::back_inserter($$));
 };
 
 ImportGroup : %empty {

@@ -149,7 +149,9 @@ namespace AST {
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.
-		Import(Import const &other);
+		Import(Import &&other);
+		Import& operator=(Import &&other);
+
 		Import(std::string &&path);
 		Import(std::string &&path, std::string &&alias);
 

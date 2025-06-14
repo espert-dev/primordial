@@ -159,7 +159,7 @@ namespace AST {
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports
-	) : name_(std::move(name)), imports_(imports) {}
+	) : name_(std::move(name)), imports_(std::move(imports)) {}
 
 	File::~File() = default;
 
@@ -171,7 +171,7 @@ namespace AST {
 			imports_.at(0).print(os, level);
 			os << "\n";
 		} else if (imports_.size() > 1) {
-			for (auto import : imports_) {
+			for (auto const &import : imports_) {
 				import.print(os, level);
 			}
 
@@ -181,7 +181,9 @@ namespace AST {
 
 	Import::Import() = default;
 
-	Import::Import(Import const &other) = default;
+	Import::Import(Import &&other) = default;
+
+	Import& Import::operator=(Import &&other) = default;
 
 	Import::Import(std::string &&path) : path_(path) {}
 
