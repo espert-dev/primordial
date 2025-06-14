@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "ast.hpp"
 
 namespace AST {
@@ -23,6 +24,91 @@ namespace AST {
 			node->print(os, level);
 			first = false;
 		}
+	}
+
+	auto binary_operator_string(BinaryOperator op) -> std::string const & {
+		// Use static strings to minimise allocations.
+		// Use blocks to scope static variables to their point of use.
+		switch (op) {
+			case BinaryOperator::LOGICAL_OR: {
+				static std::string const logical_or("||");
+				return logical_or;
+			}
+			case BinaryOperator::LOGICAL_AND: {
+				static std::string const logical_and("&&");
+				return logical_and;
+			}
+			case BinaryOperator::EQ: {
+				static std::string const eq("==");
+				return eq;
+			}
+			case BinaryOperator::NE: {
+				static std::string const ne("!=");
+				return ne;
+			}
+			case BinaryOperator::LE: {
+				static std::string const le("<=");
+				return le;
+			}
+			case BinaryOperator::GE: {
+				static std::string const ge(">=");
+				return ge;
+			}
+			case BinaryOperator::LT: {
+				static std::string const lt("<");
+				return lt;
+			}
+			case BinaryOperator::GT: {
+				static std::string const gt(">");
+				return gt;
+			}
+			case BinaryOperator::ADD: {
+				static std::string const add("+");
+				return add;
+			}
+			case BinaryOperator::SUB: {
+				static std::string const sub("-");
+				return sub;
+			}
+			case BinaryOperator::BITWISE_OR: {
+				static std::string const bitwise_or("|");
+				return bitwise_or;
+			}
+			case BinaryOperator::BITWISE_XOR: {
+				static std::string const bitwise_xor("^");
+				return bitwise_xor;
+			}
+			case BinaryOperator::MUL: {
+				static std::string const mul("*");
+				return mul;
+			}
+			case BinaryOperator::DIV: {
+				static std::string const div("/");
+				return div;
+			}
+			case BinaryOperator::REM: {
+				static std::string const rem("%");
+				return rem;
+			}
+			case BinaryOperator::BITWISE_AND: {
+				static std::string const bitwise_and("&");
+				return bitwise_and;
+			}
+			case BinaryOperator::BITWISE_CLEAR: {
+				static std::string const bitwise_clear("&^");
+				return bitwise_clear;
+			}
+			case BinaryOperator::LEFT_SHIFT: {
+				static std::string const left_shift("<<");
+				return left_shift;
+			}
+			case BinaryOperator::RIGHT_SHIFT: {
+				static std::string const right_shift(">>");
+				return right_shift;
+			}
+		}
+
+		throw std::invalid_argument("unknown binary operator");
 	}
 
 	Node::~Node() = default;
@@ -154,6 +240,20 @@ namespace AST {
 		os << "[";
 		print_list(os, level, args_);
 		os << "]";
+	}
+
+	BinaryExpression::BinaryExpression(
+		AST::BinaryOperator op,
+		std::unique_ptr<AST::Expression> &&lhs,
+		std::unique_ptr<AST::Expression> &&rhs
+	) : operator_(op), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {}
+
+	void BinaryExpression::print(std::ostream &os, int level) const {
+		os << "(";
+		lhs_->print(os, level);
+		os << ") " << binary_operator_string(operator_) << " (";
+		rhs_->print(os, level);
+		os << ")";
 	}
 
 	File::File(

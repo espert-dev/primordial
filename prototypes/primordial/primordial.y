@@ -193,7 +193,15 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::vector<AST::Field>> FieldList
 %nterm <std::vector<AST::Field>> XFieldList
 
+// We cannot use concrete types here because of embedding higher-precedence
+// expressions in lower-precedence expressions.
 %nterm <std::unique_ptr<AST::Expression>> Expression
+%nterm <std::unique_ptr<AST::Expression>> AndExpression
+%nterm <std::unique_ptr<AST::Expression>> RelExpression
+%nterm <std::unique_ptr<AST::Expression>> SumExpression
+%nterm <std::unique_ptr<AST::Expression>> MulExpression
+%nterm <std::unique_ptr<AST::Expression>> UnaryExpression
+%nterm <std::unique_ptr<AST::Expression>> Term
 
 %%
 
@@ -495,75 +503,220 @@ Condition
 	: AssignmentSeq Expression
 	;
 
-Expression
-	: AndExpression { /* TODO */ }
-	| Expression "||" AndExpression { /* TODO */ }
-	;
+Expression : AndExpression {
+	$$ = std::move($1);
+};
 
-AndExpression
-	: RelExpression
-	| AndExpression "&&" RelExpression
-	;
+Expression : Expression "||" AndExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::LOGICAL_AND,
+		std::move($1),
+		std::move($3)
+	);
+};
 
-RelExpression
-	: SumExpression
-	| RelExpression "==" SumExpression
-	| RelExpression "!=" SumExpression
-	| RelExpression "<=" SumExpression
-	| RelExpression ">=" SumExpression
-	| RelExpression "<" SumExpression
-	| RelExpression ">" SumExpression
-	;
+AndExpression : RelExpression {
+ 	$$ = std::move($1);
+};
 
-SumExpression
-	: MulExpression
-	| SumExpression "+" MulExpression
-	| SumExpression "-" MulExpression
-	| SumExpression "|" MulExpression
-	| SumExpression "^" MulExpression
-	;
+AndExpression : AndExpression "&&" RelExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::LOGICAL_AND,
+		std::move($1),
+		std::move($3)
+	);
+};
 
-MulExpression
-	: Unary
-	| MulExpression "*" Unary
-	| MulExpression "/" Unary
-	| MulExpression "%" Unary
-	| MulExpression "&" Unary
-	| MulExpression "&^" Unary
-	| MulExpression "<<" Unary
-	| MulExpression ">>" Unary
-	;
+RelExpression : SumExpression {
+	$$ = std::move($1);
+};
 
-Unary
-	: Term
-	| "-" Unary
-	| "~" Unary
-	| "!" Unary
-	| "@" Unary /* Address of */
+RelExpression : RelExpression "==" SumExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::EQ,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+RelExpression : RelExpression "!=" SumExpression {
+$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::NE,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+RelExpression : RelExpression "<=" SumExpression {
+$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::LE,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+RelExpression : RelExpression ">=" SumExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::GE,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+RelExpression : RelExpression "<" SumExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::LT,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+RelExpression : RelExpression ">" SumExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::GT,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+SumExpression : MulExpression {
+	$$ = std::move($1);
+};
+
+SumExpression : SumExpression "+" MulExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::ADD,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+SumExpression : SumExpression "-" MulExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::SUB,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+SumExpression : SumExpression "|" MulExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::BITWISE_OR,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+SumExpression : SumExpression "^" MulExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::BITWISE_XOR,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : UnaryExpression {
+	$$ = std::move($1);
+};
+
+MulExpression : MulExpression "*" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::MUL,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : MulExpression "/" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::DIV,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : MulExpression "%" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::REM,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : MulExpression "&" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::BITWISE_AND,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : MulExpression "&^" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::BITWISE_CLEAR,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : MulExpression "<<" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::LEFT_SHIFT,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+MulExpression : MulExpression ">>" UnaryExpression {
+	$$ = std::make_unique<AST::BinaryExpression>(
+		AST::BinaryOperator::RIGHT_SHIFT,
+		std::move($1),
+		std::move($3)
+	);
+};
+
+UnaryExpression
+	: Term { $$ = std::move($1); }
+	| "-" UnaryExpression { /* TODO */ }
+	| "~" UnaryExpression { /* TODO */ }
+	| "!" UnaryExpression { /* TODO */ }
+	| "@" UnaryExpression { /* TODO */ }
 	;
 
 Term
-	: "(" Expression ")"
-	| Term "[" Expression "]"
-	| FunctionCall
-	| AnonymousFunctionDef
-	| Term "." LOWER_ID /* field access */
-	| Term "." /* Pointer dereference */
-	| Type "(" Expression ")"
-	| LOWER_ID
-	| BOOL_LITERAL
-	| STR_LITERAL
-	| NUM_LITERAL
+	: "(" Expression ")" { $$ = std::move($2); }
+	| Term "[" Expression "]" { /* TODO */ }
+	| FunctionCall { /* TODO */ }
+	| AnonymousFunctionDef { /* TODO */ }
+	| FieldAccess { /* TODO */ }
+	| PointerDereference { /* TODO */ }
+	| TypeCast { /* TODO */ }
+	| LOWER_ID { /* TODO */ }
+	| BOOL_LITERAL { /* TODO */ }
+	| STR_LITERAL { /* TODO */ }
+	| NUM_LITERAL { /* TODO */ }
 	;
+
+FieldAccess : Term "." LOWER_ID {
+	// TODO
+};
+
+PointerDereference : Term "." {
+	// TODO
+};
+
+TypeCast : Type "(" Expression ")" {
+	// TODO
+};
 
 /*
  * The empty struct and the empty list look identical, so we need to treat it
  * on its own to prevent ambiguities.
  */
 Term
-	: CompoundLiteralType "{" "}"
-	| CompoundLiteralType "{" NEFieldAssignmentList "}"
-	| CompoundLiteralType "{" NEExpressionList "}"
+	: CompoundLiteralType "{" "}" { /* TODO */ }
+	| CompoundLiteralType "{" NEFieldAssignmentList "}" { /* TODO */ }
+	| CompoundLiteralType "{" NEExpressionList "}" { /* TODO */ }
 	;
 
 /*

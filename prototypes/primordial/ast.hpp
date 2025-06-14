@@ -146,6 +146,43 @@ namespace AST {
 		// TODO
 	};
 
+	enum class BinaryOperator {
+		LOGICAL_OR,
+		LOGICAL_AND,
+		EQ,
+		NE,
+		LE,
+		GE,
+		LT,
+		GT,
+		ADD,
+		SUB,
+		BITWISE_OR,
+		BITWISE_XOR,
+		MUL,
+		DIV,
+		REM,
+		BITWISE_AND,
+		BITWISE_CLEAR,
+		LEFT_SHIFT,
+		RIGHT_SHIFT,
+	};
+
+	class BinaryExpression : public Expression {
+	public:
+		BinaryExpression(
+			BinaryOperator op,
+			std::unique_ptr<Expression> &&lhs,
+			std::unique_ptr<Expression> &&rhs
+		);
+
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		BinaryOperator operator_;
+		std::unique_ptr<Expression> lhs_, rhs_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.
