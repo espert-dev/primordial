@@ -212,7 +212,7 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::Expression>> AnonymousFunctionDef
 %nterm <std::unique_ptr<AST::PointerDereference>> PointerDereference
 %nterm <std::unique_ptr<AST::TypeCast>> TypeCast
-%nterm <std::unique_ptr<AST::Expression>> VariableRead
+%nterm <std::unique_ptr<AST::Expression>> SymbolAccess
 
 %%
 
@@ -725,9 +725,9 @@ Term
 	| ArrayAccess { $$ = std::move($1); }
 	| FieldAccess { $$ = std::move($1); }
 	| PackageAccess { $$ = std::move($1); }
+	| SymbolAccess { $$ = std::move($1); }
 	| PointerDereference { $$ = std::move($1); }
 	| TypeCast { $$ = std::move($1); }
-	| VariableRead { $$ = std::move($1); }
 	| Literal { $$ = std::move($1); }
 	;
 
@@ -745,6 +745,10 @@ FieldAccess : Term "." LOWER_ID {
 PackageAccess : UPPER_ID "." LOWER_ID {
 	$$ = std::make_unique<AST::PackageAccess>(std::move($1), std::move($3));
 };
+
+SymbolAccess : LOWER_ID {
+	$$ = std::make_unique<AST::SymbolAccess>(std::move($1));
+}
 
 Literal : BOOLEAN_LITERAL {
 	$$ = std::make_unique<AST::BooleanLiteral>($1);
@@ -765,10 +769,6 @@ PointerDereference : Term "." {
 TypeCast : Type "(" Expression ")" {
 	$$ = std::make_unique<AST::TypeCast>(std::move($1), std::move($3));
 };
-
-VariableRead : LOWER_ID {
-	// TODO
-}
 
 /*
  * The empty struct and the empty list look identical, so we need to treat it

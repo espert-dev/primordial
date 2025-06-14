@@ -344,6 +344,12 @@ namespace AST {
 		os << package_ << '.' << name_;
 	}
 
+	SymbolAccess::SymbolAccess(std::string &&name) : name_(std::move(name)) {}
+
+	void SymbolAccess::print(std::ostream &os, int level) const {
+		os << name_;
+	}
+
 	PointerDereference::PointerDereference(std::unique_ptr<Expression> &&ptr)
 	: ptr_(std::move(ptr)) {}
 

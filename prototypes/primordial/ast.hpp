@@ -265,6 +265,15 @@ namespace AST {
 		std::string name_;
 	};
 
+	class SymbolAccess : public Expression {
+	public:
+		SymbolAccess(std::string &&name);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::string name_;
+	};
+
 	class PointerDereference : public Expression {
 	public:
 		PointerDereference(std::unique_ptr<Expression> &&ptr);
