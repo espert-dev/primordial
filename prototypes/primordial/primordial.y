@@ -207,8 +207,9 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 // These can have concrete types.
 %nterm <std::unique_ptr<AST::Expression>> FunctionCall
 %nterm <std::unique_ptr<AST::Expression>> ArrayAccess
-%nterm <std::unique_ptr<AST::Expression>> AnonymousFunctionDef
 %nterm <std::unique_ptr<AST::Expression>> FieldAccess
+%nterm <std::unique_ptr<AST::Expression>> PackageAccess
+%nterm <std::unique_ptr<AST::Expression>> AnonymousFunctionDef
 %nterm <std::unique_ptr<AST::Expression>> PointerDereference
 %nterm <std::unique_ptr<AST::Expression>> TypeCast
 %nterm <std::unique_ptr<AST::Expression>> VariableRead
@@ -723,6 +724,7 @@ Term
 	| AnonymousFunctionDef { $$ = std::move($1); }
 	| ArrayAccess { $$ = std::move($1); }
 	| FieldAccess { $$ = std::move($1); }
+	| PackageAccess { $$ = std::move($1); }
 	| PointerDereference { $$ = std::move($1); }
 	| TypeCast { $$ = std::move($1); }
 	| VariableRead { $$ = std::move($1); }
@@ -736,6 +738,14 @@ ArrayAccess : Term "[" Expression "]" {
 	);
 };
 
+FieldAccess : Term "." LOWER_ID {
+	$$ = std::make_unique<AST::FieldAccess>(std::move($1), std::move($3));
+};
+
+PackageAccess : UPPER_ID "." LOWER_ID {
+	$$ = std::make_unique<AST::PackageAccess>(std::move($1), std::move($3));
+};
+
 Literal : BOOLEAN_LITERAL {
 	$$ = std::make_unique<AST::BooleanLiteral>($1);
 };
@@ -746,10 +756,6 @@ Literal : STRING_LITERAL {
 
 Literal : NUMERIC_LITERAL {
 	$$ = std::make_unique<AST::NumericLiteral>(std::move($1));
-};
-
-FieldAccess : Term "." LOWER_ID {
-	$$ = std::make_unique<AST::FieldAccess>(std::move($1), std::move($3));
 };
 
 PointerDereference : Term "." {

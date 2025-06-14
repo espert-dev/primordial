@@ -255,6 +255,16 @@ namespace AST {
 		std::string field_;
 	};
 
+	class PackageAccess : public Expression {
+	public:
+		PackageAccess(std::string &&package, std::string &&name);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::string package_;
+		std::string name_;
+	};
+
 	class PointerDereference : public Expression {
 	public:
 		PointerDereference(std::unique_ptr<Expression> &&ptr);

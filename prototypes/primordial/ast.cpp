@@ -337,6 +337,13 @@ namespace AST {
 		os << '.' << field_;
 	}
 
+	PackageAccess::PackageAccess(std::string &&package, std::string &&name)
+	: package_(std::move(package)), name_(std::move(name)) {}
+
+	void PackageAccess::print(std::ostream &os, int level) const {
+		os << package_ << '.' << name_;
+	}
+
 	PointerDereference::PointerDereference(std::unique_ptr<Expression> &&ptr)
 	: ptr_(std::move(ptr)) {}
 
