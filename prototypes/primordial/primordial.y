@@ -162,7 +162,7 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 
 /* Literals */
 %token <bool> BOOLEAN_LITERAL "Boolean literal"
-%token <std::string> NUM_LITERAL "numeric literal"
+%token <std::string> NUMERIC_LITERAL "numeric literal"
 %token <std::string> STRING_LITERAL "string literal"
 
 /* Non-terminals */
@@ -741,8 +741,8 @@ Literal : STRING_LITERAL {
 	$$ = std::make_unique<AST::StringLiteral>(std::move($1));
 };
 
-Literal : NUM_LITERAL {
-	// TODO
+Literal : NUMERIC_LITERAL {
+	$$ = std::make_unique<AST::NumericLiteral>(std::move($1));
 };
 
 FieldAccess : Term "." LOWER_ID {

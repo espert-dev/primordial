@@ -276,7 +276,7 @@ static bool can_insert_semicolon = false;
 
 ([0-9]*[0-9.][0-9]*([Ee][-+]?[0-9]+)?|"0x"[0-9A-Fa-f]+) {
 	can_insert_semicolon = true;
-	return yy::Parser::make_NUM_LITERAL(yytext, loc);
+	return yy::Parser::make_NUMERIC_LITERAL(yytext, loc);
 }
 
 \"(\\.|[^"\\])*\" {

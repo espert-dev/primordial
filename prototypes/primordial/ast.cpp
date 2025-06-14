@@ -308,6 +308,13 @@ namespace AST {
 		os << value_;
 	}
 
+	NumericLiteral::NumericLiteral(std::string &&value)
+	: value_(std::move(value)) {}
+
+	void NumericLiteral::print(std::ostream &os, int level) const {
+		os << value_;
+	}
+
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports
