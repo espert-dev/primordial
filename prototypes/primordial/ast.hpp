@@ -209,6 +209,15 @@ namespace AST {
 		bool value_;
 	};
 
+	class StringLiteral : public Expression {
+	public:
+		StringLiteral(std::string &&value);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::string value_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.

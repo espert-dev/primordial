@@ -163,7 +163,7 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 /* Literals */
 %token <bool> BOOLEAN_LITERAL "Boolean literal"
 %token <std::string> NUM_LITERAL "numeric literal"
-%token <std::string> STR_LITERAL "string literal"
+%token <std::string> STRING_LITERAL "string literal"
 
 /* Non-terminals */
 %nterm <std::string> PackageDecl
@@ -247,11 +247,11 @@ ImportGroup : ImportGroup Import ";"	{
 	$$.push_back(std::move($2));
 };
 
-Import : STR_LITERAL {
+Import : STRING_LITERAL {
 	$$ = AST::Import(std::move($1));
 };
 
-Import : UPPER_ID STR_LITERAL {
+Import : UPPER_ID STRING_LITERAL {
 	$$ = AST::Import(std::move($2), std::move($1));
 };
 
@@ -737,8 +737,8 @@ Literal : BOOLEAN_LITERAL {
 	$$ = std::make_unique<AST::BooleanLiteral>($1);
 };
 
-Literal : STR_LITERAL {
-	// TODO
+Literal : STRING_LITERAL {
+	$$ = std::make_unique<AST::StringLiteral>(std::move($1));
 };
 
 Literal : NUM_LITERAL {

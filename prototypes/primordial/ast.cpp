@@ -301,6 +301,13 @@ namespace AST {
 		}
 	}
 
+	StringLiteral::StringLiteral(std::string &&value)
+	: value_(std::move(value)) {}
+
+	void StringLiteral::print(std::ostream &os, int level) const {
+		os << value_;
+	}
+
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports

@@ -281,7 +281,7 @@ static bool can_insert_semicolon = false;
 
 \"(\\.|[^"\\])*\" {
 	can_insert_semicolon = true;
-	return yy::Parser::make_STR_LITERAL(yytext, loc);
+	return yy::Parser::make_STRING_LITERAL(yytext, loc);
 }
 
 [ \t]+ {
