@@ -753,7 +753,7 @@ FieldAccess : Term "." LOWER_ID {
 };
 
 PointerDereference : Term "." {
-	// TODO
+	$$ = std::make_unique<AST::PointerDereference>(std::move($1));
 };
 
 TypeCast : Type "(" Expression ")" {

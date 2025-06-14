@@ -337,6 +337,14 @@ namespace AST {
 		os << '.' << field_;
 	}
 
+	PointerDereference::PointerDereference(std::unique_ptr<Expression> &&ptr)
+	: ptr_(std::move(ptr)) {}
+
+	void PointerDereference::print(std::ostream &os, int level) const {
+		ptr_->print(os, level);
+		os << '.';
+	}
+
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports

@@ -255,6 +255,15 @@ namespace AST {
 		std::string field_;
 	};
 
+	class PointerDereference : public Expression {
+	public:
+		PointerDereference(std::unique_ptr<Expression> &&ptr);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Expression> ptr_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.
