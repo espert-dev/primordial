@@ -111,6 +111,31 @@ namespace AST {
 		throw std::invalid_argument("unknown binary operator");
 	}
 
+	auto unary_operator_string(UnaryOperator op) {
+		// Use static strings to minimise allocations.
+		// Use blocks to scope static variables to their point of use.
+		switch (op) {
+			case UnaryOperator::NEG: {
+				static std::string const neg("-");
+				return neg;
+			}
+			case UnaryOperator::BITWISE_NOT: {
+				static std::string const bitwise_not("~");
+				return bitwise_not;
+			}
+			case UnaryOperator::LOGICAL_NOT: {
+				static std::string const logical_not("!");
+				return logical_not;
+			}
+			case UnaryOperator::ADDRESS_OF: {
+				static std::string const address_of("@");
+				return address_of;
+			}
+		}
+
+		throw std::invalid_argument("unknown binary operator");
+	}
+
 	Node::~Node() = default;
 
 	TypeName::TypeName(std::string &&name) : name_(std::move(name)) {}
@@ -254,6 +279,16 @@ namespace AST {
 		os << ") " << binary_operator_string(operator_) << " (";
 		rhs_->print(os, level);
 		os << ")";
+	}
+
+	UnaryExpression::UnaryExpression(
+		AST::UnaryOperator op,
+		std::unique_ptr <Expression> &&arg
+	) : operator_(op), arg_(std::move(arg)) {}
+
+	void UnaryExpression::print(std::ostream &os, int level) const {
+		os << unary_operator_string(operator_) << ' ';
+		arg_->print(os, level);
 	}
 
 	File::File(

@@ -183,6 +183,23 @@ namespace AST {
 		std::unique_ptr<Expression> lhs_, rhs_;
 	};
 
+	enum class UnaryOperator {
+		NEG,
+		BITWISE_NOT,
+		LOGICAL_NOT,
+		ADDRESS_OF,
+	};
+
+	class UnaryExpression : public Expression {
+	public:
+		UnaryExpression(UnaryOperator op, std::unique_ptr<Expression> &&arg);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		UnaryOperator operator_;
+		std::unique_ptr<Expression> arg_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.

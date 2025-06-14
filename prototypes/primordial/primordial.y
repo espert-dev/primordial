@@ -675,13 +675,37 @@ MulExpression : MulExpression ">>" UnaryExpression {
 	);
 };
 
-UnaryExpression
-	: Term { $$ = std::move($1); }
-	| "-" UnaryExpression { /* TODO */ }
-	| "~" UnaryExpression { /* TODO */ }
-	| "!" UnaryExpression { /* TODO */ }
-	| "@" UnaryExpression { /* TODO */ }
-	;
+UnaryExpression	: Term {
+	$$ = std::move($1);
+};
+
+UnaryExpression	: "-" UnaryExpression {
+	$$ = std::make_unique<AST::UnaryExpression>(
+		AST::UnaryOperator::NEG,
+		std::move($2)
+	);
+};
+
+UnaryExpression	: "~" UnaryExpression {
+	$$ = std::make_unique<AST::UnaryExpression>(
+		AST::UnaryOperator::BITWISE_NOT,
+		std::move($2)
+	);
+};
+
+UnaryExpression	: "!" UnaryExpression {
+	$$ = std::make_unique<AST::UnaryExpression>(
+		AST::UnaryOperator::LOGICAL_NOT,
+		std::move($2)
+	);
+};
+
+UnaryExpression	: "@" UnaryExpression {
+	$$ = std::make_unique<AST::UnaryExpression>(
+		AST::UnaryOperator::ADDRESS_OF,
+		std::move($2)
+	);
+};
 
 Term
 	: "(" Expression ")" { $$ = std::move($2); }
