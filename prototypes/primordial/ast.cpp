@@ -315,6 +315,18 @@ namespace AST {
 		os << value_;
 	}
 
+	ArrayAccess::ArrayAccess(
+		std::unique_ptr <Expression> &&array,
+		std::unique_ptr <Expression> index
+	) : array_(std::move(array)), index_(std::move(index)) {}
+
+	void ArrayAccess::print(std::ostream &os, int level) const {
+		array_->print(os, level);
+		os << '[';
+		index_->print(os, level);
+		os << ']';
+	}
+
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports

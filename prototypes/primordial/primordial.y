@@ -730,7 +730,10 @@ Term
 	;
 
 ArrayAccess : Term "[" Expression "]" {
-	// TODO
+	$$ = std::make_unique<AST::ArrayAccess>(
+		std::move($1),
+		std::move($3)
+	);
 };
 
 Literal : BOOLEAN_LITERAL {

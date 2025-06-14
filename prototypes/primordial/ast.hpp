@@ -227,6 +227,20 @@ namespace AST {
 		std::string value_;
 	};
 
+	class ArrayAccess : public Expression {
+	public:
+		ArrayAccess(
+			std::unique_ptr<Expression> &&array,
+			std::unique_ptr<Expression> index
+		);
+
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Expression> array_;
+		std::unique_ptr<Expression> index_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.
