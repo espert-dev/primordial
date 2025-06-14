@@ -203,6 +203,16 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::Expression>> UnaryExpression
 %nterm <std::unique_ptr<AST::Expression>> Term
 
+// TODO use concrete types for terms.
+%nterm <std::unique_ptr<AST::Expression>> FunctionCall
+%nterm <std::unique_ptr<AST::Expression>> ArrayAccess
+%nterm <std::unique_ptr<AST::Expression>> AnonymousFunctionDef
+%nterm <std::unique_ptr<AST::Expression>> FieldAccess
+%nterm <std::unique_ptr<AST::Expression>> PointerDereference
+%nterm <std::unique_ptr<AST::Expression>> TypeCast
+%nterm <std::unique_ptr<AST::Expression>> VariableRead
+%nterm <std::unique_ptr<AST::Expression>> Literal
+
 %%
 
 File : PackageDecl ImportList TopItems {
@@ -445,12 +455,12 @@ XLowerIDList
 	;
 
 FunctionCall
-	: Term "(" ExpressionList ")"
-	| Term "[" NETypeList "]" "(" ExpressionList ")"
+	: Term "(" ExpressionList ")" { /* TODO */ }
+	| Term "[" NETypeList "]" "(" ExpressionList ")" { /* TODO */ }
 	;
 
 AnonymousFunctionDef
-	: "func" FunctionSignature Block
+	: "func" FunctionSignature Block { /* TODO */ }
 	;
 
 /*
@@ -709,17 +719,31 @@ UnaryExpression	: "@" UnaryExpression {
 
 Term
 	: "(" Expression ")" { $$ = std::move($2); }
-	| Term "[" Expression "]" { /* TODO */ }
-	| FunctionCall { /* TODO */ }
-	| AnonymousFunctionDef { /* TODO */ }
-	| FieldAccess { /* TODO */ }
-	| PointerDereference { /* TODO */ }
-	| TypeCast { /* TODO */ }
-	| LOWER_ID { /* TODO */ }
-	| BOOL_LITERAL { /* TODO */ }
-	| STR_LITERAL { /* TODO */ }
-	| NUM_LITERAL { /* TODO */ }
+	| ArrayAccess { $$ = std::move($1); }
+	| FunctionCall { $$ = std::move($1); }
+	| AnonymousFunctionDef { $$ = std::move($1); }
+	| FieldAccess { $$ = std::move($1); }
+	| PointerDereference { $$ = std::move($1); }
+	| TypeCast { $$ = std::move($1); }
+	| VariableRead { $$ = std::move($1); }
+	| Literal { $$ = std::move($1); }
 	;
+
+ArrayAccess : Term "[" Expression "]" {
+	// TODO
+};
+
+Literal : BOOL_LITERAL {
+	// TODO
+};
+
+Literal : STR_LITERAL {
+	// TODO
+};
+
+Literal : NUM_LITERAL {
+	// TODO
+};
 
 FieldAccess : Term "." LOWER_ID {
 	// TODO
@@ -732,6 +756,10 @@ PointerDereference : Term "." {
 TypeCast : Type "(" Expression ")" {
 	// TODO
 };
+
+VariableRead : LOWER_ID {
+	// TODO
+}
 
 /*
  * The empty struct and the empty list look identical, so we need to treat it
