@@ -94,6 +94,10 @@ namespace AST {
 
 	Field::Field() = default;
 
+	Field::Field(Field &&other) = default;
+
+	Field& Field::operator=(Field &&other)= default;
+
 	Field::Field(std::unique_ptr<Type> &&type)	: type_(std::move(type)) {}
 
 	Field::Field(std::string &&name, std::unique_ptr<Type> &&type)

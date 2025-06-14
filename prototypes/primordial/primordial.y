@@ -188,6 +188,8 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::InterfaceType>> InterfaceType
 
 %nterm <AST::Field> Field
+%nterm <std::vector<AST::Field>> FieldList
+%nterm <std::vector<AST::Field>> XFieldList
 
 %nterm <std::unique_ptr<AST::Expression>> Expression
 
@@ -676,11 +678,11 @@ FunctionType : "func" "(" NETypeList ")" "->" "(" NETypeList ")" {
 };
 
 StructType : "struct" "{" FieldList "}" {
-	// TODO
+	$$ = std::make_unique<AST::StructType>(std::move($3));
 };
 
 UnionType :  "union" "{" FieldList "}" {
-	// TODO
+	$$ = std::make_unique<AST::UnionType>(std::move($3));
 };
 
 InterfaceType : "interface" "{" InterfaceItems "}" {
@@ -701,15 +703,22 @@ XExpressionList
 	| XExpressionList "," Expression
 	;
 
-FieldList
-	: %empty
-	| XFieldList MaybeSemi
-	;
+FieldList : %empty {
+	// Default constructed.
+};
 
-XFieldList
-	: Field
-	| XFieldList ";" Field
-	;
+FieldList : XFieldList MaybeSemi {
+	$$ = std::move($1);
+};
+
+XFieldList : Field {
+	$$.push_back(std::move($1));
+};
+
+XFieldList : XFieldList ";" Field {
+	$$ = std::move($1);
+	$$.push_back(std::move($3));
+};
 
 Field : Type {
 	$$ = AST::Field(std::move($1));

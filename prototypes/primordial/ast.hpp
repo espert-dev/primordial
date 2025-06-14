@@ -104,6 +104,9 @@ namespace AST {
 	class Field : public Node {
 	public:
 		Field(); // only for Bison
+		Field(Field &&other);
+		Field& operator=(Field &&other);
+
 		Field(std::unique_ptr<Type> &&type);
 		Field(std::string &&name, std::unique_ptr<Type> &&type);
 		void print(std::ostream &os, int level) const override final;
