@@ -161,7 +161,7 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %token <std::string> LOWER_ID "lower identifier"
 
 /* Literals */
-%token <bool> BOOL_LITERAL "Boolean literal"
+%token <bool> BOOLEAN_LITERAL "Boolean literal"
 %token <std::string> NUM_LITERAL "numeric literal"
 %token <std::string> STR_LITERAL "string literal"
 
@@ -202,8 +202,9 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::Expression>> MulExpression
 %nterm <std::unique_ptr<AST::Expression>> UnaryExpression
 %nterm <std::unique_ptr<AST::Expression>> Term
+%nterm <std::unique_ptr<AST::Expression>> Literal
 
-// TODO use concrete types for terms.
+// These can have concrete types.
 %nterm <std::unique_ptr<AST::Expression>> FunctionCall
 %nterm <std::unique_ptr<AST::Expression>> ArrayAccess
 %nterm <std::unique_ptr<AST::Expression>> AnonymousFunctionDef
@@ -211,7 +212,6 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::Expression>> PointerDereference
 %nterm <std::unique_ptr<AST::Expression>> TypeCast
 %nterm <std::unique_ptr<AST::Expression>> VariableRead
-%nterm <std::unique_ptr<AST::Expression>> Literal
 
 %%
 
@@ -733,8 +733,8 @@ ArrayAccess : Term "[" Expression "]" {
 	// TODO
 };
 
-Literal : BOOL_LITERAL {
-	// TODO
+Literal : BOOLEAN_LITERAL {
+	$$ = std::make_unique<AST::BooleanLiteral>($1);
 };
 
 Literal : STR_LITERAL {

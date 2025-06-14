@@ -200,6 +200,15 @@ namespace AST {
 		std::unique_ptr<Expression> arg_;
 	};
 
+	class BooleanLiteral : public Expression {
+	public:
+		BooleanLiteral(bool value);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		bool value_;
+	};
+
 	class Import : public Node {
 	public:
 		Import(); // Bison requires an empty constructor.

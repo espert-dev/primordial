@@ -255,11 +255,11 @@ static bool can_insert_semicolon = false;
 }
 "true" {
 	can_insert_semicolon = true;
-	return yy::Parser::make_BOOL_LITERAL(true, loc);
+	return yy::Parser::make_BOOLEAN_LITERAL(true, loc);
 }
 "false" {
 	can_insert_semicolon = true;
-	return yy::Parser::make_BOOL_LITERAL(false, loc);
+	return yy::Parser::make_BOOLEAN_LITERAL(false, loc);
 }
 
 [_]*[A-Z][_0-9A-Za-z]* {

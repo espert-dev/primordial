@@ -291,6 +291,16 @@ namespace AST {
 		arg_->print(os, level);
 	}
 
+	BooleanLiteral::BooleanLiteral(bool value) : value_(value) {}
+
+	void BooleanLiteral::print(std::ostream &os, int level) const {
+		if (value_) {
+			os << "true";
+		} else {
+			os << "false";
+		}
+	}
+
 	File::File(
 		std::string &&name,
 		std::vector<Import> &&imports
