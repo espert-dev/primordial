@@ -214,6 +214,10 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::TypeCast>> TypeCast
 %nterm <std::unique_ptr<AST::Expression>> SymbolAccess
 
+%nterm <AST::ExpressionList> ExpressionList
+%nterm <AST::ExpressionList> NEExpressionList
+%nterm <AST::ExpressionList> XExpressionList
+
 %%
 
 File : PackageDecl ImportList TopItems {
@@ -773,7 +777,7 @@ Literal	: CompoundLiteralType "{" NEFieldAssignmentList "}" {
 };
 
 Literal : CompoundLiteralType "{" NEExpressionList "}" {
-	// TODO
+	$$ = std::make_unique<AST::ListLiteral>(std::move($1), std::move($3));
 };
 
 PointerDereference : Term "." {
@@ -909,22 +913,29 @@ InterfaceType : "interface" "{" InterfaceItems "}" {
 	// TODO
 };
 
-ExpressionList
-	: %empty
-	| XExpressionList MaybeComma
-	;
+ExpressionList : %empty {
+	// $$ was default constructed.
+};
 
-NEExpressionList
-	: XExpressionList MaybeComma
-	;
+ExpressionList : XExpressionList MaybeComma {
+	$$ = std::move($1);
+};
 
-XExpressionList
-	: Expression
-	| XExpressionList "," Expression
-	;
+NEExpressionList : XExpressionList MaybeComma {
+	$$ = std::move($1);
+};
+
+XExpressionList	: Expression {
+	$$.push_back(std::move($1));
+};
+
+XExpressionList : XExpressionList "," Expression {
+	$$ = std::move($1);
+	$$.push_back(std::move($3));
+};
 
 FieldList : %empty {
-	// Default constructed.
+	// $$ was default constructed.
 };
 
 FieldList : XFieldList MaybeSemi {

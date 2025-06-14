@@ -323,6 +323,24 @@ namespace AST {
 		os << " {}";
 	}
 
+	ListLiteral::ListLiteral(
+		std::unique_ptr<Type> &&type,
+		ExpressionList &&values
+	) : type_(std::move(type)), values_(std::move(values)) {}
+
+	void ListLiteral::print(std::ostream &os, int level) const {
+		type_->print(os, level);
+		os << " {";
+
+		for (auto const &value: values_) {
+			indent(os, level + 1);
+			value->print(os, level + 1);
+			os << '\n';
+		}
+
+		os << "};";
+	}
+
 	ArrayAccess::ArrayAccess(
 		std::unique_ptr <Expression> &&array,
 		std::unique_ptr <Expression> index

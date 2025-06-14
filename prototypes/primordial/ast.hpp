@@ -236,6 +236,16 @@ namespace AST {
 		std::unique_ptr<Type> type_;
 	};
 
+	class ListLiteral : public Expression {
+	public:
+		ListLiteral(std::unique_ptr<Type> &&type, ExpressionList &&values);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Type> type_;
+		ExpressionList values_;
+	};
+
 	class ArrayAccess : public Expression {
 	public:
 		ArrayAccess(
