@@ -92,12 +92,48 @@ namespace AST {
 		os << ")";
 	}
 
-	void StructType::print(std::ostream &os, int level) const {
-		// TODO
+	Field::Field() = default;
+
+	Field::Field(std::unique_ptr<Type> &&type)	: type_(std::move(type)) {}
+
+	Field::Field(std::string &&name, std::unique_ptr<Type> &&type)
+	: name_(std::move(name)), type_(std::move(type)) {}
+
+	void Field::print(std::ostream &os, int level) const {
+		indent(os, level);
+		if (!is_embedding()) {
+			os << name_ << ' ';
+		}
+
+		type_->print(os, level);
 	}
 
+	bool Field::is_embedding() const {
+		return name_.empty();
+	}
+
+	StructType::StructType(FieldList &&fields) : fields_(std::move(fields)) {}
+
+	void StructType::print(std::ostream &os, int level) const {
+		os << "struct {\n";
+
+		for (auto const &field : fields_) {
+			field.print(os, level+1);
+		}
+
+		os << "}\n";
+	}
+
+	UnionType::UnionType(FieldList &&fields) : fields_(std::move(fields)) {}
+
 	void UnionType::print(std::ostream &os, int level) const {
-		// TODO
+		os << "union {\n";
+
+		for (auto const &field : fields_) {
+			field.print(os, level+1);
+		}
+
+		os << "}\n";
 	}
 
 	void InterfaceType::print(std::ostream &os, int level) const {

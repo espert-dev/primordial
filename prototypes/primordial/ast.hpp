@@ -101,22 +101,37 @@ namespace AST {
 		TypeList outputs_;
 	};
 
+	class Field : public Node {
+	public:
+		Field(); // only for Bison
+		Field(std::unique_ptr<Type> &&type);
+		Field(std::string &&name, std::unique_ptr<Type> &&type);
+		void print(std::ostream &os, int level) const override final;
+		bool is_embedding() const;
+
+	private:
+		std::string name_;
+		std::unique_ptr<Type> type_;
+	};
+
+	using FieldList = std::vector<Field>;
+
 	class StructType : public Type {
 	public:
-		StructType() = default; // TODO replace
+		StructType(FieldList &&fields);
 		void print(std::ostream &os, int level) const override final;
 
 	private:
-		// TODO
+		FieldList fields_;
 	};
 
 	class UnionType : public Type {
 	public:
-		UnionType() = default; // TODO replace
+		UnionType(FieldList &&fields);
 		void print(std::ostream &os, int level) const override final;
 
 	private:
-		// TODO
+		FieldList fields_;
 	};
 
 	class InterfaceType : public Type {

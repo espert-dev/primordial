@@ -187,6 +187,8 @@ yy::Parser::symbol_type yylex(void* yyscanner, yy::location& loc);
 %nterm <std::unique_ptr<AST::UnionType>> UnionType
 %nterm <std::unique_ptr<AST::InterfaceType>> InterfaceType
 
+%nterm <AST::Field> Field
+
 %nterm <std::unique_ptr<AST::Expression>> Expression
 
 %%
@@ -709,10 +711,13 @@ XFieldList
 	| XFieldList ";" Field
 	;
 
-Field
-	: Type /* Embedding */
-	| LOWER_ID Type /* Field */
-	;
+Field : Type {
+	$$ = AST::Field(std::move($1));
+};
+
+Field : LOWER_ID Type {
+	$$ = AST::Field(std::move($1), std::move($2));
+};
 
 InterfaceItems
 	: %empty
