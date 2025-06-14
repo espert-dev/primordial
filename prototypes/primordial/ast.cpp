@@ -315,6 +315,14 @@ namespace AST {
 		os << value_;
 	}
 
+	EmptyCompoundLiteral::EmptyCompoundLiteral(std::unique_ptr <Type> &&type)
+	: type_(std::move(type)) {}
+
+	void EmptyCompoundLiteral::print(std::ostream &os, int level) const {
+		type_->print(os, level);
+		os << " {}";
+	}
+
 	ArrayAccess::ArrayAccess(
 		std::unique_ptr <Expression> &&array,
 		std::unique_ptr <Expression> index

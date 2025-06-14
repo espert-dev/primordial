@@ -227,6 +227,15 @@ namespace AST {
 		std::string value_;
 	};
 
+	class EmptyCompoundLiteral : public Expression {
+	public:
+		EmptyCompoundLiteral(std::unique_ptr<Type> &&type);
+		void print(std::ostream &os, int level) const override final;
+
+	private:
+		std::unique_ptr<Type> type_;
+	};
+
 	class ArrayAccess : public Expression {
 	public:
 		ArrayAccess(

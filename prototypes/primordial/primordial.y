@@ -762,6 +762,20 @@ Literal : NUMERIC_LITERAL {
 	$$ = std::make_unique<AST::NumericLiteral>(std::move($1));
 };
 
+// The empty struct and the empty list look identical, so we need to treat it
+// on its own to prevent ambiguities, and require non-emptiness from the rest.
+Literal : CompoundLiteralType "{" "}" {
+	$$ = std::make_unique<AST::EmptyCompoundLiteral>(std::move($1));
+};
+
+Literal	: CompoundLiteralType "{" NEFieldAssignmentList "}" {
+	// TODO
+};
+
+Literal : CompoundLiteralType "{" NEExpressionList "}" {
+	// TODO
+};
+
 PointerDereference : Term "." {
 	$$ = std::make_unique<AST::PointerDereference>(std::move($1));
 };
@@ -769,16 +783,6 @@ PointerDereference : Term "." {
 TypeCast : Type "(" Expression ")" {
 	$$ = std::make_unique<AST::TypeCast>(std::move($1), std::move($3));
 };
-
-/*
- * The empty struct and the empty list look identical, so we need to treat it
- * on its own to prevent ambiguities.
- */
-Term
-	: CompoundLiteralType "{" "}" { /* TODO */ }
-	| CompoundLiteralType "{" NEFieldAssignmentList "}" { /* TODO */ }
-	| CompoundLiteralType "{" NEExpressionList "}" { /* TODO */ }
-	;
 
 /*
  * We cannot use the full Type here because otherwise, e.g.,
