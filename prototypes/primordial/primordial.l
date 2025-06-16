@@ -187,6 +187,8 @@ static bool can_insert_semicolon = false;
 }
 
 "_" {
+	// For consistency with identifiers.
+	can_insert_semicolon = true;
 	return yy::Parser::make_OMIT(loc);
 }
 "import" {
