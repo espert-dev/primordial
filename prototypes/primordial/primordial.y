@@ -274,44 +274,7 @@ TopItem
 	| TypeDecl
 	| FunctionDef
 	| FunctionDecl
-	| Let
-	| Var
-	;
-
-Let
-	: "let" NELowerIDList "=" NEExpressionList
-	| "let" NELowerIDList Type "=" NEExpressionList
-	| "let" "(" LetDefinitionGroup ")"
-	;
-
-LetDefinitionItem
-	: LOWER_ID "=" Expression
-	| LOWER_ID Type "=" Expression
-	;
-
-LetDefinitionGroup
-	: %empty
-	| LetDefinitionGroup LetDefinitionItem ";"
-	;
-
-Var
-	: "var" NELowerIDList
-	| "var" NELowerIDList Type
-	| "var" NELowerIDList "=" NEExpressionList
-	| "var" NELowerIDList Type "=" NEExpressionList
-	| "var" "(" VarDefinitionGroup ")"
-	;
-
-VarDefinitionItem
-	: LOWER_ID
-	| LOWER_ID Type
-	| LOWER_ID "=" Expression
-	| LOWER_ID Type "=" Expression
-	;
-
-VarDefinitionGroup
-	: %empty
-	| VarDefinitionGroup VarDefinitionItem ";"
+	| Assignment
 	;
 
 TypeDef
@@ -333,10 +296,9 @@ FunctionDef
 	| "func" Receiver LOWER_ID FunctionSignature Block
 	;
 
-// The parentheses aren't really necessary, but might provide a visual cue.
 Receiver
-	: "(" ReceiverType ")"
-	| "(" LOWER_ID ReceiverType ")"
+	: ReceiverType
+	| LOWER_ID ReceiverType
 	;
 
 ReceiverType
@@ -398,8 +360,6 @@ Statement
 	| If
 	| While
 	| For
-	| Let
-	| Var
 	| Block
 	| Label
 	| Continue
@@ -452,15 +412,6 @@ XLeftValueList
 LeftValue
 	: OMIT
 	| Expression
-	;
-
-NELowerIDList
-	: XLowerIDList MaybeComma
-	;
-
-XLowerIDList
-	: LOWER_ID
-	| XLowerIDList "," LOWER_ID
 	;
 
 FunctionCall
